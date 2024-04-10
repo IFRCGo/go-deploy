@@ -1,0 +1,72 @@
+trigger:
+- main
+- develop
+
+# no PR triggers
+pr: none
+
+resources:
+  repositories:
+  - repository: go-deploy
+    type: github
+    endpoint: IFRCGo
+    name: IFRCGo/go-deploy
+    ref: ${{ variables['Build.SourceBranchName'] }}
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+- job: 'Build'
+  steps:
+  - checkout: go-deploy
+    displayName: "Checkout go-deploy"
+    path: go-deploy
+
+  # Deploy Terraform managed infrastructure to staging
+  - bash: $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/setup-infra.sh
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
+    displayName: "Deploy Staging Infrastructure"
+    env:
+      TF_VAR_environment: staging
+      TF_VAR_subscriptionId: $(TERRAFORM_SUBSCRIPTION_ID)
+      # DB resources
+      TF_VAR_RESOURCES_DB_SERVER: ${STAGING_RESOURCES_DB_SERVER}
+      TF_VAR_RESOURCES_DB_NAME: ${STAGING_RESOURCES_DB_NAME}
+      TF_VAR_REGION: ${STAGING_REGION}
+
+      # For azurerm backend
+      ARM_SUBSCRIPTION_ID: ${TERRAFORM_SUBSCRIPTION_ID}
+      ARM_TENANT_ID: ${TERRAFORM_TENANT_ID}
+      ARM_CLIENT_ID: ${TERRAFORM_SERVICE_PRINCIPAL_ID}
+      ARM_CLIENT_SECRET: ${TERRAFORM_SERVICE_PRINCIPAL_KEY}
+      ARM_ACCESS_KEY: ${TERRAFORM_STORAGE_KEY}
+
+      # For Azure CLI
+      AZURE_TENANT_ID: ${TERRAFORM_TENANT_ID}
+      AZURE_CLIENT_ID: ${TERRAFORM_SERVICE_PRINCIPAL_ID}
+      AZURE_CLIENT_SECRET: ${TERRAFORM_SERVICE_PRINCIPAL_KEY}
+
+  # Deploy Terraform managed infrastructure to production
+  - bash: $(Pipeline.Workspace)/go-deploy/deployment-scripts/base-infra.sh
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    displayName: "Deploy Production Infrastructure"
+    env:
+      TF_VAR_environment: production
+      TF_VAR_subscriptionId: $(TERRAFORM_SUBSCRIPTION_ID)
+      # DB resources
+      TF_VAR_RESOURCES_DB_SERVER: ${PRODUCTION_RESOURCES_DB_SERVER}
+      TF_VAR_RESOURCES_DB_NAME: ${PRODUCTION_RESOURCES_DB_NAME}
+      TF_VAR_REGION: ${PRODUCTION_REGION}
+
+      # For azurerm backend
+      ARM_SUBSCRIPTION_ID: ${TERRAFORM_SUBSCRIPTION_ID}
+      ARM_TENANT_ID: ${TERRAFORM_TENANT_ID}
+      ARM_CLIENT_ID: ${TERRAFORM_SERVICE_PRINCIPAL_ID}
+      ARM_CLIENT_SECRET: ${TERRAFORM_SERVICE_PRINCIPAL_KEY}
+      ARM_ACCESS_KEY: ${TERRAFORM_STORAGE_KEY}
+
+      # For Azure CLI
+      AZURE_TENANT_ID: ${TERRAFORM_TENANT_ID}
+      AZURE_CLIENT_ID: ${TERRAFORM_SERVICE_PRINCIPAL_ID}
+      AZURE_CLIENT_SECRET: ${TERRAFORM_SERVICE_PRINCIPAL_KEY}
