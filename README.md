@@ -1,4 +1,7 @@
-# IFRC GO Deployment
+# IFRC GO Deployment (Work in Progress)
+
+> [!Note]
+> This repository is still work in progress and not being used to manage GO deployments yet.
 
 This repository hosts the configuration files and scripts required for deploying Kubernetes clusters for the IFRC GO ecosystem, as well as for deploying IFRC GO ecosystem applications onto these clusters.
 
