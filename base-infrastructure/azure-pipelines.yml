@@ -24,6 +24,9 @@ jobs:
     path: go-deploy
 
   # Deploy Terraform managed infrastructure to staging
+  - script: chmod +x $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/setup-infra.sh
+    displayName: "Make setup-infra executable"
+
   - bash: $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/setup-infra.sh
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
     displayName: "Deploy Staging Infrastructure"
