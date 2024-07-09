@@ -24,7 +24,10 @@ jobs:
     path: go-deploy
 
   # Deploy go-api to staging
-  - bash: $(Pipeline.Workspace)/go-deploy/deployment-scripts/go-api.sh
+  - script: chmod +x $(Pipeline.Workspace)/go-deploy/applications/go-api/scripts/deploy-go-api.sh
+    displayName: "Make deployment script executable"
+
+  - bash: $(Pipeline.Workspace)/go-deploy/applications/go-api/scripts/deploy-go-api.sh
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
     displayName: "Deploy staging instance of go-api"
     env:
@@ -104,7 +107,7 @@ jobs:
       JWT_EXPIRE_TIMESTAMP_DAYS: $(STAGING_JWT_EXPIRE_TIMESTAMP_DAYS)
 
   # Deploy go-api to production
-  - bash: $(Pipeline.Workspace)/go-deploy/deployment-scripts/go-api.sh
+  - bash: $(Pipeline.Workspace)/go-deploy/applications/go-api/scripts/deploy-go-api.sh
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     displayName: "Deploy production instance of go-api"
     env:
