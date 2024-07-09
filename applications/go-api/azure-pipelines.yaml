@@ -17,7 +17,7 @@ pool:
   vmImage: ubuntu-latest
 
 jobs:
-- job: 'Deploy GO API'
+- job: 'Deploy_GO_API'
   steps:
   - checkout: go-deploy
     displayName: "Checkout go-deploy"
