@@ -17,7 +17,7 @@ fi
 helm upgrade --dry-run --install --wait \
     -f applications/go-api/helm/ifrcgo-helm/values-${ENVIRONMENT}.yaml \
     ifrcgo-helm \
-    oci://ghcr.io/IFRCGo/go-api/ifrcgo-helm \
+    oci://ghcr.io/ifrcgo/go-api/ifrcgo-helm \
     --version "${VERSION}" \
     --set env.DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY} \
     --set env.DJANGO_DB_USER=${DJANGO_DB_USER} \
