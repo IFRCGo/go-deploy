@@ -12,3 +12,4 @@ sed -i "s/ENVIRONMENT_TO_REPLACE/$TF_VAR_environment/g" main.tf
 
 terraform init
 terraform plan
+terraform apply -auto-approve
