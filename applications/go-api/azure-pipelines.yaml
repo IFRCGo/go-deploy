@@ -108,7 +108,7 @@ jobs:
 
   # Deploy go-api to production
   - bash: $(Pipeline.Workspace)/go-deploy/applications/go-api/scripts/deploy-go-api.sh
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     displayName: "Deploy production instance of go-api"
     env:
       ENVIRONMENT: production
