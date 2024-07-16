@@ -51,7 +51,7 @@ jobs:
       AZURE_CLIENT_SECRET: $(TERRAFORM_SERVICE_PRINCIPAL_KEY)
 
   # Deploy Terraform managed infrastructure to production
-  - bash: $(Pipeline.Workspace)/go-deploy/deployment-scripts/base-infra.sh
+  - bash: $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/setup-infra.sh
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     displayName: "Deploy Production Infrastructure"
     env:
