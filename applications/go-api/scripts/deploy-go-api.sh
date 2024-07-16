@@ -14,7 +14,7 @@ else
     az aks get-credentials --resource-group ifrctgo002rg --name ifrctgo-cluster
 fi
 
-helm upgrade --dry-run --install --wait \
+helm upgrade --install --wait \
     -f applications/go-api/helm/ifrcgo-helm/values-${ENVIRONMENT}.yaml \
     ifrcgo-helm \
     oci://ghcr.io/ifrcgo/go-api/ifrcgo-helm \
