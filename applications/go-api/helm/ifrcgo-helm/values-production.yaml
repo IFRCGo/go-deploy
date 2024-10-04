@@ -14,7 +14,7 @@ env:
   ELASTIC_SEARCH_HOST: elasticsearch://ifrcgo-helm-elasticsearch:9200
   FRONTEND_URL: go.ifrc.org
   GO_ENVIRONMENT: production
-  IFRC_TRANSLATION_DOMAIN: https://microservices-staging.ifrc.org
+  IFRC_TRANSLATION_DOMAIN: https://ifrc-translationapi.azurewebsites.net
   SENTRY_DSN: https://342632f67ea942c9bde214c0bb7e91be@sentry.northeurope.cloudapp.azure.com/2
   SENTRY_SAMPLE_RATE: "0.2"
 
