@@ -112,7 +112,7 @@ jobs:
     displayName: "Deploy production instance of go-api"
     env:
       ENVIRONMENT: production
-      VERSION: "0.0.1-0.dev.git.1.h41e44de"
+      VERSION: "0.0.1-0.dev.git.1.hb403eac"
       # For Azure CLI
       AZURE_TENANT_ID: $(TERRAFORM_TENANT_ID)
       AZURE_CLIENT_ID: $(TERRAFORM_SERVICE_PRINCIPAL_ID)
