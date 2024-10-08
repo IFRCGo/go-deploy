@@ -21,6 +21,18 @@ variable "RESOURCES_DB_SERVER" {
   default = ""
 }
 
+variable "secret_rotation_interval" {
+  type        = string
+  description = "How frequently the cluster should check for secret changes in minutes, in the form of '2m', '3m', etc."
+  default     = "2m"
+
+  validation {
+    condition     = can(regex("^[1-9][0-9]*m$", var.secret_rotation_interval))
+    error_message = "The secret_rotation_interval value must be a string in the form of 'Xm' where X is a positive integer, e.g., '2m', '10m', etc."
+  }
+}
+
+
 # -----------------
 # Attach ACR
 # Defaults to common resources
