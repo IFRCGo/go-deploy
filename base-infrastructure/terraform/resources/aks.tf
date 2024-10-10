@@ -1,7 +1,7 @@
 resource "azurerm_kubernetes_cluster" "ifrcgo" {
-  lifecycle {
-    ignore_changes = all
-  }
+#  lifecycle {
+#    ignore_changes = all
+#  }
   
   name                = "${local.prefix}-cluster"
   location            = data.azurerm_resource_group.ifrcgo.location
@@ -27,6 +27,14 @@ resource "azurerm_kubernetes_cluster" "ifrcgo" {
     Environment = var.environment
     ManagedBy   = "IFRCGo"
   }
+
+  key_vault_secrets_provider {
+    secret_rotation_enabled  = true
+    secret_rotation_interval = var.secret_rotation_interval
+  }
+
+  oidc_issuer_enabled       = true
+  workload_identity_enabled = true
 }
 
 # add the role to the identity the kubernetes cluster was assigned
