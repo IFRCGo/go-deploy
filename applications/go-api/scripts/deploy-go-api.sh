@@ -51,7 +51,6 @@ helm upgrade --install --wait \
     --set env.APPEALS_USER=${APPEALS_USER} \
     --set env.APPEALS_PASS=${APPEALS_PASS} \
     --set env.IFRC_TRANSLATION_DOMAIN=${IFRC_TRANSLATION_DOMAIN} \
-    --set env.IFRC_TRANSLATION_GET_API_KEY=${IFRC_TRANSLATION_GET_API_KEY} \
     --set env.IFRC_TRANSLATION_HEADER_API_KEY=${IFRC_TRANSLATION_HEADER_API_KEY} \
     --set secrets.API_TLS_CRT=${API_TLS_CRT} \
     --set secrets.API_TLS_KEY=${API_TLS_KEY} \
