@@ -10,6 +10,10 @@ output "cluster_name" {
   value = azurerm_kubernetes_cluster.ifrcgo.name
 }
 
+output "cluster_oidc_issuer_url" {
+  value = azurerm_kubernetes_cluster.ifrcgo.oidc_issuer_url
+}
+
 output "resource_group" {
   value = data.azurerm_resource_group.ifrcgo.name
 }
