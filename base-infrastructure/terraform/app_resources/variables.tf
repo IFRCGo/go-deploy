@@ -1,6 +1,6 @@
 variable "app_name" {
   description = "The application name for which the module resources are being created"
-  type = string
+  type        = string
 }
 
 variable "aks_config" {
@@ -21,9 +21,27 @@ variable "aks_config" {
   }
 }
 
+variable "database_config" {
+  description = "Configuration for the application database"
+
+  type = object(
+    {
+      create_database = bool
+      database_name   = string
+      server_id       = string
+    }
+  )
+
+  default = {
+    create_database = false
+    database_name   = null
+    server_id       = null
+  }
+}
+
 variable "environment" {
   description = "The deployment environment (production, staging, or sandbox)"
-  type = string
+  type        = string
 }
 
 variable "key_vault_network_acls" {

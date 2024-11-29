@@ -1,3 +1,7 @@
+output "database_name" {
+  value = var.database_config.create_database ? azurerm_postgresql_flexible_server_database.app.name : null
+}
+
 output "key_vault_id" {
   value = azurerm_key_vault.app_kv.id
 }
@@ -11,7 +15,7 @@ output "storage_containers" {
 }
 
 output "tenant_id" {
-  value = data.azurerm_client_config.current.tenant_id 
+  value = data.azurerm_client_config.current.tenant_id
 }
 
 output "workload_client_id" {
