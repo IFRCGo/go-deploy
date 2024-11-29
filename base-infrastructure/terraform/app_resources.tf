@@ -21,6 +21,16 @@ module "alert_hub_resources" {
     service_account_name    = "service-token-reader"
   }
 
+  storage_config = {
+    enabled              = true
+    storage_account_id   = module.resources.storage_account_id
+    storage_account_name = module.resources.storage_account_name
+    container_refs = [
+#      "media",
+#      "static"
+    ]
+  }
+
   app_name            = "alert-hub"
   environment         = var.environment
   resource_group_name = module.resources.resource_group

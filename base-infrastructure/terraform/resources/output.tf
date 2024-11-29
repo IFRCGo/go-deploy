@@ -33,3 +33,11 @@ output "azure_strorage_key" {
 output "azure_storage_connection_string" {
   value = azurerm_storage_account.ifrcgo.primary_connection_string
 }
+
+output "storage_account_name" {
+  value = azurerm_storage_account.ifrcgo.name 
+}
+
+output "storage_account_id" {
+  value = azurerm_storage_account.ifrcgo.id
+}
