@@ -6,6 +6,10 @@ output "key_vault_name" {
   value = azurerm_key_vault.app_kv.name
 }
 
+output "storage_containers" {
+  value = var.storage_config.enabled ? azurerm_storage_container.app_container[*].name : null
+}
+
 output "tenant_id" {
   value = data.azurerm_client_config.current.tenant_id 
 }

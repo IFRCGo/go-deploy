@@ -54,3 +54,23 @@ variable "secrets" {
   type    = map(string)
   default = {}
 }
+
+variable "storage_config" {
+  description = "Configuration for the application storage containers"
+
+  type = object(
+    {
+      enabled              = bool
+      storage_account_id   = any
+      storage_account_name = any
+      container_refs       = list(string)
+    }
+  )
+
+  default = {
+    enabled              = false
+    storage_account_id   = null
+    storage_account_name = null
+    container_refs       = []
+  }
+}
