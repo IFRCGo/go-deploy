@@ -1,5 +1,5 @@
 output "database_name" {
-  value = var.database_config.create_database ? azurerm_postgresql_flexible_server_database.app.name : null
+  value = var.database_config.create_database ? azurerm_postgresql_flexible_server_database.app[0].name : null
 }
 
 output "key_vault_id" {
