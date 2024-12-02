@@ -7,6 +7,6 @@ resource "azurerm_postgresql_flexible_server_database" "app" {
   charset   = "utf8"
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
