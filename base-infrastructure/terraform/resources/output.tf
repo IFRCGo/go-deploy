@@ -1,3 +1,11 @@
+output "alert_hub_db_admin_password" {
+  value = random_password.alert_hub_db_admin.result
+}
+
+output "alert_hub_db_server_id" {
+  value = azurerm_postgresql_flexible_server.alerthub.id 
+}
+
 output "environment" {
   value = var.environment
 }

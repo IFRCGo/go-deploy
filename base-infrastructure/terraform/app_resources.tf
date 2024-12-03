@@ -12,6 +12,10 @@ module "risk_module_resources" {
   resource_group_name = module.resources.resource_group
 }
 
+locals {
+  alerthub_db_name = "alerthubdb"
+}
+
 module "alert_hub_resources" {
   source = "./app_resources"
 
@@ -25,14 +29,19 @@ module "alert_hub_resources" {
     service_account_name    = "service-token-reader"
   }
 
-#  database_config = {
-#    create_database = true
-#    database_name   = <database_name>
-#    server_id       = <server_id>
-#  }
+  database_config = {
+    create_database = true
+    database_name   = local.alerthub_db_name
+    server_id       = module.resources.alert_hub_db_server_id
+  }
+
+  secrets = {
+    DB_ADMIN_PASSWORD = module.resources.alert_hub_db_admin_password
+    DB_NAME           = local.alerthub_db_name
+  }
 
   storage_config = {
-    enabled              = true
+    enabled = true
 
     container_refs = [
       "media",
