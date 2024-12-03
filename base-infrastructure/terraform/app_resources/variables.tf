@@ -1,6 +1,6 @@
 variable "app_name" {
   description = "The application name for which the module resources are being created"
-  type = string
+  type        = string
 }
 
 variable "aks_config" {
@@ -21,9 +21,27 @@ variable "aks_config" {
   }
 }
 
+variable "database_config" {
+  description = "Configuration for the application database"
+
+  type = object(
+    {
+      create_database = bool
+      database_name   = string
+      server_id       = string
+    }
+  )
+
+  default = {
+    create_database = false
+    database_name   = null
+    server_id       = null
+  }
+}
+
 variable "environment" {
   description = "The deployment environment (production, staging, or sandbox)"
-  type = string
+  type        = string
 }
 
 variable "key_vault_network_acls" {
@@ -53,4 +71,24 @@ variable "resource_group_name" {
 variable "secrets" {
   type    = map(string)
   default = {}
+}
+
+variable "storage_config" {
+  description = "Configuration for the application storage containers"
+
+  type = object(
+    {
+      enabled              = bool
+      storage_account_id   = any
+      storage_account_name = any
+      container_refs       = list(string)
+    }
+  )
+
+  default = {
+    enabled              = false
+    storage_account_id   = null
+    storage_account_name = null
+    container_refs       = []
+  }
 }
