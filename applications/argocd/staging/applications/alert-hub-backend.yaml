@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alert-hub
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  # We can configure the app to auto-update images as per the strategy below
+  #annotations:
+  #  # Image list for ArgoCD Image Updater to track
+  #  argocd-image-updater.argoproj.io/image-list: |
+  #    api=ghcr.io/ifrcgo/alert-hub-backend
+
+  #  # Set the update strategy to pick the latest matching tag
+  #  argocd-image-updater.argoproj.io/api.update-strategy: newest-build
+  #  argocd-image-updater.argoproj.io/api.allow-tags: regexp:^develop.*$
+
+  #  argocd-image-updater.argoproj.io/api.helm.image-name: image.name
+  #  argocd-image-updater.argoproj.io/api.helm.image-tag: image.tag
+
+  #  argocd-image-updater.argoproj.io/api.pull-secret: pullsecret:argocd/ghcr-secret
+spec:
+  project: default
+  source:
+    # We can use a specific version of the helm chart
+    repoURL: ghcr.io/ifrcgo/alert-hub-backend
+    chart: ifrcgo-alert-hub-helm
+    targetRevision: 0.0.1-develop.d8e2386
+    # Or we can track the helm chart on tip of the develop branch
+    #repoURL: https://github.com/IFRCGo/alert-hub-backend
+    #targetRevision: develop
+    #path: helm
+    helm:
+      # We can override values here:
+      #parameters:
+      #  - name: image.tag
+      #    value: "develop.d8e2386"
+      # Specify the values file to use
+      valueFiles:
+        - values-staging.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: alert-hub
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
