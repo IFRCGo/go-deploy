@@ -51,4 +51,9 @@ module "alert_hub_resources" {
     storage_account_id   = module.resources.storage_account_id
     storage_account_name = module.resources.storage_account_name
   }
+
+  vault_admin_ids = [
+    "c31baae7-afbf-4ad3-8e01-5abbd68adb16",
+    "32053268-3970-48f3-9b09-c4280cd0b67d"
+  ]
 }

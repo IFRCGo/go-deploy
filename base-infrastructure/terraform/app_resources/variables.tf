@@ -92,3 +92,9 @@ variable "storage_config" {
     container_refs       = []
   }
 }
+
+variable "vault_admin_ids" {
+  description = "the Azure principals that shall have access to the vault"
+  type        = list(string)
+  default     = []
+}
