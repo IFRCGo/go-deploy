@@ -16,9 +16,17 @@ spec:
         - name: ingress.host
           value: "alerthub-stage.ifrc.org"
         - name: ingress.className
-          value: "nginx"
+          value: nginx
         - name: env.APP_MAPBOX_ACCESS_TOKEN
-          value: "pk.ab.xy"
+          value: "pk.eyJ1IjoiZ28taWZyYyIsImEiOiJjams3b2ZhZWswMGFvM3hxeHp2ZHFhOTRrIn0._pqO9OQ2iNeDGrpopJNjpg"
+        - name: env.APP_GOOGLE_ANALYTICS_ID
+          value: G-PZFCBMTDPV
+        - name: env.APP_ENVIRONMENT 
+          value: staging
+        - name: env.APP_GRAPHQL_API_ENDPOINT 
+          value: https://alerthub-stage-api.ifrc.org/graphql/
+        - name: env.APP_HCAPTCHA_SITEKEY
+          value: 35f8a154-7f0c-46fa-ae3e-9000fbc86c8e
   destination:
     server: https://kubernetes.default.svc
     namespace: alert-hub
