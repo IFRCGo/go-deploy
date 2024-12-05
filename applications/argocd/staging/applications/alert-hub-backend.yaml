@@ -1,0 +1,69 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alert-hub-backend
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  # We can configure the app to auto-update images as per the strategy below
+  #annotations:
+  #  # Image list for ArgoCD Image Updater to track
+  #  argocd-image-updater.argoproj.io/image-list: |
+  #    api=ghcr.io/ifrcgo/alert-hub-backend
+
+  #  # Set the update strategy to pick the latest matching tag
+  #  argocd-image-updater.argoproj.io/api.update-strategy: newest-build
+  #  argocd-image-updater.argoproj.io/api.allow-tags: regexp:^develop.*$
+
+  #  argocd-image-updater.argoproj.io/api.helm.image-name: image.name
+  #  argocd-image-updater.argoproj.io/api.helm.image-tag: image.tag
+
+  #  argocd-image-updater.argoproj.io/api.pull-secret: pullsecret:argocd/ghcr-secret
+spec:
+  project: default
+  source:
+    # We can use a specific version of the helm chart
+    repoURL: ghcr.io/ifrcgo/alert-hub-backend
+    chart: ifrcgo-alert-hub-helm
+    targetRevision: 0.0.1-develop.d8e2386
+    # Or we can track the helm chart on tip of the develop branch
+    #repoURL: https://github.com/IFRCGo/alert-hub-backend
+    #targetRevision: develop
+    #path: helm
+    helm:
+      parameters:
+        - name: azure.aksSecretsProviderAvailable
+          value: true
+        - name: azure.keyvault.name
+          value: alert-hub-staging-kv
+        - name: azure.keyvault.clientId
+          value: 99dd63fe-721e-4abb-b30d-e2b782d2893d
+        - name: azure.keyvault.tenantId
+          value: a2b53be5-734e-4e6c-ab0d-d184f60fd917 
+        - name: serviceAccount.create
+          value: true
+        - name: serviceAccount.annotations.azure\.workload\.identity/client-id
+          value: 99dd63fe-721e-4abb-b30d-e2b782d2893d
+        - name: env.APP_FRONTEND_HOST 
+          value: https://alerthub-stage.ifrc.org
+        - name: env.APP_DOMAIN 
+          value: alerthub-stage-api.ifrc.org
+        - name: env.DJANGO_ALLOWED_HOSTS 
+          value: alerthub-stage-api.ifrc.org
+        - name: env.SESSION_COOKIE_DOMAIN 
+          value: .ifrc.org
+        - name: env.CSRF_COOKIE_DOMAIN 
+          value: .ifrc.org
+        - name: env.CORS_ALLOWED_ORIGINS
+          value: https://alerthub-stage.ifrc.org
+      valueFiles:
+        - values-staging.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: alert-hub
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
