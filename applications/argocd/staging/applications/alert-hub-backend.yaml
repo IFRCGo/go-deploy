@@ -56,9 +56,6 @@ spec:
           value: .ifrc.org
         - name: env.CORS_ALLOWED_ORIGINS
           value: https://alerthub-stage.ifrc.org
-  # CORS
-  CORS_ALLOWED_ORIGINS: https://alerthub-stage.ifrc.org 
-      # Specify the values file to use
       valueFiles:
         - values-staging.yaml
   destination:
