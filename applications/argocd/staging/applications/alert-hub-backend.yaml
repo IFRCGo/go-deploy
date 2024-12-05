@@ -31,10 +31,19 @@ spec:
     #targetRevision: develop
     #path: helm
     helm:
-      # We can override values here:
-      #parameters:
-      #  - name: image.tag
-      #    value: "develop.d8e2386"
+      parameters:
+      - name: azure.aksSecretsProviderAvailable
+        value: true
+      - name: azure.keyvault.name
+        value: alert-hub-staging-kv
+      - name: azure.keyvault.clientId
+        value: 99dd63fe-721e-4abb-b30d-e2b782d2893d
+      - name: azure.keyvault.tenantId
+        value: a2b53be5-734e-4e6c-ab0d-d184f60fd917 
+      - name: serviceAccount.create
+        value: true
+      - name: serviceAccount.annotations.azure\.workload\.identity/client-id
+        value: 99dd63fe-721e-4abb-b30d-e2b782d2893d
       # Specify the values file to use
       valueFiles:
         - values-staging.yaml
