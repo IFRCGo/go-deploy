@@ -33,6 +33,7 @@ spec:
           # Blob Storage Configs
           USE_AZURE_STORAGE: true
           AZURE_CLIENT_ID: 99dd63fe-721e-4abb-b30d-e2b782d2893d
+          AZURE_TENANT_ID: a2b53be5-734e-4e6c-ab0d-d184f60fd917
           AZURE_STORAGE_MEDIA_CONTAINER: alert-hub-staging-media-container
           AZURE_STORAGE_STATIC_CONTAINER: alert-hub-staging-static-container
           AZURE_STORAGE_ACCOUNT_NAME: ifrctgo
