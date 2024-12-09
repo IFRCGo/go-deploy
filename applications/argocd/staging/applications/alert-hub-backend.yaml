@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/alert-hub-backend
     chart: ifrcgo-alert-hub-helm
-    targetRevision: 0.0.1-develop.300568e
+    targetRevision: 0.0.1-develop.b829d73
     helm:
       parameters:
         - name: ingress.host
