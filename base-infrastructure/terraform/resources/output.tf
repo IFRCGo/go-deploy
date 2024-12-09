@@ -1,3 +1,11 @@
+output "alert_hub_db_admin_password" {
+  value = random_password.alert_hub_db_admin.result
+}
+
+output "alert_hub_db_server_id" {
+  value = azurerm_postgresql_flexible_server.alerthub.id 
+}
+
 output "environment" {
   value = var.environment
 }
@@ -8,6 +16,10 @@ output "location" {
 
 output "cluster_name" {
   value = azurerm_kubernetes_cluster.ifrcgo.name
+}
+
+output "cluster_oidc_issuer_url" {
+  value = azurerm_kubernetes_cluster.ifrcgo.oidc_issuer_url
 }
 
 output "resource_group" {
@@ -28,4 +40,12 @@ output "azure_strorage_key" {
 
 output "azure_storage_connection_string" {
   value = azurerm_storage_account.ifrcgo.primary_connection_string
+}
+
+output "storage_account_name" {
+  value = azurerm_storage_account.ifrcgo.name 
+}
+
+output "storage_account_id" {
+  value = azurerm_storage_account.ifrcgo.id
 }
