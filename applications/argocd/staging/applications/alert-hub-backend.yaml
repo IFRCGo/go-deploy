@@ -31,11 +31,12 @@ spec:
           CSRF_COOKIE_DOMAIN: ".ifrc.org"
           CORS_ALLOWED_ORIGINS: "https://alerthub-stage.ifrc.org"
           # Blob Storage Configs
-          USE_AZURE_STORAGE: True
+          USE_AZURE_STORAGE: "True"
           AZURE_STORAGE_MEDIA_CONTAINER: alert-hub-staging-media-container
           AZURE_STORAGE_STATIC_CONTAINER: alert-hub-staging-static-container
           AZURE_STORAGE_ACCOUNT_NAME: ifrctgo
-          AZURE_STORAGE_MANAGED_IDENTITY: True
+          AZURE_STORAGE_MANAGED_IDENTITY: "True"
+          AZURE_STORAGE_TOKEN_CREDENTIAL: None
         serviceAccount:
           create: true
           name: service-token-reader
