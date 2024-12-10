@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/alert-hub-backend
     chart: ifrcgo-alert-hub-helm
-    targetRevision: 0.0.1-develop.2a8cbe0
+    targetRevision: 0.0.1-develop.e0d8c41
     helm:
       valuesObject:
         ingress:
@@ -38,7 +38,6 @@ spec:
           AZURE_STORAGE_STATIC_CONTAINER: alert-hub-staging-static-container
           AZURE_STORAGE_ACCOUNT_NAME: ifrctgo
           AZURE_STORAGE_MANAGED_IDENTITY: true
-          AZURE_STORAGE_TOKEN_CREDENTIAL: None
         serviceAccount:
           create: true
           name: service-token-reader
