@@ -41,13 +41,18 @@ module "alert_hub_resources" {
   }
 
   storage_config = {
-    enabled = true
-
     container_refs = [
-      "media",
-      "static"
+      {
+        container_ref = "media"
+        access_type   = "private"
+      },
+      {
+        container_ref = "static"
+        access_type   = "blob"
+      }
     ]
 
+    enabled              = true
     storage_account_id   = module.resources.storage_account_id
     storage_account_name = module.resources.storage_account_name
   }

@@ -21,7 +21,7 @@ resource "azurerm_postgresql_flexible_server" "alerthub" {
   administrator_login    = "postgres"
   administrator_password = random_password.alert_hub_db_admin.result
   backup_retention_days  = 35
-  storage_mb             = 32768
+  storage_mb             = 65536
   sku_name               = "GP_Standard_D2s_v3"
   delegated_subnet_id    = azurerm_subnet.postgres.id
   private_dns_zone_id    = azurerm_private_dns_zone.ifrcgo.id
@@ -39,12 +39,19 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "alerthub_db_vnet_ru
   end_ip_address   = cidrhost(azurerm_virtual_network.ifrcgo-cluster.address_space[0], -1)
 }
 
+# Enable extensions
+resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
+  name                = "azure.extensions"
+  server_id          = azurerm_postgresql_flexible_server.alerthub.id
+  value              = "POSTGIS"
+}
+
 # AlertHub Database Configuration Optimizations to allow managing historical data
 # For a D2s_v3 (8GB RAM) instance
 resource "azurerm_postgresql_flexible_server_configuration" "alerthub_postgres_config" {
   for_each = {
     effective_cache_size             = "6144000"  # 6GB - About 75% of total RAM
-    shared_buffers                   = "2097152"  # 2GB - About 25% of total RAM
+    shared_buffers                   = "786432"  
     work_mem                         = "32768"    # 32MB
     maintenance_work_mem             = "524288"   # 512MB - About 6.4% of RAM
     random_page_cost                 = "1.1"      # Lower value for SSD storage
