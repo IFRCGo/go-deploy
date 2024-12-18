@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/alert-hub-backend
     chart: ifrcgo-alert-hub-helm
-    targetRevision: 0.0.1-develop.31a3999
+    targetRevision: 0.0.1-develop.34e386b
     helm:
       valuesObject:
         ingress:
