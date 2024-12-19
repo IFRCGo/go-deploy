@@ -50,14 +50,14 @@ resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
 # For a D2s_v3 (8GB RAM) instance
 resource "azurerm_postgresql_flexible_server_configuration" "alerthub_postgres_config" {
   for_each = {
-    effective_cache_size             = "12288000"   # 12GB - About 75% of total RAM
-    shared_buffers                   = "2097152"    # 2GB 
-    work_mem                         = "65536"      # 64MB
-    maintenance_work_mem             = "1048576"    # 1GB - About 6.4% of RAM
-    random_page_cost                 = "1.1"        # Lower value for SSD storage
-    effective_io_concurrency         = "300"        # Higher value for SSD storage
-    max_parallel_workers             = "4"          # Equal to number of vCPUs
-    max_parallel_workers_per_gather  = "2"          # Half of max_parallel_workers
+#    effective_cache_size             = "12288000"   # 12GB - About 75% of total RAM
+#    shared_buffers                   = "2097152"    # 2GB 
+#    work_mem                         = "65536"      # 64MB
+#    maintenance_work_mem             = "1048576"    # 1GB - About 6.4% of RAM
+#    random_page_cost                 = "1.1"        # Lower value for SSD storage
+#    effective_io_concurrency         = "300"        # Higher value for SSD storage
+#    max_parallel_workers             = "4"          # Equal to number of vCPUs
+#    max_parallel_workers_per_gather  = "2"          # Half of max_parallel_workers
   }
 
   name      = each.key
