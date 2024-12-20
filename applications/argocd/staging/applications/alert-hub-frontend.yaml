@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/alert-hub-web-app
     chart: ifrcgo-web-app-nginx-serve
-    targetRevision: 0.0.1-develop.2a4bf0a
+    targetRevision: 0.0.1-develop.990c96d
     helm:
       parameters:
         - name: ingress.host
