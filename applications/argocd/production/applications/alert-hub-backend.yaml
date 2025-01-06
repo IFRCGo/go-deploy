@@ -1,0 +1,58 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alert-hub-backend
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/ifrcgo/alert-hub-backend
+    chart: ifrcgo-alert-hub-helm
+    targetRevision: 0.0.1-develop.fa756c0
+    helm:
+      valuesObject:
+        ingress:
+          host: "alerthub-api.ifrc.org"
+          tls:
+            secretName: "alerthub-helm-secret-cert"
+        azure:
+          aksSecretsProviderAvailable: true
+          keyvault:
+            name: "alert-hub-production-kv"
+            clientId: "5853dc85-0d06-4f6d-9145-c72680a65ad9"
+            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+        env:
+          APP_FRONTEND_HOST: "https://alerthub.ifrc.org"
+          APP_DOMAIN: "alerthub-api.ifrc.org"
+          DJANGO_ALLOWED_HOSTS: "alerthub-api.ifrc.org"
+          SESSION_COOKIE_DOMAIN: ".ifrc.org"
+          CSRF_COOKIE_DOMAIN: ".ifrc.org"
+          CORS_ALLOWED_ORIGINS: "https://alerthub.ifrc.org"
+          # Blob Storage Configs
+          USE_AZURE_STORAGE: true
+          AZURE_CLIENT_ID: 5853dc85-0d06-4f6d-9145-c72680a65ad9
+          AZURE_TENANT_ID: a2b53be5-734e-4e6c-ab0d-d184f60fd917
+          AZURE_STORAGE_MEDIA_CONTAINER: alert-hub-production-media-container
+          AZURE_STORAGE_STATIC_CONTAINER: alert-hub-production-static-container
+          AZURE_STORAGE_ACCOUNT_NAME: ifrcpgo
+          AZURE_STORAGE_MANAGED_IDENTITY: true
+        serviceAccount:
+          create: true
+          name: service-token-reader
+          annotations:
+            azure.workload.identity/client-id: "5853dc85-0d06-4f6d-9145-c72680a65ad9"
+          labels:
+            azure.workload.identity/use: "true"
+      valueFiles:
+        - values-production.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: alert-hub
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

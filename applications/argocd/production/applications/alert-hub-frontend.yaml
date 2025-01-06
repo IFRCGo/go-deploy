@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alert-hub-frontend
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/ifrcgo/alert-hub-web-app
+    chart: ifrcgo-web-app-nginx-serve
+    targetRevision: 0.0.1-develop.990c96d
+    helm:
+      parameters:
+        - name: ingress.host
+          value: "alerthub.ifrc.org"
+        - name: ingress.className
+          value: nginx
+        - name: ingress.tls.secretName
+          value: "alerthub-helm-secret-cert"
+        - name: env.APP_GRAPHQL_API_ENDPOINT 
+          value: https://alerthub-api.ifrc.org/graphql/
+      valueFiles:
+        - values.yaml
+        - values-production.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: alert-hub
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
