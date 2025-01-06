@@ -78,18 +78,26 @@ variable "storage_config" {
 
   type = object(
     {
+      container_refs = list(
+        object(
+          {
+            container_ref = string
+            access_type   = string
+          }
+        )
+      )
+
       enabled              = bool
       storage_account_id   = any
       storage_account_name = any
-      container_refs       = list(string)
     }
   )
 
   default = {
+    container_refs       = []
     enabled              = false
     storage_account_id   = null
     storage_account_name = null
-    container_refs       = []
   }
 }
 

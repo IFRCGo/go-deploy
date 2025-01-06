@@ -2,9 +2,9 @@
 resource "azurerm_storage_container" "app_container" {
   count = var.storage_config.enabled ? length(var.storage_config.container_refs) : 0
 
-  name                  = lower("${var.app_name}-${var.environment}-${var.storage_config.container_refs[count.index]}-container")
+  name                  = lower("${var.app_name}-${var.environment}-${var.storage_config.container_refs[count.index].container_ref}-container")
   storage_account_name  = var.storage_config.storage_account_name
-  container_access_type = "private"
+  container_access_type = var.storage_config.container_refs[count.index].access_type
 }
 
 # Grant workload identity access to container

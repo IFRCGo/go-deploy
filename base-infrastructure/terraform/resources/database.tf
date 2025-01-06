@@ -21,8 +21,8 @@ resource "azurerm_postgresql_flexible_server" "alerthub" {
   administrator_login    = "postgres"
   administrator_password = random_password.alert_hub_db_admin.result
   backup_retention_days  = 35
-  storage_mb             = 32768
-  sku_name               = "GP_Standard_D2s_v3"
+  storage_mb             = 65536
+  sku_name               = "GP_Standard_D4s_v3"
   delegated_subnet_id    = azurerm_subnet.postgres.id
   private_dns_zone_id    = azurerm_private_dns_zone.ifrcgo.id
   zone                   = 1
@@ -39,18 +39,25 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "alerthub_db_vnet_ru
   end_ip_address   = cidrhost(azurerm_virtual_network.ifrcgo-cluster.address_space[0], -1)
 }
 
+# Enable extensions
+resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
+  name                = "azure.extensions"
+  server_id          = azurerm_postgresql_flexible_server.alerthub.id
+  value              = "POSTGIS"
+}
+
 # AlertHub Database Configuration Optimizations to allow managing historical data
 # For a D2s_v3 (8GB RAM) instance
 resource "azurerm_postgresql_flexible_server_configuration" "alerthub_postgres_config" {
   for_each = {
-    effective_cache_size             = "6144000"  # 6GB - About 75% of total RAM
-    shared_buffers                   = "2097152"  # 2GB - About 25% of total RAM
-    work_mem                         = "32768"    # 32MB
-    maintenance_work_mem             = "524288"   # 512MB - About 6.4% of RAM
-    random_page_cost                 = "1.1"      # Lower value for SSD storage
-    effective_io_concurrency         = "200"      # Higher value for SSD storage
-    max_parallel_workers             = "2"        # Equal to number of vCPUs
-    max_parallel_workers_per_gather  = "1"        # Half of max_parallel_workers
+#    effective_cache_size             = "12288000"   # 12GB - About 75% of total RAM
+#    shared_buffers                   = "2097152"    # 2GB 
+#    work_mem                         = "65536"      # 64MB
+#    maintenance_work_mem             = "1048576"    # 1GB - About 6.4% of RAM
+#    random_page_cost                 = "1.1"        # Lower value for SSD storage
+#    effective_io_concurrency         = "300"        # Higher value for SSD storage
+#    max_parallel_workers             = "4"          # Equal to number of vCPUs
+#    max_parallel_workers_per_gather  = "2"          # Half of max_parallel_workers
   }
 
   name      = each.key

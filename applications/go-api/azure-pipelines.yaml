@@ -32,7 +32,7 @@ jobs:
     displayName: "Deploy staging instance of go-api"
     env:
       ENVIRONMENT: staging
-      VERSION: "0.0.1-0.dev.git.1.h8ad4c8b"
+      VERSION: "0.0.1-0.dev.git.1.ha31d00c"
       # For Azure CLI
       AZURE_TENANT_ID: $(TERRAFORM_TENANT_ID)
       AZURE_CLIENT_ID: $(TERRAFORM_SERVICE_PRINCIPAL_ID)
@@ -114,7 +114,7 @@ jobs:
     displayName: "Deploy production instance of go-api"
     env:
       ENVIRONMENT: production
-      VERSION: "0.0.1-0.dev.git.1.h1974a30"
+      VERSION: "0.0.1-0.dev.git.1.hf8e898a"
       # For Azure CLI
       AZURE_TENANT_ID: $(TERRAFORM_TENANT_ID)
       AZURE_CLIENT_ID: $(TERRAFORM_SERVICE_PRINCIPAL_ID)
