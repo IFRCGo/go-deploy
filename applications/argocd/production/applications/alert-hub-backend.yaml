@@ -13,6 +13,14 @@ spec:
     targetRevision: 0.0.1-develop.fa756c0
     helm:
       valuesObject:
+        # NOTE: This should be adjusted in future to a value optimized for the workload
+        # Vertical Pod Autoscaler should be used for establishing these values:
+        # https://learn.microsoft.com/en-us/azure/aks/vertical-pod-autoscaler
+        api:
+          resources:
+            requests:
+              cpu: "0.2"
+              memory: 1Gi
         ingress:
           host: "alerthub-api.ifrc.org"
           tls:
