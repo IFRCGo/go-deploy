@@ -22,6 +22,16 @@ spec:
             envVars:
               LOAD_FIXTURES: "0"
               RUN_FOREVER: "1"
+        postgrescluster:
+          instances:
+          - name: eoapi
+            replicas: 1
+            dataVolumeClaimSpec:
+              accessModes:
+              - "ReadWriteOnce"
+              resources:
+                requests:
+                  storage: "250Gi"
 
   destination:
     server: https://kubernetes.default.svc
