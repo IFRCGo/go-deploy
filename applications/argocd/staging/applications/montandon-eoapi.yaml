@@ -32,6 +32,8 @@ spec:
               resources:
                 requests:
                   storage: "250Gi"
+                  cpu: "1024m"
+                  memory: "3048Mi"
 
   destination:
     server: https://kubernetes.default.svc
