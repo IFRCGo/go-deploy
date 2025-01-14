@@ -21,6 +21,28 @@ spec:
             requests:
               cpu: "0.2"
               memory: 1Gi
+        worker:
+          beat:
+            resources:
+              requests:
+                cpu: "0.1"
+                memory: 0.2Gi
+          flower:
+            resources:
+              requests:
+                cpu: "0.1"
+                memory: 0.5Gi
+          queues:
+            default:
+              resources:
+                requests:
+                  cpu: "0.1"
+                  memory: 0.5Gi
+            feeds:
+              resources:
+                requests:
+                  cpu: "0.1"
+                  memory: 0.5Gi
         ingress:
           host: "alerthub-api.ifrc.org"
           tls:
