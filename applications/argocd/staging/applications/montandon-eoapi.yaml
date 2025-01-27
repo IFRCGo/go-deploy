@@ -31,7 +31,7 @@ spec:
               - "ReadWriteOnce"
               resources:
                 requests:
-                  storage: "250Gi"
+                  storage: "500Gi"
                   cpu: "1024m"
                   memory: "3048Mi"
 
