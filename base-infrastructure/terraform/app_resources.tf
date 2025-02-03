@@ -62,3 +62,28 @@ module "alert_hub_resources" {
     "32053268-3970-48f3-9b09-c4280cd0b67d"
   ]
 }
+
+module "sdt_resources" {
+  source = "./app_resources"
+
+  app_name            = "sdt"
+  environment         = var.environment
+  resource_group_name = module.resources.resource_group
+
+  aks_config = {
+    cluster_namespace       = "sdt"
+    cluster_oidc_issuer_url = module.resources.cluster_oidc_issuer_url
+    service_account_name    = "service-token-reader"
+  }
+
+  secrets = {
+    REGISTRY_LOGIN_SERVER = module.go_shared_registry.registry_server
+    REGISTRY_PASSWORD     = module.go_shared_registry.acr_token_password
+    REGISTRY_USER         = module.go_shared_registry.acr_token_username
+  }
+
+  vault_admin_ids = [
+    "c31baae7-afbf-4ad3-8e01-5abbd68adb16",
+    "32053268-3970-48f3-9b09-c4280cd0b67d"
+  ]
+}
