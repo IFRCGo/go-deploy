@@ -22,6 +22,10 @@ output "cluster_oidc_issuer_url" {
   value = azurerm_kubernetes_cluster.ifrcgo.oidc_issuer_url
 }
 
+output "cluster_kubelet_identity" {
+  value = azurerm_kubernetes_cluster.ifrcgo.kubelet_identity[0].object_id
+}
+
 output "resource_group" {
   value = data.azurerm_resource_group.ifrcgo.name
 }

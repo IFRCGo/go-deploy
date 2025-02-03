@@ -1,0 +1,4 @@
+# Retrieve data on the resource group
+data "azurerm_resource_group" "app_rg" {
+  name = var.resource_group_name
+}
