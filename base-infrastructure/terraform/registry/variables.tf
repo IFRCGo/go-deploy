@@ -1,3 +1,8 @@
+variable "admin_enabled" {
+  type    = bool
+  default = false
+}
+
 variable "app_name" {
   type = string
 }
