@@ -34,7 +34,7 @@ resource "azurerm_container_registry_token_password" "ci" {
 
 # Create a Custom Role for Accessing Token Passwords
 resource "azurerm_role_definition" "acr_token_password_reader" {
-  name        = "ACR Token Password Reader"
+  name        = "${title(var.environment)} ACR Token Password Reader"
   scope       = azurerm_container_registry.shared.id
   description = "Custom role to allow reading ACR token passwords."
 
