@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sdt-staging-api
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-api
+    chart: ifrcgo-sdt-helm
+    targetRevision: 0.0.1-develop.6dd82a9
+    helm:
+      valuesObject:
+        image:
+          name: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-api
+          tag: develop.6dd82a9
+        ingress:
+          tls:
+            enabled: false
+        env:
+          BASE_DOMAIN: sdt-staging-api.ifrc.org
+          FRONTEND_BASE_DOMAIN: sdt-staging.ifrc.org
+          ALLOWED_HOSTS: "*.ifrc.org"
+        fullnameOverride: ifrcgo-sdt-staging
+        # Azure related configurations
+        azure:
+          aksSecretsProviderAvailable: true
+          keyvault:
+            name: "sdt-staging-kv"
+            clientId: "3355b3c7-a6be-466a-83f4-19c5f67cc161"
+            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+        serviceAccount:
+          # Specifies whether a service account should be created
+          # Required when using workload identity to access Azure Key Vault Secrets
+          create: true
+          automount: true
+          annotations:
+            azure.workload.identity/client-id : "3355b3c7-a6be-466a-83f4-19c5f67cc161"
+          labels:
+            azure.workload.identity/use: "true"
+          name: "service-token-reader"
+      valueFiles:
+        - values-staging.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sdt
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
