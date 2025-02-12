@@ -46,6 +46,18 @@ output "azure_storage_connection_string" {
   value = azurerm_storage_account.ifrcgo.primary_connection_string
 }
 
+output "sdt_db_admin_password" {
+  value = random_password.sdt_db_admin.result
+}
+
+output "sdt_db_host" {
+  value = azurerm_postgresql_flexible_server.sdt.fqdn
+}
+
+output "sdt_db_server_id" {
+  value = azurerm_postgresql_flexible_server.sdt.id 
+}
+
 output "storage_account_name" {
   value = azurerm_storage_account.ifrcgo.name 
 }

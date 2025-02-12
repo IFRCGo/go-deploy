@@ -14,6 +14,7 @@ module "risk_module_resources" {
 
 locals {
   alerthub_db_name = "alerthubdb"
+  sdt_db_name      = "sdtdb"
 }
 
 module "alert_hub_resources" {
@@ -76,10 +77,36 @@ module "sdt_resources" {
     service_account_name    = "service-token-reader"
   }
 
+  database_config = {
+    create_database = true
+    database_name   = local.sdt_db_name
+    server_id       = module.resources.sdt_db_server_id
+  }
+
   secrets = {
+    POSTGRES_DB           = local.sdt_db_name
+    POSTGRES_PASSWORD     = module.resources.sdt_db_admin_password
+    POSTGRES_HOST         = module.resources.sdt_db_host
     REGISTRY_LOGIN_SERVER = module.go_shared_registry.registry_server
     REGISTRY_PASSWORD     = module.go_shared_registry.acr_token_password
     REGISTRY_USER         = module.go_shared_registry.acr_token_username
+  }
+
+  storage_config = {
+    container_refs = [
+      {
+        container_ref = "media"
+        access_type   = "private"
+      },
+      {
+        container_ref = "static"
+        access_type   = "blob"
+      }
+    ]
+
+    enabled              = true
+    storage_account_id   = module.resources.storage_account_id
+    storage_account_name = module.resources.storage_account_name
   }
 
   vault_admin_ids = [
