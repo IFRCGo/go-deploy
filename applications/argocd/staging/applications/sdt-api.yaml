@@ -23,6 +23,8 @@ spec:
           BASE_DOMAIN: sdt-staging-api.ifrc.org
           FRONTEND_BASE_DOMAIN: sdt-staging.ifrc.org
           ALLOWED_HOSTS: "*.ifrc.org"
+          SESSION_COOKIE_DOMAIN: "None"
+          CSRF_COOKIE_DOMAIN: "None"
         fullnameOverride: ifrcgo-sdt-staging
         # Azure related configurations
         azure:
