@@ -17,3 +17,11 @@ output "risk_module_app_resource_details" {
     workload_id        = module.risk_module_resources.workload_client_id
   }
 }
+
+output "sdt_app_resource_details" {
+  value = {
+    key_vault_name     = module.sdt_resources.key_vault_name
+    tenant_id          = module.sdt_resources.tenant_id
+    workload_id        = module.sdt_resources.workload_client_id
+  }
+}

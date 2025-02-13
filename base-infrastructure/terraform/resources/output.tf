@@ -22,6 +22,10 @@ output "cluster_oidc_issuer_url" {
   value = azurerm_kubernetes_cluster.ifrcgo.oidc_issuer_url
 }
 
+output "cluster_kubelet_identity" {
+  value = azurerm_kubernetes_cluster.ifrcgo.kubelet_identity[0].object_id
+}
+
 output "resource_group" {
   value = data.azurerm_resource_group.ifrcgo.name
 }
@@ -40,6 +44,18 @@ output "azure_strorage_key" {
 
 output "azure_storage_connection_string" {
   value = azurerm_storage_account.ifrcgo.primary_connection_string
+}
+
+output "sdt_db_admin_password" {
+  value = random_password.sdt_db_admin.result
+}
+
+output "sdt_db_host" {
+  value = azurerm_postgresql_flexible_server.sdt.fqdn
+}
+
+output "sdt_db_server_id" {
+  value = azurerm_postgresql_flexible_server.sdt.id 
 }
 
 output "storage_account_name" {
