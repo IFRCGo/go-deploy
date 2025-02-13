@@ -19,16 +19,11 @@ spec:
           tls:
             enabled: true
             secretName: sdt-helm-secret-cert
-        image:
-          name: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-web-app
-          tag: main.80e2a7e
         env:
           APP_ENVIRONMENT: staging
-          APP_API_ENDPOINT: https://sdt-staging-api.ifrcgo.org
-          APP_CSRF_TOKEN: staging-csrftoken
+          APP_API_ENDPOINT: https://sdt-staging-api.ifrc.org
+          APP_CSRF_TOKEN: sdt-staging-csrftoken
           APP_SENTRY_DSN: https://random-token@random-user@sentry-test.io/10000
-      valueFiles:
-        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: sdt

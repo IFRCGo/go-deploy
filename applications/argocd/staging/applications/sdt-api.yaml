@@ -13,9 +13,8 @@ spec:
     targetRevision: 0.0.1-develop.6dd82a9
     helm:
       valuesObject:
-        image:
-          name: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-api
-          tag: develop.6dd82a9
+        fullnameOverride: ifrcgo-sdt-staging
+        environment: staging
         ingress:
           enabled: true
           host: sdt-staging-api.ifrc.org
@@ -24,12 +23,12 @@ spec:
             enabled: true
             secretName: sdt-helm-secret-cert
         env:
-          BASE_DOMAIN: sdt-staging-api.ifrc.org
-          FRONTEND_BASE_DOMAIN: sdt-staging.ifrc.org
-          ALLOWED_HOSTS: "*.ifrc.org"
-          SESSION_COOKIE_DOMAIN: "None"
-          CSRF_COOKIE_DOMAIN: "None"
-        fullnameOverride: ifrcgo-sdt-staging
+          BASE_DOMAIN: https://sdt-staging-api.ifrc.org
+          FRONTEND_BASE_DOMAIN: https://sdt-staging.ifrc.org
+          ALLOWED_HOSTS: "sdt-staging-api.ifrc.org"
+          SESSION_COOKIE_DOMAIN: "ifrc.org"
+          CSRF_COOKIE_DOMAIN: "ifrc.org"
+          # EMAIL_FROM:  # TODO: Update this
         # Azure related configurations
         azure:
           aksSecretsProviderAvailable: true
