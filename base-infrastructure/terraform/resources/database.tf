@@ -106,3 +106,10 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "sdt_db_vnet_rule" {
   start_ip_address = cidrhost(azurerm_virtual_network.ifrcgo-cluster.address_space[0], 0)
   end_ip_address   = cidrhost(azurerm_virtual_network.ifrcgo-cluster.address_space[0], -1)
 }
+
+# Enable extensions for SDT database
+resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
+  name               = "azure.extensions"
+  server_id          = azurerm_postgresql_flexible_server.sdt.id
+  value              = "CITEXT"
+}
