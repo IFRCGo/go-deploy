@@ -17,6 +17,7 @@ spec:
           name: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-api
           tag: develop.6dd82a9
         ingress:
+          enabled: true
           host: sdt-staging-api.ifrc.org
           className: nginx
           tls:
