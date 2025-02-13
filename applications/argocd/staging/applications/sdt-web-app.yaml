@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sdt-staging-web-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-web-app
+    chart: sdt-web-app-nginx-serve
+    targetRevision: 0.0.1-main.80e2a7e
+    helm:
+      valuesObject:
+        ingress:
+          host: sdt-staging.ifrc.org
+          className: nginx
+          tls:
+            enabled: true
+            secretName: sdt-helm-secret-cert
+        image:
+          name: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-web-app
+          tag: main.80e2a7e
+        env:
+          APP_ENVIRONMENT: staging
+          APP_API_ENDPOINT: https://sdt-staging-api.ifrcgo.org
+          APP_CSRF_TOKEN: staging-csrftoken
+          APP_SENTRY_DSN: https://random-token@random-user@sentry-test.io/10000
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sdt
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
