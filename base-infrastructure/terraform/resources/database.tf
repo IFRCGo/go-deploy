@@ -108,7 +108,7 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "sdt_db_vnet_rule" {
 }
 
 # Enable extensions for SDT database
-resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
+resource "azurerm_postgresql_flexible_server_configuration" "sdt_db_extensions" {
   name               = "azure.extensions"
   server_id          = azurerm_postgresql_flexible_server.sdt.id
   value              = "CITEXT"
