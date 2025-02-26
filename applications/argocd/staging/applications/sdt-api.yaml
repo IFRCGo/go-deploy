@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-api
     chart: ifrcgo-sdt-helm
-    targetRevision: 0.0.1-develop.d9dc65d  # https://github.com/IFRCGo/sdt-api/compare/6dd82a92669d4e6d8da4dc42c8b2773c01490f39...d9dc65d734ce6676ba9f66d9ab542d48a3262f58
+    targetRevision: 0.0.1-develop.2a2738c  # https://github.com/IFRCGo/sdt-api/compare/6dd82a92669d4e6d8da4dc42c8b2773c01490f39...2a2738c5e025e06dfa593b822943e29cedc75444
     helm:
       valuesObject:
         fullnameOverride: ifrcgo-sdt-staging
