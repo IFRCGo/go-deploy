@@ -23,6 +23,16 @@ resource "azurerm_storage_account" "sdt" {
   location                 = data.azurerm_resource_group.ifrcgo.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  blob_properties {
+    cors_rule {
+      allowed_headers    = ["*"]
+      allowed_methods    = ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"]
+      allowed_origins    = ["*"]  # Allow all origins
+      exposed_headers    = ["*"]
+      max_age_in_seconds = 3600
+    }
+  }
 }
 
 resource "random_integer" "montandon_storage_account_suffix" {
