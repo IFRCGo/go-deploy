@@ -47,7 +47,7 @@ spec:
           DJANGO_ALLOWED_HOSTS: "*"
           # Azure configs
           AZURE_STORAGE_ENABLE: true
-          AZURE_STORAGE_ACCOUNT_NAME: ifrctgo
+          AZURE_STORAGE_ACCOUNT_NAME: montystaging6757
           AZURE_STORAGE_MEDIA_CONTAINER: montandon-etl-staging-media-container
           AZURE_STORAGE_STATIC_CONTAINER: montandon-etl-staging-static-container
           # ETL Load config

@@ -32,7 +32,7 @@ spec:
           USE_AZURE_STORAGE: "true"
           AZURE_STORAGE_MEDIA_CONTAINER: sdt-staging-media-container
           AZURE_STORAGE_STATIC_CONTAINER: sdt-staging-static-container
-          AZURE_STORAGE_ACCOUNT_NAME: ifrctgo
+          AZURE_STORAGE_ACCOUNT_NAME: sdtstaging2813
           AZURE_STORAGE_MANAGED_IDENTITY: true
         # Azure related configurations
         azure:
