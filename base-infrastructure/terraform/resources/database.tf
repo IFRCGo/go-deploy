@@ -117,7 +117,6 @@ resource "azurerm_postgresql_flexible_server_configuration" "sdt_db_extensions" 
   value     = "CITEXT"
 }
 
-
 # Database for Montandon
 resource "random_password" "montandon_db_user" {
   length  = 16
@@ -159,4 +158,11 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "montandon_db_vnet_r
   server_id        = azurerm_postgresql_flexible_server.montandon.id
   start_ip_address = cidrhost(azurerm_virtual_network.ifrcgo-cluster.address_space[0], 0)
   end_ip_address   = cidrhost(azurerm_virtual_network.ifrcgo-cluster.address_space[0], -1)
+}
+
+# Enable extensions for montandon-et db
+resource "azurerm_postgresql_flexible_server_configuration" "montandon_db_extensions" {
+  name      = "azure.extensions"
+  server_id = azurerm_postgresql_flexible_server.alerthub.id
+  value     = "POSTGIS"
 }
