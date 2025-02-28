@@ -160,9 +160,9 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "montandon_db_vnet_r
   end_ip_address   = cidrhost(azurerm_virtual_network.ifrcgo-cluster.address_space[0], -1)
 }
 
-# Enable extensions for montandon-et db
+# Enable extensions for montandon-etl db
 resource "azurerm_postgresql_flexible_server_configuration" "montandon_db_extensions" {
   name      = "azure.extensions"
-  server_id = azurerm_postgresql_flexible_server.alerthub.id
+  server_id = azurerm_postgresql_flexible_server.montandon.id
   value     = "POSTGIS"
 }
