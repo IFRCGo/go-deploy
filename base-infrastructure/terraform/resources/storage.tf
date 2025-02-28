@@ -18,7 +18,7 @@ resource "random_integer" "sdt_storage_account_suffix" {
 }
 
 resource "azurerm_storage_account" "sdt" {
-  name                     = "sdt${var.environment}storage${random_integer.sdt_storage_account_suffix.result}"
+  name                     = "sdt${var.environment}${random_integer.sdt_storage_account_suffix.result}"
   resource_group_name      = data.azurerm_resource_group.ifrcgo.name
   location                 = data.azurerm_resource_group.ifrcgo.location
   account_tier             = "Standard"
@@ -31,7 +31,7 @@ resource "random_integer" "montandon_storage_account_suffix" {
 }
 
 resource "azurerm_storage_account" "montandon" {
-  name                     = "montandon${var.environment}storage${random_integer.montandon_storage_account_suffix.result}"
+  name                     = "monty${var.environment}${random_integer.montandon_storage_account_suffix.result}"
   resource_group_name      = data.azurerm_resource_group.ifrcgo.name
   location                 = data.azurerm_resource_group.ifrcgo.location
   account_tier             = "Standard"

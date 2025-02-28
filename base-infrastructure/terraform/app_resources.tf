@@ -106,8 +106,8 @@ module "sdt_resources" {
     ]
 
     enabled              = true
-    storage_account_id   = module.resources.storage_account_id
-    storage_account_name = module.resources.storage_account_name
+    storage_account_id   = module.resources.sdt_storage_account_id
+    storage_account_name = module.resources.sdt_storage_account_name
   }
 
   vault_admin_ids = [
@@ -154,8 +154,8 @@ module "montandon_etl_resources" {
     ]
 
     enabled              = true
-    storage_account_id   = module.resources.storage_account_id
-    storage_account_name = module.resources.storage_account_name
+    storage_account_id   = module.resources.montandon_storage_account_id
+    storage_account_name = module.resources.montandon_storage_account_name
   }
 
   vault_admin_ids = [

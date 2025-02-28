@@ -59,6 +59,14 @@ output "montandon_db_server_id" {
   value = azurerm_postgresql_flexible_server.montandon.id 
 }
 
+output "montandon_storage_account_id" {
+  value = azurerm_storage_account.montandon.id 
+}
+
+output "montandon_storage_account_name" {
+  value = azurerm_storage_account.montandon.name
+}
+
 # SDT DB Details
 output "sdt_db_admin_password" {
   value = random_password.sdt_db_admin.result
@@ -70,6 +78,14 @@ output "sdt_db_host" {
 
 output "sdt_db_server_id" {
   value = azurerm_postgresql_flexible_server.sdt.id 
+}
+
+output "sdt_storage_account_id" {
+  value = azurerm_storage_account.sdt.id 
+}
+
+output "sdt_storage_account_name" {
+  value = azurerm_storage_account.sdt.name
 }
 
 output "storage_account_name" {
