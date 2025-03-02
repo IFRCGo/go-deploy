@@ -46,6 +46,28 @@ output "azure_storage_connection_string" {
   value = azurerm_storage_account.ifrcgo.primary_connection_string
 }
 
+# Montandon DB Details
+output "montandon_db_user_password" {
+  value = random_password.montandon_db_user.result
+}
+
+output "montandon_db_host" {
+  value = azurerm_postgresql_flexible_server.montandon.fqdn
+}
+
+output "montandon_db_server_id" {
+  value = azurerm_postgresql_flexible_server.montandon.id 
+}
+
+output "montandon_storage_account_id" {
+  value = azurerm_storage_account.montandon.id 
+}
+
+output "montandon_storage_account_name" {
+  value = azurerm_storage_account.montandon.name
+}
+
+# SDT DB Details
 output "sdt_db_admin_password" {
   value = random_password.sdt_db_admin.result
 }
@@ -56,6 +78,14 @@ output "sdt_db_host" {
 
 output "sdt_db_server_id" {
   value = azurerm_postgresql_flexible_server.sdt.id 
+}
+
+output "sdt_storage_account_id" {
+  value = azurerm_storage_account.sdt.id 
+}
+
+output "sdt_storage_account_name" {
+  value = azurerm_storage_account.sdt.name
 }
 
 output "storage_account_name" {

@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-api
     chart: ifrcgo-sdt-helm
-    targetRevision: 0.0.1-develop.6dd82a9
+    targetRevision: 0.0.1-develop.ed343f1  # https://github.com/IFRCGo/sdt-api/pull/20
     helm:
       valuesObject:
         fullnameOverride: ifrcgo-sdt-staging
@@ -29,6 +29,11 @@ spec:
           SESSION_COOKIE_DOMAIN: ".ifrc.org"
           CSRF_COOKIE_DOMAIN: ".ifrc.org"
           EMAIL_FROM: ''  # TODO: Update this
+          USE_AZURE_STORAGE: "true"
+          AZURE_STORAGE_MEDIA_CONTAINER: sdt-staging-media-container
+          AZURE_STORAGE_STATIC_CONTAINER: sdt-staging-static-container
+          AZURE_STORAGE_ACCOUNT_NAME: sdtstaging2813
+          AZURE_STORAGE_MANAGED_IDENTITY: true
         # Azure related configurations
         azure:
           aksSecretsProviderAvailable: true

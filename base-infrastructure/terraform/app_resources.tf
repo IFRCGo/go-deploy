@@ -13,8 +13,9 @@ module "risk_module_resources" {
 }
 
 locals {
-  alerthub_db_name = "alerthubdb"
-  sdt_db_name      = "sdtdb"
+  alerthub_db_name  = "alerthubdb"
+  montandon_db_name = "montandondb"
+  sdt_db_name       = "sdtdb"
 }
 
 module "alert_hub_resources" {
@@ -96,6 +97,54 @@ module "sdt_resources" {
     container_refs = [
       {
         container_ref = "media"
+        access_type   = "blob"
+      },
+      {
+        container_ref = "static"
+        access_type   = "blob"
+      }
+    ]
+
+    enabled              = true
+    storage_account_id   = module.resources.sdt_storage_account_id
+    storage_account_name = module.resources.sdt_storage_account_name
+  }
+
+  vault_admin_ids = [
+    "c31baae7-afbf-4ad3-8e01-5abbd68adb16",
+    "32053268-3970-48f3-9b09-c4280cd0b67d"
+  ]
+}
+
+module "montandon_etl_resources" {
+  source = "./app_resources"
+
+  app_name            = "montandon-etl"
+  environment         = var.environment
+  resource_group_name = module.resources.resource_group
+
+  aks_config = {
+    cluster_namespace       = "montandon-etl"
+    cluster_oidc_issuer_url = module.resources.cluster_oidc_issuer_url
+    service_account_name    = "service-token-reader"
+  }
+
+  database_config = {
+    create_database = true
+    database_name   = local.montandon_db_name
+    server_id       = module.resources.montandon_db_server_id
+  }
+
+  secrets = {
+    DB_PASSWORD = module.resources.montandon_db_user_password
+    DB_NAME     = local.montandon_db_name
+    DB_HOST     = module.resources.montandon_db_host
+  }
+
+  storage_config = {
+    container_refs = [
+      {
+        container_ref = "media"
         access_type   = "private"
       },
       {
@@ -105,8 +154,8 @@ module "sdt_resources" {
     ]
 
     enabled              = true
-    storage_account_id   = module.resources.storage_account_id
-    storage_account_name = module.resources.storage_account_name
+    storage_account_id   = module.resources.montandon_storage_account_id
+    storage_account_name = module.resources.montandon_storage_account_name
   }
 
   vault_admin_ids = [
