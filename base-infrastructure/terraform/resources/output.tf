@@ -67,6 +67,19 @@ output "montandon_storage_account_name" {
   value = azurerm_storage_account.montandon.name
 }
 
+# Montandon eoAPI DB Details
+output "montandon_eoapi_db_user_password" {
+  value = random_password.montandon_eoapi_db_user.result
+}
+
+output "montandon_eoapi_db_host" {
+  value = azurerm_postgresql_flexible_server.montandon_eoapi.fqdn
+}
+
+output "montandon_eoapi_db_server_id" {
+  value = azurerm_postgresql_flexible_server.montandon_eoapi.id
+}
+
 # SDT DB Details
 output "sdt_db_admin_password" {
   value = random_password.sdt_db_admin.result
