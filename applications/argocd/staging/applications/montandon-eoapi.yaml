@@ -10,6 +10,7 @@ spec:
   source:
     repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
+    # TODO: replace with test version for azure secrets handling
     targetRevision: 0.5.0
     helm:
       valuesObject:
@@ -17,6 +18,19 @@ spec:
           host: "montandon-eoapi-stage.ifrc.org"
           tls:
             enabled: false
+      azure:
+        aksSecretsProviderAvailable: true
+        # TODO: fill these with correct values
+        keyvault:
+          name: ""
+          clientId: ""
+          tenantId: ""
+        # TODO: use correct key names based on how they are stored in the vault
+        secretKeys:
+          pgpassword: POSTGRES_PASSWORD
+          pghost: POSTGRES_HOST
+          dbname: POSTGRES_DBNAME
+
         pgstacBootstrap:
           settings:
             envVars:
