@@ -10,26 +10,33 @@ spec:
   source:
     repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    # TODO: replace with test version for azure secrets handling
-    targetRevision: 0.5.0
+    targetRevision: 0.5.3-azure-test
     helm:
       valuesObject:
         ingress:
           host: "montandon-eoapi-stage.ifrc.org"
           tls:
             enabled: false
-      azure:
-        aksSecretsProviderAvailable: true
-        # TODO: fill these with correct values
-        keyvault:
-          name: ""
-          clientId: ""
-          tenantId: ""
-        # TODO: use correct key names based on how they are stored in the vault
-        secretKeys:
-          pgpassword: POSTGRES_PASSWORD
-          pghost: POSTGRES_HOST
-          dbname: POSTGRES_DBNAME
+        azure:
+          aksSecretsProviderAvailable: true
+          keyvault:
+            name: "montandon-eoapi-staging"
+            clientId: "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+          secretKeys:
+            pgpassword: DB_PASSWORD
+            pghost: DB_HOST
+            dbname: DB_NAME
+
+        serviceAccount:
+          create: true
+          automount: true
+          annotations:
+            azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+          labels:
+            azure.workload.identity/use: "true"
+          name: "service-token-reader"
+
 
         pgstacBootstrap:
           settings:
@@ -37,6 +44,7 @@ spec:
               LOAD_FIXTURES: "0"
               RUN_FOREVER: "1"
         postgrescluster:
+          enabled: false
           instances:
           - name: eoapi
             replicas: 1
