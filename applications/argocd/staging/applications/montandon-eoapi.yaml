@@ -28,14 +28,14 @@ spec:
             pghost: DB_HOST
             dbname: DB_NAME
 
-        serviceAccount:
-          create: true
-          automount: true
-          annotations:
-            azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
-          labels:
-            azure.workload.identity/use: "true"
-          name: "service-token-reader"
+          serviceAccount:
+            create: true
+            automount: true
+            annotations:
+              azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+            labels:
+              azure.workload.identity/use: "true"
+            name: "service-token-reader"
 
 
         pgstacBootstrap:
