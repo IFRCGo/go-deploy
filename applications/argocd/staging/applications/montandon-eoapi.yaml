@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: v0.5.3-azure-test-sa
+    targetRevision: 0.5.3-azure-test-2
     helm:
       valuesObject:
         ingress:
@@ -24,13 +24,13 @@ spec:
             clientId: "9b1f12a8-4ae9-4281-afa9-948451f77dce"
             tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
           secretKeys:
-            DB_PASSWORD: POSTGRES_PASSWORD
-            DB_PASSWORD: PGPASSWORD
-            DB_HOST: POSTGRES_HOST
-            DB_HOST: POSTGRES_HOST_READER
-            DB_HOST: POSTGRES_HOST_WRITER
-            DB_NAME: POSTGRES_DB
-            DB_NAME: PGDATABASE
+            POSTGRES_PASSWORD: DB_PASSWORD
+            PGPASSWORD: DB_PASSWORD
+            POSTGRES_HOST: DB_HOST
+            POSTGRES_HOST_READER: DB_HOST
+            POSTGRES_HOST_WRITER: DB_HOST
+            POSTGRES_DB: DB_NAME
+            PGDATABASE: DB_NAME
 
           serviceAccount:
             create: true
