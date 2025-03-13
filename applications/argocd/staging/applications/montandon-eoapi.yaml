@@ -17,29 +17,17 @@ spec:
           host: "montandon-eoapi-stage.ifrc.org"
           tls:
             enabled: false
-        # pgstacBootstrap:
-        #   settings:
-        #     envVars:
-        #       LOAD_FIXTURES: "0"
-        #       RUN_FOREVER: "1"
-        # postgrescluster:
-        #   instances:
-        #   - name: eoapi
-        #     replicas: 1
-        #     dataVolumeClaimSpec:
-        #       accessModes:
-        #       - "ReadWriteOnce"
-        #       resources:
-        #         requests:
-        #           storage: "600Gi"
-        #           cpu: "1024m"
-        #           memory: "3048Mi"
         azure:
           aksSecretsProviderAvailable: true
           keyvault:
             name: "montandon-eoapi-staging"
             clientId: "9b1f12a8-4ae9-4281-afa9-948451f77dce"
             tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+          secretKeys:
+            pgpassword: DB_PASSWORD
+            pghost: DB_HOST
+            dbname: DB_NAME
+
         serviceAccount:
           create: true
           automount: true
@@ -48,6 +36,26 @@ spec:
           labels:
             azure.workload.identity/use: "true"
           name: "service-token-reader"
+
+
+        pgstacBootstrap:
+          settings:
+            envVars:
+              LOAD_FIXTURES: "0"
+              RUN_FOREVER: "1"
+        postgrescluster:
+          enabled: false
+          instances:
+          - name: eoapi
+            replicas: 1
+            dataVolumeClaimSpec:
+              accessModes:
+              - "ReadWriteOnce"
+              resources:
+                requests:
+                  storage: "600Gi"
+                  cpu: "1024m"
+                  memory: "3048Mi"
 
   destination:
     server: https://kubernetes.default.svc
