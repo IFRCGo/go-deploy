@@ -10,30 +10,44 @@ spec:
   source:
     repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.5.0
+    targetRevision: 0.5.0 # replace to point to chart which uses secretsprovider
     helm:
       valuesObject:
         ingress:
           host: "montandon-eoapi-stage.ifrc.org"
           tls:
             enabled: false
-        pgstacBootstrap:
-          settings:
-            envVars:
-              LOAD_FIXTURES: "0"
-              RUN_FOREVER: "1"
-        postgrescluster:
-          instances:
-          - name: eoapi
-            replicas: 1
-            dataVolumeClaimSpec:
-              accessModes:
-              - "ReadWriteOnce"
-              resources:
-                requests:
-                  storage: "600Gi"
-                  cpu: "1024m"
-                  memory: "3048Mi"
+        # pgstacBootstrap:
+        #   settings:
+        #     envVars:
+        #       LOAD_FIXTURES: "0"
+        #       RUN_FOREVER: "1"
+        # postgrescluster:
+        #   instances:
+        #   - name: eoapi
+        #     replicas: 1
+        #     dataVolumeClaimSpec:
+        #       accessModes:
+        #       - "ReadWriteOnce"
+        #       resources:
+        #         requests:
+        #           storage: "600Gi"
+        #           cpu: "1024m"
+        #           memory: "3048Mi"
+        azure:
+          aksSecretsProviderAvailable: true
+          keyvault:
+            name: "montandon-eoapi-staging"
+            clientId: "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+        serviceAccount:
+          create: true
+          automount: true
+          annotations:
+            azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+          labels:
+            azure.workload.identity/use: "true"
+          name: "service-token-reader"
 
   destination:
     server: https://kubernetes.default.svc
