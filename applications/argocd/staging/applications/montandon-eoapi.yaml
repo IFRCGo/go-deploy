@@ -21,6 +21,15 @@ spec:
           settings:
             envVars:
               POSTGRES_USER: postgres
+        stac:
+          settings:
+            envVars:
+              POSTGRES_USER: postgres
+              POSTGRES_PORT: 5432
+        vector:
+          settings:
+            envVars:
+              POSTGRES_USER: postgres
         azure:
           aksSecretsProviderAvailable: true
           keyvault:
