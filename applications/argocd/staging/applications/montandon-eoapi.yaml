@@ -10,19 +10,63 @@ spec:
   source:
     repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.5.0
+    targetRevision: 0.5.3-azure-test-14
     helm:
       valuesObject:
         ingress:
           host: "montandon-eoapi-stage.ifrc.org"
           tls:
             enabled: false
+        raster:
+          settings:
+            envVars:
+              POSTGRES_USER: postgres
+        stac:
+          settings:
+            envVars:
+              POSTGRES_USER: postgres
+              POSTGRES_PORT: 5432
+        vector:
+          settings:
+            envVars:
+              POSTGRES_USER: postgres
+        azure:
+          aksSecretsProviderAvailable: true
+          keyvault:
+            name: "montandon-eoapi-staging"
+            clientId: "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+          secretKeys:
+            POSTGRES_PASSWORD: DB_PASSWORD
+            PGPASSWORD: DB_PASSWORD
+            POSTGRES_HOST: DB_HOST
+            POSTGRES_HOST_READER: DB_HOST
+            POSTGRES_HOST_WRITER: DB_HOST
+            POSTGRES_DB: DB_NAME
+            PGDATABASE: DB_NAME
+            POSTGRES_PASS: DB_PASSWORD
+            POSTGRES_DBNAME: DB_NAME
+            pgpassword: DB_PASSWORD
+            pghost: DB_HOST
+            dbname: DB_NAME
+
+          serviceAccount:
+            create: true
+            automount: true
+            annotations:
+              azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+            labels:
+              azure.workload.identity/use: "true"
+            name: "service-token-reader"
+
+
         pgstacBootstrap:
           settings:
             envVars:
               LOAD_FIXTURES: "0"
               RUN_FOREVER: "1"
         postgrescluster:
+          enabled: false
           instances:
           - name: eoapi
             replicas: 1
