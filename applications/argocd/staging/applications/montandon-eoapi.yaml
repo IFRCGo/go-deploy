@@ -17,6 +17,10 @@ spec:
           host: "montandon-eoapi-stage.ifrc.org"
           tls:
             enabled: false
+        raster:
+          settings:
+            envVars:
+              POSTGRES_USER: postgres
         azure:
           aksSecretsProviderAvailable: true
           keyvault:
