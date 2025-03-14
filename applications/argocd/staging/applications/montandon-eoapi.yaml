@@ -31,6 +31,9 @@ spec:
             POSTGRES_HOST_WRITER: DB_HOST
             POSTGRES_DB: DB_NAME
             PGDATABASE: DB_NAME
+            pgpassword: DB_PASSWORD
+            pghost: DB_HOST
+            dbname: DB_NAME
 
           serviceAccount:
             create: true
