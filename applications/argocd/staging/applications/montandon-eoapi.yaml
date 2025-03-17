@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.5.3-azure-test-21
+    targetRevision: 0.5.3-azure-test-18
     helm:
       valuesObject:
         ingress:
@@ -39,6 +39,7 @@ spec:
           secretKeys:
             POSTGRES_PASSWORD: DB_PASSWORD
             PGPASSWORD: DB_PASSWORD
+            PGHOST: DB_HOST``
             POSTGRES_HOST: DB_HOST
             POSTGRES_HOST_READER: DB_HOST
             POSTGRES_HOST_WRITER: DB_HOST
@@ -61,6 +62,13 @@ spec:
 
 
         pgstacBootstrap:
+          image:
+            name: ghcr.io/stac-utils/pgstac
+            tag: v0.9.5
+          command:
+            - "source /usr/local/bin/docker-entrypoint.sh && sh"
+          args:
+            - "/opt/initdb/run-migrate-and-load.sh"
           settings:
             envVars:
               LOAD_FIXTURES: "0"
