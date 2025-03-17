@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-web-app
     chart: sdt-web-app-nginx-serve
-    targetRevision: 0.0.1-main.060d5e5
+    targetRevision: 0.0.1-main.02a2fcb  # #138 from IFRCGo/fix/hide-language-select #
     helm:
       valuesObject:
         ingress:
@@ -23,7 +23,7 @@ spec:
           APP_ENVIRONMENT: STAGING
           APP_API_ENDPOINT: https://sdt-staging-api.ifrc.org
           APP_CSRF_TOKEN: sdt-STAGING-csrftoken
-          APP_SENTRY_DSN: https://random-token@random-user@sentry-test.io/10000
+          APP_SENTRY_DSN: https://ced9f4f35e4d47840f02d2b78f7ba5cb@sentry.northeurope.cloudapp.azure.com/7
           APP_GO_REGISTER_URL: http://go-stage.ifrc.org/register
   destination:
     server: https://kubernetes.default.svc
