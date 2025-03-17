@@ -64,7 +64,7 @@ spec:
         pgstacBootstrap:
           image:
             name: ghcr.io/stac-utils/pgstac
-            tag: v0.9.5
+            tag: v0.8.2
           command:
             - "source /usr/local/bin/docker-entrypoint.sh && sh"
           args:
