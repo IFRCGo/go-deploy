@@ -69,7 +69,7 @@ spec:
             - "sh"
           args:
             - "-c"
-            - "source /usr/local/bin/docker-entrypoint.sh; /opt/initdb/run-migrate-and-load.sh"
+            - ". /usr/local/bin/docker-entrypoint.sh; sh /opt/initdb/run-migrate-and-load.sh"
           settings:
             envVars:
               LOAD_FIXTURES: "0"
