@@ -39,7 +39,7 @@ spec:
           secretKeys:
             POSTGRES_PASSWORD: DB_PASSWORD
             PGPASSWORD: DB_PASSWORD
-            PGHOST: DB_HOST``
+            PGHOST: DB_HOST
             POSTGRES_HOST: DB_HOST
             POSTGRES_HOST_READER: DB_HOST
             POSTGRES_HOST_WRITER: DB_HOST
@@ -64,7 +64,7 @@ spec:
         pgstacBootstrap:
           image:
             name: ghcr.io/stac-utils/pgstac
-            tag: v0.8.2
+            tag: v0.9.5
           command:
             - "source /usr/local/bin/docker-entrypoint.sh && sh"
           args:
