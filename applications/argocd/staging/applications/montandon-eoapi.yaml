@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.5.3-azure-test-16
+    targetRevision: 0.5.3-azure-test-17
     helm:
       valuesObject:
         ingress:
@@ -46,7 +46,6 @@ spec:
             PGDATABASE: DB_NAME
             POSTGRES_PASS: DB_PASSWORD
             POSTGRES_DBNAME: DB_NAME
-            PGADMIN_URI: DB_HOST
             pgpassword: DB_PASSWORD
             pghost: DB_HOST
             dbname: DB_NAME
