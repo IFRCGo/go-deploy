@@ -66,9 +66,10 @@ spec:
             name: ghcr.io/stac-utils/pgstac
             tag: v0.9.5
           command:
-            - "source /usr/local/bin/docker-entrypoint.sh && sh"
+            - "sh"
           args:
-            - "/opt/initdb/run-migrate-and-load.sh"
+            - "-c"
+            - "source /usr/local/bin/docker-entrypoint.sh; /opt/initdb/run-migrate-and-load.sh"
           settings:
             envVars:
               LOAD_FIXTURES: "0"
