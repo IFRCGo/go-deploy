@@ -46,6 +46,7 @@ spec:
             PGDATABASE: DB_NAME
             POSTGRES_PASS: DB_PASSWORD
             POSTGRES_DBNAME: DB_NAME
+            PGADMIN_URI: DB_HOST
             pgpassword: DB_PASSWORD
             pghost: DB_HOST
             dbname: DB_NAME
