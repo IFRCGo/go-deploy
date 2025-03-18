@@ -14,14 +14,14 @@ spec:
     helm:
       valuesObject:
         ingress:
-          host: sdt-staging.ifrc.org
+          host: surveydesigner-stage.ifrc.org
           className: nginx
           tls:
             enabled: true
             secretName: sdt-helm-secret-cert
         env:
           APP_ENVIRONMENT: STAGING
-          APP_API_ENDPOINT: https://sdt-staging-api.ifrc.org
+          APP_API_ENDPOINT: https://surveydesigner-stage-api.ifrc.org
           APP_CSRF_TOKEN: sdt-STAGING-csrftoken
           APP_SENTRY_DSN: https://ced9f4f35e4d47840f02d2b78f7ba5cb@sentry.northeurope.cloudapp.azure.com/7
           APP_GO_REGISTER_URL: http://go-stage.ifrc.org/register
