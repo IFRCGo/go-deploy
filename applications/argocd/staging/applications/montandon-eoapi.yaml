@@ -16,7 +16,8 @@ spec:
         ingress:
           host: "montandon-eoapi-stage.ifrc.org"
           tls:
-            enabled: false
+            enabled: true
+            secretName: montandon-eoapi-helm-secret-cert
         raster:
           settings:
             envVars:
