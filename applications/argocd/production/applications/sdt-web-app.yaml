@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sdt-web-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ifrcgoproductioncontainerregistry.azurecr.io/ifrcgo/sdt-web-app
+    chart: sdt-web-app-nginx-serve
+    targetRevision: 0.0.1-feature-update-cd.c4e01dca
+    helm:
+      valuesObject:
+        ingress:
+          host: surveydesigner.ifrc.org
+          className: nginx
+          tls:
+            enabled: true
+            secretName: sdt-helm-secret-cert
+        env:
+          APP_ENVIRONMENT: PROD
+          APP_API_ENDPOINT: https://surveydesigner-api.ifrc.org
+          APP_CSRF_TOKEN: sdt-PROD-csrftoken
+          APP_SENTRY_DSN: https://ced9f4f35e4d47840f02d2b78f7ba5cb@sentry.northeurope.cloudapp.azure.com/7
+          APP_GO_REGISTER_URL: http://go.ifrc.org/register
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sdt
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

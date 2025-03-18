@@ -1,0 +1,64 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sdt-api
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ifrcgoproductioncontainerregistry.azurecr.io/ifrcgo/sdt-api
+    chart: ifrcgo-sdt-helm
+    targetRevision: 0.0.1-feature-update-cdc.53b646d
+    helm:
+      valuesObject:
+        fullnameOverride: ifrcgo-sdt
+        environment: PROD
+        ingress:
+          enabled: true
+          host: surveydesigner-api.ifrc.org
+          className: nginx
+          tls:
+            enabled: true
+            secretName: sdt-helm-secret-cert
+        env:
+          BASE_DOMAIN: https://surveydesigner-api.ifrc.org
+          FRONTEND_BASE_DOMAIN: https://surveydesigner.ifrc.org
+          ALLOWED_HOSTS: "surveydesigner-api.ifrc.org"
+          SESSION_COOKIE_DOMAIN: ".ifrc.org"
+          CSRF_COOKIE_DOMAIN: ".ifrc.org"
+          EMAIL_FROM: ''  # TODO: Update this
+          USE_AZURE_STORAGE: "true"
+          AZURE_STORAGE_MEDIA_CONTAINER: sdt-production-media-container
+          AZURE_STORAGE_STATIC_CONTAINER: sdt-production-static-container
+          AZURE_STORAGE_ACCOUNT_NAME: sdtproduction4869
+          AZURE_STORAGE_MANAGED_IDENTITY: true
+        # Azure related configurations
+        azure:
+          aksSecretsProviderAvailable: true
+          keyvault:
+            name: "sdt-production-kv"
+            clientId: "4893339d-5463-464c-abb7-7a0937c18ed0"
+            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+        serviceAccount:
+          # Specifies whether a service account should be created
+          # Required when using workload identity to access Azure Key Vault Secrets
+          create: true
+          automount: true
+          annotations:
+            azure.workload.identity/client-id : "4893339d-5463-464c-abb7-7a0937c18ed0"
+          labels:
+            azure.workload.identity/use: "true"
+          name: "service-token-reader"
+      valueFiles:
+        - values-production.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sdt
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
