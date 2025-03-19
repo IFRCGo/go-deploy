@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-api
     chart: ifrcgo-sdt-helm
-    targetRevision: 0.0.1-develop.73479b3  # Sort choices by id instead of integer in name https://github.com/IFRCGo/sdt-api/pull/21
+    targetRevision: 0.0.1-develop.c32f3671  # Update "Survey Design Tool" to "IFRC Survey Designer"
     helm:
       valuesObject:
         fullnameOverride: ifrcgo-sdt-staging
