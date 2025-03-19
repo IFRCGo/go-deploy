@@ -17,15 +17,15 @@ spec:
         environment: STAGING
         ingress:
           enabled: true
-          host: sdt-staging-api.ifrc.org
+          host: surveydesigner-stage-api.ifrc.org
           className: nginx
           tls:
             enabled: true
             secretName: sdt-helm-secret-cert
         env:
-          BASE_DOMAIN: https://sdt-staging-api.ifrc.org
-          FRONTEND_BASE_DOMAIN: https://sdt-staging.ifrc.org
-          ALLOWED_HOSTS: "sdt-staging-api.ifrc.org"
+          BASE_DOMAIN: https://surveydesigner-stage-api.ifrc.org
+          FRONTEND_BASE_DOMAIN: https://surveydesigner-stage.ifrc.org
+          ALLOWED_HOSTS: "surveydesigner-stage-api.ifrc.org"
           SESSION_COOKIE_DOMAIN: ".ifrc.org"
           CSRF_COOKIE_DOMAIN: ".ifrc.org"
           EMAIL_FROM: ''  # TODO: Update this
