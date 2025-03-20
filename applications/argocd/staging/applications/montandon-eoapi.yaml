@@ -23,6 +23,8 @@ spec:
             envVars:
               POSTGRES_USER: postgres
         stac:
+          image:
+            tag: 5.0.0
           settings:
             envVars:
               POSTGRES_USER: postgres
