@@ -34,6 +34,7 @@ spec:
           settings:
             envVars:
               FORWARDED_ALLOW_IPS: "*"
+              PROXY_HEADERS: True
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
         vector:
