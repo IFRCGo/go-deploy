@@ -18,6 +18,12 @@ spec:
           tls:
             enabled: true
             secretName: montandon-eoapi-helm-secret-cert
+          annotations:
+            # increase the max body size to 100MB
+            nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+            nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+            nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+            nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
         raster:
           settings:
             envVars:
