@@ -35,6 +35,7 @@ spec:
             envVars:
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
+              FORWARDED_ALLOW_IPS: "*"
         vector:
           settings:
             envVars:
