@@ -33,9 +33,9 @@ spec:
             tag: 5.0.0
           settings:
             envVars:
+              FORWARDED_ALLOW_IPS: "*"
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
-              FORWARDED_ALLOW_IPS: "*"
         vector:
           settings:
             envVars:
