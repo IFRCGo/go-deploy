@@ -30,7 +30,8 @@ spec:
               POSTGRES_USER: postgres
         stac:
           image:
-            tag: 5.0.0
+            name: ghcr.io/sunu/stac-fastapi-pgstac
+            tag: 5.0.0-test7
           settings:
             envVars:
               FORWARDED_ALLOW_IPS: "*"
