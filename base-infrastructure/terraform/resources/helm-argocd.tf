@@ -15,8 +15,8 @@ resource "helm_release" "argo-cd" {
     yamlencode({
       configs = {
         cm = {
-          "timeout.reconciliation": "60s"  
-          "timeout.hard.reconciliation": "90s"
+          "timeout.reconciliation" : "60s"
+          "timeout.hard.reconciliation" : "90s"
         }
       }
     })

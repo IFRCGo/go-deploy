@@ -3,7 +3,7 @@ output "alert_hub_db_admin_password" {
 }
 
 output "alert_hub_db_server_id" {
-  value = azurerm_postgresql_flexible_server.alerthub.id 
+  value = azurerm_postgresql_flexible_server.alerthub.id
 }
 
 output "environment" {
@@ -56,11 +56,11 @@ output "montandon_db_host" {
 }
 
 output "montandon_db_server_id" {
-  value = azurerm_postgresql_flexible_server.montandon.id 
+  value = azurerm_postgresql_flexible_server.montandon.id
 }
 
 output "montandon_storage_account_id" {
-  value = azurerm_storage_account.montandon.id 
+  value = azurerm_storage_account.montandon.id
 }
 
 output "montandon_storage_account_name" {
@@ -90,11 +90,11 @@ output "sdt_db_host" {
 }
 
 output "sdt_db_server_id" {
-  value = azurerm_postgresql_flexible_server.sdt.id 
+  value = azurerm_postgresql_flexible_server.sdt.id
 }
 
 output "sdt_storage_account_id" {
-  value = azurerm_storage_account.sdt.id 
+  value = azurerm_storage_account.sdt.id
 }
 
 output "sdt_storage_account_name" {
@@ -102,7 +102,7 @@ output "sdt_storage_account_name" {
 }
 
 output "storage_account_name" {
-  value = azurerm_storage_account.ifrcgo.name 
+  value = azurerm_storage_account.ifrcgo.name
 }
 
 output "storage_account_id" {
