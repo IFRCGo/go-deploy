@@ -17,3 +17,13 @@ The repository is structured as follows:
 
 ## Monitoring
 Detail here [./docs/monitoring.md](./docs/monitoring.md)
+
+
+## Pre-commit (locally)
+
+- Install tenv (version manager for terraform): https://github.com/tofuutils/tenv#installation
+- Install tflint: https://github.com/terraform-linters/tflint?tab=readme-ov-file#installation
+
+```bash
+pre-commit run --color=always --all-files
+```
