@@ -13,9 +13,9 @@ module "risk_module_resources" {
 }
 
 locals {
-  alerthub_db_name  = "alerthubdb"
-  montandon_db_name = "montandondb"
-  sdt_db_name       = "sdtdb"
+  alerthub_db_name        = "alerthubdb"
+  montandon_db_name       = "montandondb"
+  sdt_db_name             = "sdtdb"
   montandon_eoapi_db_name = "montandoneoapidb"
 }
 

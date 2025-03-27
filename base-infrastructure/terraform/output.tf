@@ -20,21 +20,21 @@ output "risk_module_app_resource_details" {
 
 output "sdt_app_resource_details" {
   value = {
-    key_vault_name     = module.sdt_resources.key_vault_name
-    workload_id        = module.sdt_resources.workload_client_id
+    key_vault_name = module.sdt_resources.key_vault_name
+    workload_id    = module.sdt_resources.workload_client_id
   }
 }
 
 output "motandon_etl_app_resource_details" {
   value = {
-    key_vault_name     = module.montandon_etl_resources.key_vault_name
-    workload_id        = module.montandon_etl_resources.workload_client_id
+    key_vault_name = module.montandon_etl_resources.key_vault_name
+    workload_id    = module.montandon_etl_resources.workload_client_id
   }
 }
 
 output "motandon_eoapi_app_resource_details" {
   value = {
-    key_vault_name     = module.montandon_eoapi_resources.key_vault_name
-    workload_id        = module.montandon_eoapi_resources.workload_client_id
+    key_vault_name = module.montandon_eoapi_resources.key_vault_name
+    workload_id    = module.montandon_eoapi_resources.workload_client_id
   }
 }

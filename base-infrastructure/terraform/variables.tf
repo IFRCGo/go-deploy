@@ -1,5 +1,5 @@
 variable "environment" {
-  type = string
+  type    = string
   default = "staging"
 }
 
@@ -8,16 +8,16 @@ variable "subscriptionId" {
 }
 
 variable "REGION" {
-  type = string
+  type    = string
   default = "west europe"
 }
 
 variable "RESOURCES_DB_NAME" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "RESOURCES_DB_SERVER" {
-  type = string
+  type    = string
   default = ""
 }
