@@ -17,6 +17,10 @@ resource "azurerm_kubernetes_cluster" "ifrcgo" {
     min_count             = 1
     max_count             = 5
     temporary_name_for_rotation = "nodepooltemp"
+
+    upgrade_settings {
+      max_surge = "10%"
+    }
   }
 
   identity {
@@ -53,10 +57,10 @@ resource "azurerm_role_assignment" "storage" {
 # create k8s configmaps and secrets
 
 provider "kubernetes" {
-  host                   = azurerm_kubernetes_cluster.ifrcgo.kube_config.0.host
-  client_certificate     = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config.0.client_certificate)
-  client_key             = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config.0.client_key)
-  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config.0.cluster_ca_certificate)
+  host                   = azurerm_kubernetes_cluster.ifrcgo.kube_config[0].host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config[0].client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config[0].client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config[0].cluster_ca_certificate)
 }
 
 # This ConfigMap stores configurations for resources created by Terraform which 

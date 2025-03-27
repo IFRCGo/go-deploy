@@ -1,13 +1,15 @@
 module "resources" {
   source = "./resources/"
   environment = var.environment
-  subscriptionId = var.subscriptionId
+  # subscriptionId      = var.subscriptionId
   REGION = var.REGION
-  RESOURCES_DB_NAME = var.RESOURCES_DB_NAME
-  RESOURCES_DB_SERVER = var.RESOURCES_DB_SERVER
+  # RESOURCES_DB_NAME   = var.RESOURCES_DB_NAME
+  # RESOURCES_DB_SERVER = var.RESOURCES_DB_SERVER
 }
 
 terraform {
+  required_version = "~> 1.11.3"
+
   backend "azurerm" {
     resource_group_name  = "ifrctgo002rg"
     storage_account_name = "ifrcgoterraform"
