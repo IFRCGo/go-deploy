@@ -14,7 +14,8 @@
 ## Deployment
 The monitoring stack is deployed using ArgoCD, with the configuration located at:
 
-- **Staging**: [applications/argocd/staging/platform/monitoring/](https://github.com/IFRCGo/go-deploy/tree/chore/pormetheus-stack/applications/argocd/staging/platform/monitoring)
+- **Staging**: [applications/argocd/staging/platform/monitoring/](https://github.com/IFRCGo/go-deploy/tree/develop/applications/argocd/staging/platform/monitoring)
+- **Production**: [applications/argocd/production/platform/monitoring/](https://github.com/IFRCGo/go-deploy/tree/develop/applications/argocd/production/platform/monitoring)
 
 > [!Important]
 > All components are deployed to the `monitoring` namespace.
