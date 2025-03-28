@@ -52,14 +52,14 @@ spec:
             limits_config:
               allow_structured_metadata: true
               volume_enabled: true
-            #   max_query_lookback: 2160h # ~3 months (TODO: Is this enough or to much?)
-            #   retention_period: 2160h   # ~3 months (TODO: Is this enough or to much?)
-            # # XXX: We need this disabled during loki init https://github.com/grafana/loki/issues/9634#issuecomment-2188215203
-            # #   Also, comment out the limits_config max_query_lookback and retention_period
-            # compactor:
-            #   working_directory: /var/loki/data/retention
-            #   delete_request_store: s3
-            #   retention_enabled: true
+              max_query_lookback: 2160h # ~3 months (TODO: Is this enough or to much?)
+              retention_period: 2160h   # ~3 months (TODO: Is this enough or to much?)
+            # XXX: We need this disabled during loki init https://github.com/grafana/loki/issues/9634#issuecomment-2188215203
+            #   Also, comment out the limits_config max_query_lookback and retention_period
+            compactor:
+              working_directory: /var/loki/data/retention
+              delete_request_store: s3
+              retention_enabled: true
             ruler:
               enable_api: true
 
