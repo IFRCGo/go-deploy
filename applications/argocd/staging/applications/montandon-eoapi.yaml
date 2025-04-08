@@ -90,8 +90,8 @@ spec:
             labels:
               azure.workload.identity/use: "true"
             envVars:
-              LOAD_FIXTURES: "0"
-              RUN_FOREVER: "1"
+              POSTGRES_USER: postgres
+              POSTGRES_PORT: 5432
         postgrescluster:
           enabled: false
           instances:
