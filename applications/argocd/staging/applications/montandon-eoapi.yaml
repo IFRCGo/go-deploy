@@ -89,7 +89,7 @@ spec:
           settings:
             labels:
               azure.workload.identity/use: "true"
-            envVars:
+            extraEnvVars:
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
         postgrescluster:
