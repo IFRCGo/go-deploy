@@ -43,7 +43,7 @@ spec:
               POSTGRES_PORT: 5432
             extraEnvFrom:
               - secretRef:
-                name: pgstac-secrets-montandon-eoapi
+                  name: pgstac-secrets-montandon-eoapi
             extraVolumeMounts:
               - name: azure-keyvault-secrets
                 mountPath: /mnt/secrets-store
@@ -80,7 +80,7 @@ spec:
               POSTGRES_PORT: 5432
             extraEnvFrom:
               - secretRef:
-                name: pgstac-secrets-montandon-eoapi
+                  name: pgstac-secrets-montandon-eoapi
             extraVolumeMounts:
               - name: azure-keyvault-secrets
                 mountPath: /mnt/secrets-store
