@@ -43,7 +43,7 @@ spec:
               POSTGRES_PORT: 5432
             extraEnvFrom:
               - secretRef:
-                  name: pgstac-secrets-montandon-eoapi
+                name: pgstac-secrets-montandon-eoapi
             extraVolumeMounts:
               - name: azure-keyvault-secrets
                 mountPath: /mnt/secrets-store
@@ -78,6 +78,20 @@ spec:
             extraEnvVars:
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
+            extraEnvFrom:
+              - secretRef:
+                name: pgstac-secrets-montandon-eoapi
+            extraVolumeMounts:
+              - name: azure-keyvault-secrets
+                mountPath: /mnt/secrets-store
+                readOnly: true
+            extraVolumes:
+              - name: azure-keyvault-secrets
+                csi:
+                  driver: secrets-store.csi.k8s.io
+                  readOnly: true
+                  volumeAttributes:
+                    secretProviderClass: azure-secret-provider-montandon-eoapi
         postgrescluster:
           enabled: false
           instances:
