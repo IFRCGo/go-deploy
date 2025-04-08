@@ -44,6 +44,10 @@ spec:
             extraEnvFrom:
               - secretRef:
                   name: pgstac-secrets-montandon-eoapi
+            extraVolumeMounts:
+              - name: pgstac-secrets-montandon-eoapi
+                mountPath: /mnt/secrets-store
+                readOnly: true
         vector:
           enabled: false
 
@@ -70,6 +74,10 @@ spec:
             extraEnvFrom:
               - secretRef:
                   name: pgstac-secrets-montandon-eoapi
+            extraVolumeMounts:
+              - name: pgstac-secrets-montandon-eoapi
+                mountPath: /mnt/secrets-store
+                readOnly: true
         postgrescluster:
           enabled: false
           instances:
