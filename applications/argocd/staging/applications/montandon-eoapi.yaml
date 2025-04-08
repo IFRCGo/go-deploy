@@ -103,6 +103,7 @@ spec:
                   memory: "3048Mi"
   - path: applications/argocd/staging/applications/montndon-eoapi/
     targetRevision: develop
+    repoURL: https://github.com/IFRCGo/go-deploy.git
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-eoapi
