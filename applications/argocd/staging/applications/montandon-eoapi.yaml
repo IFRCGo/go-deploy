@@ -7,10 +7,10 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    repoURL: https://devseed.com/eoapi-k8s/
+  sources:
+  - repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.5.3-azure-test-18
+    targetRevision: 0.5.3-azure-test-19
     helm:
       valuesObject:
         ingress:
@@ -26,6 +26,8 @@ spec:
             nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
         raster:
           settings:
+            labels:
+              azure.workload.identity/use: "true"
             envVars:
               POSTGRES_USER: postgres
         stac:
@@ -33,44 +35,42 @@ spec:
             name: ghcr.io/sunu/stac-fastapi-pgstac
             tag: 5.0.0-test7
           settings:
+            labels:
+              azure.workload.identity/use: "true"
             envVars:
               FORWARDED_ALLOW_IPS: "*"
               PROXY_HEADERS: True
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
+            extraEnvFrom:
+              - secretRef:
+                  name: pgstac-secrets-montandon-eoapi
+            extraVolumeMounts:
+              - name: azure-keyvault-secrets
+                mountPath: /mnt/secrets-store
+                readOnly: true
+            extraVolumes:
+              - name: azure-keyvault-secrets
+                csi:
+                  driver: secrets-store.csi.k8s.io
+                  readOnly: true
+                  volumeAttributes:
+                    secretProviderClass: azure-secret-provider-montandon-eoapi
+          
         vector:
           settings:
-            envVars:
-              POSTGRES_USER: postgres
-        azure:
-          aksSecretsProviderAvailable: true
-          keyvault:
-            name: "montandon-eoapi-staging"
-            clientId: "9b1f12a8-4ae9-4281-afa9-948451f77dce"
-            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
-          secretKeys:
-            POSTGRES_PASSWORD: DB_PASSWORD
-            PGPASSWORD: DB_PASSWORD
-            PGHOST: DB_HOST
-            POSTGRES_HOST: DB_HOST
-            POSTGRES_HOST_READER: DB_HOST
-            POSTGRES_HOST_WRITER: DB_HOST
-            POSTGRES_DB: DB_NAME
-            PGDATABASE: DB_NAME
-            POSTGRES_PASS: DB_PASSWORD
-            POSTGRES_DBNAME: DB_NAME
-            pgpassword: DB_PASSWORD
-            pghost: DB_HOST
-            dbname: DB_NAME
-
-          serviceAccount:
-            create: true
-            automount: true
-            annotations:
-              azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
             labels:
               azure.workload.identity/use: "true"
-            name: "service-token-reader"
+            envVars:
+              POSTGRES_USER: postgres
+
+        serviceAccount:
+          create: true
+          automount: true
+          annotations:
+            azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+          labels:
+            azure.workload.identity/use: "true"
 
 
         pgstacBootstrap:
@@ -83,6 +83,8 @@ spec:
             - "-c"
             - "source /usr/local/bin/docker-entrypoint.sh && sh /opt/initdb/run-migrate-and-load.sh"
           settings:
+            labels:
+              azure.workload.identity/use: "true"
             envVars:
               LOAD_FIXTURES: "0"
               RUN_FOREVER: "1"
@@ -99,7 +101,8 @@ spec:
                   storage: "600Gi"
                   cpu: "1024m"
                   memory: "3048Mi"
-
+  - path: applications/argocd/staging/applications/montndon-eoapi/
+    targetRevision: develop
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-eoapi
