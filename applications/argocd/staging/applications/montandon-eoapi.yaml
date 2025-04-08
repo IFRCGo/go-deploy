@@ -44,12 +44,8 @@ spec:
             extraEnvFrom:
               - secretRef:
                   name: pgstac-secrets-montandon-eoapi
-            extraVolumeMounts:
-              - name: pgstac-secrets-montandon-eoapi
-                mountPath: /mnt/secrets-store
-                readOnly: true
             extraVolumes:
-              - name: pgstac-secrets-montandon-eoapi
+              - name: azure-keyvault-secrets
                 csi:
                   driver: secrets-store.csi.k8s.io
                   readOnly: true
@@ -81,12 +77,8 @@ spec:
             extraEnvFrom:
               - secretRef:
                   name: pgstac-secrets-montandon-eoapi
-            extraVolumeMounts:
-              - name: pgstac-secrets-montandon-eoapi
-                mountPath: /mnt/secrets-store
-                readOnly: true
             extraVolumes:
-              - name: pgstac-secrets-montandon-eoapi
+              - name: azure-keyvault-secrets
                 csi:
                   driver: secrets-store.csi.k8s.io
                   readOnly: true
