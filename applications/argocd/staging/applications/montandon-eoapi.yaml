@@ -44,13 +44,6 @@ spec:
             extraEnvFrom:
               - secretRef:
                   name: pgstac-secrets-montandon-eoapi
-            extraVolumes:
-              - name: azure-keyvault-secrets
-                csi:
-                  driver: secrets-store.csi.k8s.io
-                  readOnly: true
-                  volumeAttributes:
-                    secretProviderClass: azure-secret-provider-montandon-eoapi
         vector:
           enabled: false
 
@@ -77,13 +70,6 @@ spec:
             extraEnvFrom:
               - secretRef:
                   name: pgstac-secrets-montandon-eoapi
-            extraVolumes:
-              - name: azure-keyvault-secrets
-                csi:
-                  driver: secrets-store.csi.k8s.io
-                  readOnly: true
-                  volumeAttributes:
-                    secretProviderClass: azure-secret-provider-montandon-eoapi
         postgrescluster:
           enabled: false
           instances:
