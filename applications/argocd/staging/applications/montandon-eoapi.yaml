@@ -10,7 +10,7 @@ spec:
   sources:
   - repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.5.3-azure-test-19
+    targetRevision: 0.5.3-azure-test-21
     helm:
       valuesObject:
         ingress:
