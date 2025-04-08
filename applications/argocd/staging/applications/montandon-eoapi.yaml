@@ -74,6 +74,7 @@ spec:
 
 
         pgstacBootstrap:
+          enabled: false
           image:
             name: ghcr.io/stac-utils/pgstac
             tag: v0.9.5
