@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-web-app
     chart: sdt-web-app-nginx-serve
-    targetRevision: 0.0.1-main.cf62af6d  # fix/apha-link https://github.com/IFRCGo/sdt-web-app/commit/f62af6d8828c196572fe28f9805dc3d085df4c60
+    targetRevision: 0.0.1-main.cc93867d  # fix/dynamic-version https://github.com/IFRCGo/sdt-web-app/commit/c93867da1b44fbdddf1f2f9b9fc2d3b8c47a5531
     helm:
       valuesObject:
         ingress:
