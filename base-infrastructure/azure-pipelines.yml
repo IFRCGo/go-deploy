@@ -23,6 +23,10 @@ jobs:
     displayName: "Checkout go-deploy"
     path: go-deploy
 
+  - task: "TerraformInstaller@1"
+    inputs:
+      terraformVersion: '1.11.3'
+
   # Deploy Terraform managed infrastructure to staging
   - script: chmod +x $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/setup-infra.sh
     displayName: "Make setup-infra executable"

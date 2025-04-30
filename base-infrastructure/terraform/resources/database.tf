@@ -22,7 +22,6 @@ resource "azurerm_postgresql_flexible_server" "alerthub" {
   administrator_password        = random_password.alert_hub_db_admin.result
   auto_grow_enabled             = true
   backup_retention_days         = 35
-  storage_mb                    = 131072
   sku_name                      = "GP_Standard_D4s_v3"
   delegated_subnet_id           = azurerm_subnet.postgres.id
   private_dns_zone_id           = azurerm_private_dns_zone.ifrcgo.id
@@ -186,7 +185,7 @@ resource "azurerm_postgresql_flexible_server" "montandon_eoapi" {
   administrator_login           = "postgres"
   administrator_password        = random_password.montandon_eoapi_db_user.result
   backup_retention_days         = 35
-  storage_mb                    = 32768
+  auto_grow_enabled             = true
   sku_name                      = "GP_Standard_D2ds_v5"
   delegated_subnet_id           = azurerm_subnet.postgres.id
   private_dns_zone_id           = azurerm_private_dns_zone.ifrcgo.id
