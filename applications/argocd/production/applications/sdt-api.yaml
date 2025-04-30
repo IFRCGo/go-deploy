@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ifrcgoproductioncontainerregistry.azurecr.io/ifrcgo/sdt-api
     chart: ifrcgo-sdt-helm
-    targetRevision: 0.0.1-release.c32f3671  # Update "Survey Design Tool" to "IFRC Survey Designer"
+    targetRevision: 0.0.1-release.c1cd43e7  # Add static translation https://github.com/IFRCGo/sdt-api/commit/1cd43e727ee7d81da54edfdf5647dd2ae70390f5
     helm:
       valuesObject:
         fullnameOverride: ifrcgo-sdt
