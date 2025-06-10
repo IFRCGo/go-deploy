@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ifrcgostagingcontainerregistry.azurecr.io/ifrcgo/sdt-api
     chart: ifrcgo-sdt-helm
-    targetRevision: 0.0.1-develop.c1cd43e7  # Add static translation https://github.com/IFRCGo/sdt-api/commit/1cd43e727ee7d81da54edfdf5647dd2ae70390f5
+    targetRevision: 0.0.1-develop.c08a80b4
     helm:
       valuesObject:
         fullnameOverride: ifrcgo-sdt-staging
