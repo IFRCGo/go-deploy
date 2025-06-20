@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ifrcgoproductioncontainerregistry.azurecr.io/ifrcgo/sdt-api
     chart: ifrcgo-sdt-helm
-    targetRevision: 0.0.1-release.c08a80b4
+    targetRevision: 0.0.1-release.ce2dd8d5
     helm:
       valuesObject:
         fullnameOverride: ifrcgo-sdt
