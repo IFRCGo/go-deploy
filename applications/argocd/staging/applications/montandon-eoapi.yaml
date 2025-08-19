@@ -8,11 +8,11 @@ metadata:
 spec:
   project: default
   sources:
-  # - repoURL: https://devseed.com/eoapi-k8s/
-  - repoURL: https://github.com/developmentseed/eoapi-k8s.git
-    # chart: eoapi
-    # targetRevision: 0.5.3-azure-test-21
-    targetRevision: feature/azure-secrets
+  - repoURL: https://devseed.com/eoapi-k8s/
+  # - repoURL: https://github.com/developmentseed/eoapi-k8s.git
+    chart: eoapi
+    targetRevision: 0.7.5
+    # targetRevision: feature/azure-secrets
     path: helm-chart/eoapi
     helm:
       valuesObject:
@@ -30,9 +30,9 @@ spec:
         raster:
           enabled: false
         stac:
-          image:
-            name: ghcr.io/sunu/stac-fastapi-pgstac
-            tag: 5.0.0-test7
+          # image:
+          #   name: ghcr.io/sunu/stac-fastapi-pgstac
+          #   tag: 5.0.0-test7
           settings:
             labels:
               azure.workload.identity/use: "true"
@@ -41,9 +41,9 @@ spec:
               PROXY_HEADERS: True
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
-            extraEnvFrom:
-              - secretRef:
-                  name: pgstac-secrets-montandon-eoapi
+            # extraEnvFrom:
+            #   - secretRef:
+            #       name: pgstac-secrets-montandon-eoapi
             extraVolumes:
               - name: azure-keyvault-secrets
                 csi:
@@ -64,18 +64,18 @@ spec:
 
         pgstacBootstrap:
           enabled: true
-          image:
-            name: ghcr.io/stac-utils/pgstac
-            tag: v0.9.5
+          # image:
+          #   name: ghcr.io/stac-utils/pgstac
+          #   tag: v0.9.5
           settings:
             labels:
               azure.workload.identity/use: "true"
             extraEnvVars:
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
-            extraEnvFrom:
-              - secretRef:
-                  name: pgstac-secrets-montandon-eoapi
+            # extraEnvFrom:
+            #   - secretRef:
+            #       name: pgstac-secrets-montandon-eoapi
             extraVolumes:
               - name: azure-keyvault-secrets
                 csi:
@@ -83,19 +83,35 @@ spec:
                   readOnly: true
                   volumeAttributes:
                     secretProviderClass: azure-secret-provider-montandon-eoapi
+        postgres:
+          type: "external-secret"
+          external:
+            port: 5432
+            credentials:
+              username: "postgres"
+            existingSecret:
+              name: pgstac-secrets-montandon-eoapi
+              keys:
+                password: "DB_PASSWORD"
+                # Optional: if these are provided in the secret
+                # Note: These values override external.host, external.port and external.database if defined
+                host: "DB_HOST"
+                # port: "port"
+                database: "DB_NAME"
+        
         postgrescluster:
           enabled: false
-          instances:
-          - name: eoapi
-            replicas: 1
-            dataVolumeClaimSpec:
-              accessModes:
-              - "ReadWriteOnce"
-              resources:
-                requests:
-                  storage: "600Gi"
-                  cpu: "1024m"
-                  memory: "3048Mi"
+          # instances:
+          # - name: eoapi
+          #   replicas: 1
+          #   dataVolumeClaimSpec:
+          #     accessModes:
+          #     - "ReadWriteOnce"
+          #     resources:
+          #       requests:
+          #         storage: "600Gi"
+          #         cpu: "1024m"
+          #         memory: "3048Mi"
   - path: applications/argocd/staging/applications/montndon-eoapi/
     targetRevision: develop
     repoURL: https://github.com/IFRCGo/go-deploy.git
