@@ -86,7 +86,7 @@ spec:
         postgresql:
           type: "external-secret"
           external:
-            port: 5432
+            port: "5432"
             credentials:
               username: "postgres"
             existingSecret:
