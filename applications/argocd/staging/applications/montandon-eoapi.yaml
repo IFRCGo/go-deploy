@@ -63,7 +63,7 @@ spec:
             azure.workload.identity/use: "true"
 
         pgstacBootstrap:
-          enabled: true
+          enabled: false
           # image:
           #   name: ghcr.io/stac-utils/pgstac
           #   tag: v0.9.5
