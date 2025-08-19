@@ -44,10 +44,10 @@ spec:
             # extraEnvFrom:
             #   - secretRef:
             #       name: pgstac-secrets-montandon-eoapi
-            extraVolumeMounts:
-              - name: azure-keyvault-secrets
-                mountPath: /mnt/secrets-store
-                readOnly: true
+            # extraVolumeMounts:
+            #   - name: azure-keyvault-secrets
+            #     mountPath: /mnt/secrets-store
+            #     readOnly: true
             extraVolumes:
               - name: azure-keyvault-secrets
                 csi:
