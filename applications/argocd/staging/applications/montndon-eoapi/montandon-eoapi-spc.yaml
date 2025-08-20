@@ -11,11 +11,14 @@ spec:
     tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
     objects: |
       array:
-        - objectName: DB-PASSWORD
+        - |
+          objectName: DB-PASSWORD
           objectType: secret
-        - objectName: DB-HOST
+        - |
+          objectName: DB-HOST
           objectType: secret
-        - objectName: DB-NAME
+        - |
+          objectName: DB-NAME
           objectType: secret
   secretObjects:
     - secretName: pgstac-secrets-montandon-eoapi
