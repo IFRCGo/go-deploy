@@ -21,7 +21,7 @@ spec:
           objectName: DB-NAME
           objectType: secret
         - |
-          objectName: DB-USER
+          objectName: DB-USERNAME
           objectType: secret
   secretObjects:
     - secretName: pgstac-secrets-montandon-eoapi
@@ -57,7 +57,7 @@ spec:
           key: pghost
         - objectName: DB-NAME
           key: dbname
-        - objectName: DB-USER
+        - objectName: DB-USERNAME
           key: POSTGRES_USER
-        - objectName: DB-USER
+        - objectName: DB-USERNAME
           key: username
