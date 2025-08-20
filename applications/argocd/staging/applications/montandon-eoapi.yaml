@@ -62,7 +62,7 @@ spec:
           create: true
           automount: true
           annotations:
-            azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+            azure.workload.identity/client-id : "f4f2c874-0f2f-497e-8eb0-c5efebf31cc6"
           labels:
             azure.workload.identity/use: "true"
 
