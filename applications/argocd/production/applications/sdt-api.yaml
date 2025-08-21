@@ -15,6 +15,12 @@ spec:
       valuesObject:
         fullnameOverride: ifrcgo-sdt
         environment: PROD
+        global:
+          security:
+            allowInsecureImages: true
+        redis:
+          image:
+            repository: bitnamilegacy/redis
         ingress:
           enabled: true
           host: surveydesigner-api.ifrc.org

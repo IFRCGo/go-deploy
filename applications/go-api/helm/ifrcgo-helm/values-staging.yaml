@@ -1,5 +1,9 @@
 environment: staging
 
+global:
+  security:
+    allowInsecureImages: true
+
 env:
   API_FQDN: https://goadmin-stage.ifrc.org
   AUTO_TRANSLATION_TRANSLATOR: lang.translation.IfrcTranslator
@@ -31,6 +35,8 @@ api:
       memory: 4Gi
 
 redis:
+  image:
+    repository: bitnamilegacy/redis
   resources:
     requests:
       cpu: "0.1"
