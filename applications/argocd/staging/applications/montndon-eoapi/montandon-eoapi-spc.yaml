@@ -23,6 +23,9 @@ spec:
         - |
           objectName: DB-USER
           objectType: secret
+        - |
+          objectName: DB-PORT
+          objectType: secret
   secretObjects:
     - secretName: pgstac-secrets-montandon-eoapi
       type: Opaque
@@ -63,3 +66,7 @@ spec:
           key: username
         - objectName: DB-USER
           key: DB_USER
+        - objectName: DB-PORT
+          key: DB_PORT
+        - objectName: DB-PORT
+          key: port

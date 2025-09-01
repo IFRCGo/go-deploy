@@ -90,9 +90,6 @@ spec:
         postgresql:
           type: "external-secret"
           external:
-            port: "5432"
-            credentials:
-              username: "postgres"
             existingSecret:
               name: pgstac-secrets-montandon-eoapi
               keys:
@@ -103,6 +100,7 @@ spec:
                 host: "DB_HOST"
                 # port: "port"
                 database: "DB_NAME"
+                port: "DB_PORT"
         
         postgrescluster:
           enabled: false
