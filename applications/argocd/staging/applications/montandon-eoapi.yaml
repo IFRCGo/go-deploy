@@ -96,6 +96,7 @@ spec:
             existingSecret:
               name: pgstac-secrets-montandon-eoapi
               keys:
+                username: "DB_USER"
                 password: "DB_PASSWORD"
                 # Optional: if these are provided in the secret
                 # Note: These values override external.host, external.port and external.database if defined
