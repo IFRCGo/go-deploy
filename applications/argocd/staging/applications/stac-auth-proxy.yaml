@@ -23,10 +23,12 @@ spec:
           value: "stac-test.whydidweevendothis.com"
         - name: ingress.className
           value: "nginx"
+        - name: ingress.annotations."cert-manager\.io/cluster-issuer"
+          value: "letsencrypt-prod"
         - name: ingress.tls.enabled
           value: "true"
         - name: ingress.tls.secretName
-          value: "stac-auth-proxy-helm-secret-cert"
+          value: "stac-auth-proxy-tls-cert"
         - name: replicaCount
           value: "1"
   destination:
