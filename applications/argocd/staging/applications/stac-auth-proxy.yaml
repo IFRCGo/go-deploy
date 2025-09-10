@@ -14,7 +14,7 @@ spec:
     helm:
       parameters:
         - name: env.UPSTREAM_URL
-          value: "http://montandon-eoapi.montandon-eoapi.svc.cluster.local/stac"
+          value: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local"
         - name: env.OIDC_DISCOVERY_URL
           value: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
         - name: ingress.enabled
@@ -33,10 +33,10 @@ spec:
           value: "1"
   destination:
     server: https://kubernetes.default.svc
-    namespace: stac-auth-proxy
+    namespace: montandon-eoapi
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+      - CreateNamespace=false
