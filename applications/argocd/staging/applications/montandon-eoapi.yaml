@@ -133,7 +133,7 @@ spec:
         - name: ingress.className
           value: "nginx"
         - name: ingress.annotations."cert-manager\.io/cluster-issuer"
-          value: "letsencrypt-prod"
+          value: "letsencrypt-prod-issuer"
         - name: ingress.tls.enabled
           value: "true"
         - name: ingress.tls.secretName
