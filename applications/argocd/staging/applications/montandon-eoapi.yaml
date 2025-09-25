@@ -123,7 +123,7 @@ spec:
     helm:
       valuesObject:
         env:
-          UPSTREAM_URL: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local"
+          UPSTREAM_URL: "http://stac-montandon-eoapi.montandon-eoapi.svc.cluster.local"
           OIDC_DISCOVERY_URL: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
         ingress:
           enabled: "true"
