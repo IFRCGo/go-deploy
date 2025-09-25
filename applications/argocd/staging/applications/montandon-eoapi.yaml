@@ -121,25 +121,20 @@ spec:
     targetRevision: v0.9.2
     path: helm/
     helm:
-      parameters:
-        - name: env.UPSTREAM_URL
-          value: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local"
-        - name: env.OIDC_DISCOVERY_URL
-          value: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
-        - name: ingress.enabled
-          value: "true"
-        - name: ingress.host
-          value: "stac-test.whydidweevendothis.com"
-        - name: ingress.className
-          value: "nginx"
-        - name: ingress.annotations."cert-manager\.io/cluster-issuer"
-          value: "letsencrypt-prod-issuer"
-        - name: ingress.tls.enabled
-          value: "true"
-        - name: ingress.tls.secretName
-          value: "stac-auth-proxy-tls-cert"
-        - name: replicaCount
-          value: "1"
+      valuesObject:
+        env:
+          UPSTREAM_URL: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local"
+          OIDC_DISCOVERY_URL: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
+        ingress:
+          enabled: "true"
+          host: "stac-test.whydidweevendothis.com"
+          className: "nginx"
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-prod-issuer"
+          tls:
+            enabled: "true"
+            secretName: "stac-auth-proxy-tls-cert"
+        replicaCount: 1
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-eoapi
