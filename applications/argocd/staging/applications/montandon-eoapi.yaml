@@ -98,7 +98,6 @@ spec:
                 # Optional: if these are provided in the secret
                 # Note: These values override external.host, external.port and external.database if defined
                 host: "DB_HOST"
-                # port: "port"
                 database: "DB_NAME"
                 port: "DB_PORT"
         
@@ -118,6 +117,25 @@ spec:
   - path: applications/argocd/staging/applications/montndon-eoapi/
     targetRevision: develop
     repoURL: https://github.com/IFRCGo/go-deploy.git
+  - repoURL: https://github.com/developmentseed/stac-auth-proxy.git
+    targetRevision: v0.9.2
+    path: helm/
+    helm:
+      valuesObject:
+        env:
+          # UPSTREAM_URL: "http://stac-montandon-eoapi:8080"
+          UPSTREAM_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
+          OIDC_DISCOVERY_URL: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
+        ingress:
+          enabled: "true"
+          host: "stac-test.whydidweevendothis.com"
+          className: "nginx"
+          annotations:
+            cert-manager.io/cluster-issuer: "letsencrypt-prod-issuer"
+          tls:
+            enabled: "true"
+            secretName: "stac-auth-proxy-tls-cert"
+        replicaCount: 1
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-eoapi
