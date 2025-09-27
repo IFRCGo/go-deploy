@@ -30,6 +30,7 @@ spec:
         raster:
           enabled: false
         stac:
+          overrideRootPath: ""
           # image:
           #   name: ghcr.io/sunu/stac-fastapi-pgstac
           #   tag: 5.0.0-test7
