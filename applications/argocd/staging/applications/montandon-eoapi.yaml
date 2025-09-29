@@ -36,6 +36,13 @@ spec:
           settings:
             labels:
               azure.workload.identity/use: "true"
+            resources:
+              requests:
+                memory: "2048Mi"
+                cpu: "500m"
+              limits:
+                memory: "4096Mi"
+                cpu: "1000m"
             extraEnvVars:
               FORWARDED_ALLOW_IPS: "*"
               PROXY_HEADERS: True
