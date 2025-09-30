@@ -12,7 +12,7 @@ spec:
   # - repoURL: https://github.com/developmentseed/eoapi-k8s.git
     chart: eoapi
     # targetRevision: 0.7.5
-    targetRevision: stac.overrideRootPath
+    targetRevision: "stac.overrideRootPath"
     path: helm-chart/eoapi
     helm:
       valuesObject:
