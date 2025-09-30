@@ -8,12 +8,12 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: https://devseed.com/eoapi-k8s/
-  # - repoURL: https://github.com/developmentseed/eoapi-k8s.git
-    chart: eoapi
+  # - repoURL: https://devseed.com/eoapi-k8s/
+  - repoURL: https://github.com/developmentseed/eoapi-k8s.git
+    # chart: eoapi
     # targetRevision: 0.7.5
     targetRevision: "stac.overrideRootPath"
-    path: helm-chart/eoapi
+    path: charts/eoapi
     helm:
       valuesObject:
         ingress:
