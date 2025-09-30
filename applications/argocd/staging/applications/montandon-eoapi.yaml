@@ -140,8 +140,9 @@ spec:
           className: "nginx"
           annotations:
             cert-manager.io/cluster-issuer: "letsencrypt-prod-issuer"
-            nginx.ingress.kubernetes.io/proxy-set-header-x-forwarded-host: "stac-test.whydidweevendothis.com"
-            nginx.ingress.kubernetes.io/proxy-set-header-x-forwarded-proto: "https"
+            nginx.ingress.kubernetes.io/configuration-snippet: |
+              proxy_set_header X-Forwarded-Host $host;
+              proxy_set_header X-Forwarded-Proto $scheme;
           tls:
             enabled: "true"
             secretName: "stac-auth-proxy-tls-cert"
