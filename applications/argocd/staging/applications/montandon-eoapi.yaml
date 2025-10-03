@@ -8,12 +8,12 @@ metadata:
 spec:
   project: default
   sources:
-  # - repoURL: https://devseed.com/eoapi-k8s/
-  - repoURL: https://github.com/developmentseed/eoapi-k8s.git
-    # chart: eoapi
-    # targetRevision: 0.7.5
-    targetRevision: "stac.overrideRootPath"
-    path: charts/eoapi
+  - repoURL: https://devseed.com/eoapi-k8s/
+  # - repoURL: https://github.com/developmentseed/eoapi-k8s.git
+    chart: eoapi
+    targetRevision: 0.7.5
+    # targetRevision: "stac.overrideRootPath"
+    # path: charts/eoapi
     helm:
       valuesObject:
         ingress:
@@ -30,7 +30,6 @@ spec:
         raster:
           enabled: false
         stac:
-          overrideRootPath: ""
           # image:
           #   name: ghcr.io/sunu/stac-fastapi-pgstac
           #   tag: 5.0.0-test7
