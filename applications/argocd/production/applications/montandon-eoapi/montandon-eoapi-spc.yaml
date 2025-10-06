@@ -6,8 +6,8 @@ spec:
   provider: azure
   parameters:
     usePodIdentity: "false"
-    clientID: "9b1f12a8-4ae9-4281-afa9-948451f77dce"
-    keyvaultName: "montandon-eoapi-staging"
+    clientID: "8bf208ec-d73c-42d1-a4a9-817d2936a883"
+    keyvaultName: "montandon-eoapi-producti"
     tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
     objects: |
       array:
