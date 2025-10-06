@@ -126,11 +126,9 @@ spec:
           enabled: "true"
           host: "montandon-eoapi.ifrc.org" # Decide on URL etc
           className: "nginx"
-          # annotations:
-          #   cert-manager.io/cluster-issuer: "letsencrypt-prod-issuer"
           tls:
             enabled: "true"
-            secretName: "stac-auth-proxy-tls-cert" # This will no longer be letsencrypt
+            secretName: "montandon-eoapi-helm-secret-cert created"
         replicaCount: 1
   destination:
     server: https://kubernetes.default.svc
