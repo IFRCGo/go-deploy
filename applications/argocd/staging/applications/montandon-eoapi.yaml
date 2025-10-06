@@ -11,7 +11,7 @@ spec:
   - repoURL: https://devseed.com/eoapi-k8s/
   # - repoURL: https://github.com/developmentseed/eoapi-k8s.git
     chart: eoapi
-    targetRevision: 0.7.5
+    targetRevision: 0.7.10
     # targetRevision: "stac.overrideRootPath"
     # path: charts/eoapi
     helm:
