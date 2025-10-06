@@ -120,7 +120,7 @@ spec:
       valuesObject:
         env:
           UPSTREAM_URL: "http://montandon-eoapi-stac:8080"
-          OIDC_DISCOVERY_URL: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
+          OIDC_DISCOVERY_URL: "https://goadmin.ifrc.org/o/.well-known/openid-configuration"
           OVERRIDE_HOST: "0"
         ingress:
           enabled: "true"
