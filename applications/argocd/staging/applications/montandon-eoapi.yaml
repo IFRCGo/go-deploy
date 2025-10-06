@@ -12,8 +12,8 @@ spec:
   # - repoURL: https://github.com/developmentseed/eoapi-k8s.git
     chart: eoapi
     targetRevision: 0.7.5
-    # targetRevision: feature/azure-secrets
-    path: helm-chart/eoapi
+    # targetRevision: "stac.overrideRootPath"
+    # path: charts/eoapi
     helm:
       valuesObject:
         ingress:
@@ -36,11 +36,22 @@ spec:
           settings:
             labels:
               azure.workload.identity/use: "true"
+            resources:
+              requests:
+                memory: "2048Mi"
+                cpu: "500m"
+              limits:
+                memory: "4096Mi"
+                cpu: "1000m"
             extraEnvVars:
               FORWARDED_ALLOW_IPS: "*"
               PROXY_HEADERS: True
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
+              CORS_ORIGINS: "http://localhost:8000"
+              CORS_METHODS: "GET,OPTIONS"
+              CORS_CREDENTIALS: "True"
+              CORS_HEADERS: "*"
             # extraEnvFrom:
             #   - secretRef:
             #       name: pgstac-secrets-montandon-eoapi
@@ -123,9 +134,10 @@ spec:
     helm:
       valuesObject:
         env:
-          # UPSTREAM_URL: "http://stac-montandon-eoapi:8080"
-          UPSTREAM_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
+          UPSTREAM_URL: "http://montandon-eoapi-stac:8080"
+          # UPSTREAM_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
           OIDC_DISCOVERY_URL: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
+          OVERRIDE_HOST: "0"
         ingress:
           enabled: "true"
           host: "stac-test.whydidweevendothis.com"
