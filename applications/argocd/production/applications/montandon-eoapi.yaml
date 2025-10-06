@@ -128,7 +128,7 @@ spec:
           className: "nginx"
           tls:
             enabled: "true"
-            secretName: "montandon-eoapi-helm-secret-cert created"
+            secretName: "montandon-eoapi-helm-secret-cert"
         replicaCount: 1
   destination:
     server: https://kubernetes.default.svc
