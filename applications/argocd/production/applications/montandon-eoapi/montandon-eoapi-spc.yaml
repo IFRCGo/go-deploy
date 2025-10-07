@@ -1,0 +1,72 @@
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: azure-secret-provider-montandon-eoapi
+spec:
+  provider: azure
+  parameters:
+    usePodIdentity: "false"
+    clientID: "8bf208ec-d73c-42d1-a4a9-817d2936a883"
+    keyvaultName: "montandon-eoapi-producti"
+    tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+    objects: |
+      array:
+        - |
+          objectName: DB-PASSWORD
+          objectType: secret
+        - |
+          objectName: DB-HOST
+          objectType: secret
+        - |
+          objectName: DB-NAME
+          objectType: secret
+        - |
+          objectName: DB-USER
+          objectType: secret
+        - |
+          objectName: DB-PORT
+          objectType: secret
+  secretObjects:
+    - secretName: pgstac-secrets-montandon-eoapi
+      type: Opaque
+      data:
+        - objectName: DB-PASSWORD
+          key: POSTGRES_PASSWORD
+        - objectName: DB-PASSWORD
+          key: PGPASSWORD
+        - objectName: DB-HOST
+          key: POSTGRES_HOST
+        - objectName: DB-HOST
+          key: POSTGRES_HOST_READER
+        - objectName: DB-HOST
+          key: POSTGRES_HOST_WRITER
+        - objectName: DB-HOST
+          key: POSTGRES_HOST
+        - objectName: DB-NAME
+          key: POSTGRES_DB
+        - objectName: DB-NAME
+          key: PGDATABASE
+        - objectName: DB-PASSWORD
+          key: POSTGRES_PASS
+        - objectName: DB-PASSWORD
+          key: DB_PASSWORD
+        - objectName: DB-HOST
+          key: DB_HOST
+        - objectName: DB-NAME
+          key: DB_NAME
+        - objectName: DB-PASSWORD
+          key: pgpassword
+        - objectName: DB-HOST
+          key: pghost
+        - objectName: DB-NAME
+          key: dbname
+        - objectName: DB-USER
+          key: POSTGRES_USER
+        - objectName: DB-USER
+          key: username
+        - objectName: DB-USER
+          key: DB_USER
+        - objectName: DB-PORT
+          key: DB_PORT
+        - objectName: DB-PORT
+          key: port

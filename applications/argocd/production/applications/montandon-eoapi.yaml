@@ -17,22 +17,20 @@ spec:
     helm:
       valuesObject:
         ingress:
-          host: "montandon-eoapi-stage.ifrc.org"
-          tls:
-            enabled: true
-            secretName: montandon-eoapi-helm-secret-cert
-          annotations:
-            # increase the max body size to 100MB
-            nginx.ingress.kubernetes.io/proxy-body-size: "100m"
-            nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-            nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-            nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+          enabled: false
+          # host: "montandon-eoapi-stage.ifrc.org"
+          # tls:
+          #   enabled: true
+          #   secretName: montandon-eoapi-helm-secret-cert
+          # annotations:
+          #   # increase the max body size to 100MB
+          #   nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+          #   nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+          #   nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+          #   nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
         raster:
           enabled: false
         stac:
-          # image:
-          #   name: ghcr.io/sunu/stac-fastapi-pgstac
-          #   tag: 5.0.0-test7
           settings:
             labels:
               azure.workload.identity/use: "true"
@@ -43,7 +41,7 @@ spec:
               limits:
                 memory: "4096Mi"
                 cpu: "1000m"
-            extraEnvVars:
+            envVars:
               FORWARDED_ALLOW_IPS: "*"
               PROXY_HEADERS: True
               POSTGRES_USER: postgres
@@ -52,9 +50,6 @@ spec:
               CORS_METHODS: "GET,OPTIONS"
               CORS_CREDENTIALS: "True"
               CORS_HEADERS: "*"
-            # extraEnvFrom:
-            #   - secretRef:
-            #       name: pgstac-secrets-montandon-eoapi
             extraVolumeMounts:
               - name: azure-keyvault-secrets
                 mountPath: /mnt/secrets-store
@@ -73,7 +68,7 @@ spec:
           create: true
           automount: true
           annotations:
-            azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+            azure.workload.identity/client-id : "8bf208ec-d73c-42d1-a4a9-817d2936a883"
           labels:
             azure.workload.identity/use: "true"
 
@@ -114,19 +109,9 @@ spec:
         
         postgrescluster:
           enabled: false
-          # instances:
-          # - name: eoapi
-          #   replicas: 1
-          #   dataVolumeClaimSpec:
-          #     accessModes:
-          #     - "ReadWriteOnce"
-          #     resources:
-          #       requests:
-          #         storage: "600Gi"
-          #         cpu: "1024m"
-          #         memory: "3048Mi"
-  - path: applications/argocd/staging/applications/montandon-eoapi/
-    targetRevision: develop
+
+  - path: applications/argocd/production/applications/montandon-eoapi/
+    targetRevision: master
     repoURL: https://github.com/IFRCGo/go-deploy.git
   - repoURL: https://github.com/developmentseed/stac-auth-proxy.git
     targetRevision: v0.9.2
@@ -135,18 +120,15 @@ spec:
       valuesObject:
         env:
           UPSTREAM_URL: "http://montandon-eoapi-stac:8080"
-          # UPSTREAM_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
-          OIDC_DISCOVERY_URL: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
+          OIDC_DISCOVERY_URL: "https://goadmin.ifrc.org/o/.well-known/openid-configuration"
           OVERRIDE_HOST: "0"
         ingress:
           enabled: "true"
-          host: "stac-test.whydidweevendothis.com"
+          host: "montandon-eoapi.ifrc.org" # Decide on URL etc
           className: "nginx"
-          annotations:
-            cert-manager.io/cluster-issuer: "letsencrypt-prod-issuer"
           tls:
             enabled: "true"
-            secretName: "stac-auth-proxy-tls-cert"
+            secretName: "montandon-eoapi-helm-secret-cert"
         replicaCount: 1
   destination:
     server: https://kubernetes.default.svc
