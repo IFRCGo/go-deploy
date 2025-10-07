@@ -46,7 +46,7 @@ spec:
               PROXY_HEADERS: True
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
-              CORS_ORIGINS: "http://localhost:8000"
+              CORS_ORIGINS: "['http://localhost:8000']"
               CORS_METHODS: "GET,OPTIONS"
               CORS_CREDENTIALS: "True"
               CORS_HEADERS: "*"
