@@ -46,9 +46,9 @@ spec:
               PROXY_HEADERS: True
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
-              CORS_HEADERS: "[\"*\"]"
-              CORS_METHODS: "[\"GET\",\"OPTIONS\"]"
-              CORS_ORIGINS: "[\"http://localhost:8080\"]"
+              CORS_HEADERS: '["*"]'
+              CORS_METHODS: '["GET","OPTIONS"]'
+              CORS_ORIGINS: '["http://localhost:8000"]'
               CORS_CREDENTIALS: "True"
             extraVolumeMounts:
               - name: azure-keyvault-secrets
