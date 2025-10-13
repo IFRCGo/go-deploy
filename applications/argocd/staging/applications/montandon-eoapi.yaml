@@ -43,6 +43,9 @@ spec:
               limits:
                 memory: "4096Mi"
                 cpu: "1000m"
+            envVars:
+              # https://stac-utils.github.io/stac-fastapi-pgstac/settings/#application-extension
+              ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
             extraEnvVars:
               FORWARDED_ALLOW_IPS: "*"
               PROXY_HEADERS: True
