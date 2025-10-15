@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: ghcr.io/ifrcgo/alert-hub-backend
+    repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-alert-hub-helm
-    targetRevision: 0.0.1-develop.041116e
+    targetRevision: 0.0.1-develop.c53f7d29
     helm:
       valuesObject:
         global:
