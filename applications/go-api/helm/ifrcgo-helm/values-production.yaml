@@ -74,3 +74,10 @@ sshBastion:
     limits:
       cpu: "0.5"
       memory: 0.2Gi
+
+serviceAccount:
+  create: false
+  name: go-api-production-workload-sa
+
+podLabels:
+  azure.workload.identity/use: "true"
