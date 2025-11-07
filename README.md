@@ -12,7 +12,7 @@ The repository is structured as follows:
 - `base-infrastructure`: Contains the Terraform configuration files for deploying the Kubernetes clusters and other infrastructure components like managed databases, object storage etc on Azure.
 
 - `applications/go-api`: Contains the deployment scripts and Helm configurations for deploying Helm charts of IFRC GO ecosystem applications onto the Kubernetes clusters.
-- `applications/argocd`: Contains the definitions of kubernetes resoures for managing applications whose deployment is managed by [ArgoCD](https://argo-cd.readthedocs.io/en/stable/). 
+- `applications/argocd`: Contains the definitions of kubernetes resoures for managing applications whose deployment is managed by [ArgoCD](https://argo-cd.readthedocs.io/en/stable/).
 
 
 ## Monitoring

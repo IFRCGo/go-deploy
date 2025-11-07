@@ -1,5 +1,5 @@
 module "resources" {
-  source = "./resources/"
+  source      = "./resources/"
   environment = var.environment
   # subscriptionId      = var.subscriptionId
   REGION = var.REGION
@@ -16,7 +16,7 @@ terraform {
     container_name       = "terraform"
     # this is meant to be replaced in base-infrastructure/scripts/setup-infra.sh
     # so that the correct environment is deployed
-    key                  = "ENVIRONMENT_TO_REPLACE"
+    key = "ENVIRONMENT_TO_REPLACE"
   }
 }
 

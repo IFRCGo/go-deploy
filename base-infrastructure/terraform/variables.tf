@@ -1,5 +1,5 @@
 variable "environment" {
-  type = string
+  type    = string
   default = "staging"
 }
 
@@ -8,7 +8,7 @@ variable "environment" {
 # }
 
 variable "REGION" {
-  type = string
+  type    = string
   default = "west europe"
 }
 

@@ -7,7 +7,7 @@ variable "environment" {
 # }
 
 variable "REGION" {
-  type = string
+  type    = string
   default = ""
 }
 
@@ -40,7 +40,7 @@ variable "secret_rotation_interval" {
 ### Staging Resources
 
 variable "ifrcgo_test_resources_rg" {
-  type = string
+  type    = string
   default = "ifrctgo002rg"
 }
 
@@ -50,8 +50,8 @@ variable "ifrcgo_test_resources_acr" {
 }
 
 variable "ifrcgo_test_resources_db_server" {
- type = string
- default = ""
+  type    = string
+  default = ""
 }
 
 # variable "ifrcgo_test_resources_db" {
@@ -72,8 +72,8 @@ variable "ifrcgo_test_resources_db_server" {
 # }
 
 variable "ifrcgo_prod_resources_db_server" {
- type = string
- default = ""
+  type    = string
+  default = ""
 }
 
 # variable "ifrcgo_prod_resources_db" {
@@ -85,11 +85,11 @@ variable "ifrcgo_prod_resources_db_server" {
 # Local variables
 
 locals {
-  location              = lower(replace(var.REGION, " ", ""))
-  prefix                = var.environment == "staging" ? "ifrctgo" : "ifrcpgo"
+  location = lower(replace(var.REGION, " ", ""))
+  prefix   = var.environment == "staging" ? "ifrctgo" : "ifrcpgo"
   # stack_id = "ifrcgo"
   # prefixnodashes        = "${local.stack_id}${var.environment}"
-  storage               = "${local.prefix}"
+  storage = local.prefix
   # deploy_secrets_prefix           = local.prefix
   # ifrcgo_test_resources_db_server = var.RESOURCES_DB_SERVER
   # ifrcgo_prod_resources_db_server = var.RESOURCES_DB_SERVER

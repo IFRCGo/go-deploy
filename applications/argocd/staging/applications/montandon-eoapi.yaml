@@ -114,7 +114,7 @@ spec:
                 host: "DB_HOST"
                 database: "DB_NAME"
                 port: "DB_PORT"
-        
+
         postgrescluster:
           enabled: false
           # instances:

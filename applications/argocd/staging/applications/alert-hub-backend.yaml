@@ -54,7 +54,7 @@ spec:
           aksSecretsProviderAvailable: true
           keyvault:
             name: "alert-hub-staging-kv"
-            clientId: "99dd63fe-721e-4abb-b30d-e2b782d2893d" 
+            clientId: "99dd63fe-721e-4abb-b30d-e2b782d2893d"
             tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
         env:
           APP_FRONTEND_HOST: "https://alerthub-stage.ifrc.org"
