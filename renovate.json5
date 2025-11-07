@@ -1,0 +1,15 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+      "config:recommended",
+      "mergeConfidence:all-badges",
+  ],
+  "ignorePaths": [],
+  // https://docs.renovatebot.com/modules/manager/regex/#regular-expression-capture-groups
+  customManagers: [],
+  "argocd": {
+    "fileMatch": [
+      "^applications/argocd/.+\\.yaml$"
+    ]
+  },
+}
