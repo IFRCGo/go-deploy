@@ -8,8 +8,12 @@
   // https://docs.renovatebot.com/modules/manager/regex/#regular-expression-capture-groups
   customManagers: [],
   "argocd": {
-    "fileMatch": [
+    "managerFilePatterns": [
       "^applications/argocd/.+\\.yaml$"
-    ]
+    ],
+    "ignorePaths": [
+      // Private registry
+      "^applications/argocd/.+/sdt-.+\\.yaml$",
+    ],
   },
 }
