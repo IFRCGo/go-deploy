@@ -1,0 +1,27 @@
+name: Pre-commit checks
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+
+jobs:
+  pre_commit_checks:
+    name: Pre-Commit checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Read Terraform version from file
+        id: tf_version
+        run: echo "terraform_version=$(cat .terraform-version)" >> $GITHUB_OUTPUT
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ steps.tf_version.outputs.terraform_version }}
+
+      - uses: terraform-linters/setup-tflint@v4
+
+      - uses: pre-commit/action@main

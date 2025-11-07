@@ -11,5 +11,6 @@ cd base-infrastructure/terraform
 sed -i "s/ENVIRONMENT_TO_REPLACE/$TF_VAR_environment/g" main.tf
 
 terraform init
-terraform plan
+
+# TODO: Remove auto-approve and add a confirmation step with plan
 terraform apply -auto-approve

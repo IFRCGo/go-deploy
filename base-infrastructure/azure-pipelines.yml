@@ -23,9 +23,18 @@ jobs:
     displayName: "Checkout go-deploy"
     path: go-deploy
 
+  - task: PowerShell@2
+    name: GetTerraformVersion
+    inputs:
+      targetType: 'inline'
+      script: |
+        $version = Get-Content .terraform-version | Select-Object -First 1
+        Write-Host "Terraform version found: $version"
+        # Set pipeline variable
+        Write-Host "##vso[task.setvariable variable=terraformVersion]$version"
   - task: "TerraformInstaller@1"
     inputs:
-      terraformVersion: '1.11.3'
+      terraformVersion: '$(terraformVersion)'
 
   # Deploy Terraform managed infrastructure to staging
   - script: chmod +x $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/setup-infra.sh

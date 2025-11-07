@@ -5,7 +5,7 @@ resource "helm_release" "ifrcgo-ingress-nginx" {
   namespace        = "ingress-nginx"
   version          = "4.12.1"
   create_namespace = true
-  depends_on       = [
+  depends_on = [
     azurerm_public_ip.ifrcgo
   ]
 
@@ -15,17 +15,17 @@ resource "helm_release" "ifrcgo-ingress-nginx" {
   }
 
   set {
-    name = "controller.service.externalTrafficPolicy"
+    name  = "controller.service.externalTrafficPolicy"
     value = "Local"
   }
 
   set {
-    name = "controller.replicaCount"
+    name  = "controller.replicaCount"
     value = 1
   }
 
   set {
-    name = "controller.service.loadBalancerIP"
+    name  = "controller.service.loadBalancerIP"
     value = azurerm_public_ip.ifrcgo.ip_address
   }
 

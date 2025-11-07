@@ -51,9 +51,9 @@ Azure Key Vault is used to securely store and manage sensitive information such 
    - Install the Secrets Store CSI Driver on your AKS cluster. For our cluster this is done through terraform with this config on the AKS cluster:
      ```
      resource "azurerm_kubernetes_cluster" "ifrcgo" {
-     
+
        ... other config ....
-     
+
        key_vault_secrets_provider {
          secret_rotation_enabled  = true
          secret_rotation_interval = var.secret_rotation_interval
@@ -63,7 +63,7 @@ Azure Key Vault is used to securely store and manage sensitive information such 
      }
      ```
      The above configuration also enables the AKS cluster to check for secret changes after a fixed interval.
-     
+
    - Ensure that the AKS cluster has the necessary permissions to access the Azure Key Vault.
 
 2. **Create a `SecretProviderClass`**:
