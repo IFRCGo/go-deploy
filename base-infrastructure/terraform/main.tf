@@ -14,7 +14,10 @@ terraform {
     resource_group_name  = "ifrctgo002rg"
     storage_account_name = "ifrcgoterraform"
     container_name       = "terraform"
-    # this is meant to be replaced in base-infrastructure/scripts/setup-infra.sh
+    # TODO: Replace this with terragrunt
+    # NOTE: this is meant to be replaced in
+    # - base-infrastructure/scripts/apply-infra.sh
+    # - base-infrastructure/scripts/plan-infra.sh
     # so that the correct environment is deployed
     key = "ENVIRONMENT_TO_REPLACE"
   }

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# NOTE: Make sure to sync this with ./apply-infra.sh
 set -x
 set -e
 
@@ -12,5 +13,4 @@ sed -i "s/ENVIRONMENT_TO_REPLACE/$TF_VAR_environment/g" main.tf
 
 terraform init
 
-# TODO: Remove auto-approve and add a confirmation step with plan
-terraform apply -auto-approve
+terraform plan
