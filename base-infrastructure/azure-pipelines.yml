@@ -5,10 +5,6 @@ trigger:
 # no PR triggers
 pr:
   drafts: "false"
-  branches:
-    include:
-    # TODO: Include chore?
-    - feat/*
 
 resources:
   repositories:
