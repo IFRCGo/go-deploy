@@ -6,7 +6,16 @@
   ],
   "ignorePaths": [],
   // https://docs.renovatebot.com/modules/manager/regex/#regular-expression-capture-groups
-  customManagers: [],
+  customManagers: [
+    {
+      customType: "regex",
+      managerFilePatterns: ["*"],
+      matchStrings: [
+        '# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s*(?<key>[A-Za-z0-9._-]+)\\s*[:=]\\s*"?v?(?<currentValue>[0-9][^"\\s]*)"?',
+      ],
+      versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
+    },
+  ],
   "argocd": {
     "managerFilePatterns": [
       "^applications/argocd/.+\\.yaml$"
