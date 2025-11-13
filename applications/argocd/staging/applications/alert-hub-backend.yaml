@@ -9,77 +9,41 @@ spec:
   project: default
   source:
     repoURL: ghcr.io/ifrcgo
-    chart: ifrcgo-alert-hub-helm
-    targetRevision: 0.0.1-develop.c53f7d29
+    # chart: ifrcgo-alert-hub-helm
+    chart: ifrcgo-alert-hub-dev-helm
+    targetRevision: 0.1.1-feat-msg-type-cancel.c026cbfa
     helm:
-      valuesObject:
-        global:
-          security:
-            allowInsecureImages: true
-        redis:
-          image:
-            repository: bitnamilegacy/redis
-        api:
-          resources:
-            requests:
-              cpu: "0.2"
-              memory: 1Gi
-        worker:
-          beat:
-            resources:
-              requests:
-                cpu: "0.1"
-                memory: 0.15Gi
-          flower:
-            resources:
-              requests:
-                cpu: "0.1"
-                memory: 0.5Gi
-          queues:
-            default:
-              resources:
-                requests:
-                  cpu: "0.1"
-                  memory: 0.5Gi
-            feeds:
-              resources:
-                requests:
-                  cpu: "0.1"
-                  memory: 0.5Gi
-        ingress:
-          host: "alerthub-stage-api.ifrc.org"
-          tls:
-            secretName: "alerthub-helm-secret-cert"
-        azure:
-          aksSecretsProviderAvailable: true
-          keyvault:
-            name: "alert-hub-staging-kv"
-            clientId: "99dd63fe-721e-4abb-b30d-e2b782d2893d"
-            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
-        env:
-          APP_FRONTEND_HOST: "https://alerthub-stage.ifrc.org"
-          APP_DOMAIN: "alerthub-stage-api.ifrc.org"
-          DJANGO_ALLOWED_HOSTS: "alerthub-stage-api.ifrc.org"
-          SESSION_COOKIE_DOMAIN: ".ifrc.org"
-          CSRF_COOKIE_DOMAIN: ".ifrc.org"
-          CORS_ALLOWED_ORIGINS: "https://alerthub-stage.ifrc.org"
-          # Blob Storage Configs
-          USE_AZURE_STORAGE: true
-          AZURE_CLIENT_ID: 99dd63fe-721e-4abb-b30d-e2b782d2893d
-          AZURE_TENANT_ID: a2b53be5-734e-4e6c-ab0d-d184f60fd917
-          AZURE_STORAGE_MEDIA_CONTAINER: alert-hub-staging-media-container
-          AZURE_STORAGE_STATIC_CONTAINER: alert-hub-staging-static-container
-          AZURE_STORAGE_ACCOUNT_NAME: ifrctgo
-          AZURE_STORAGE_MANAGED_IDENTITY: true
-        serviceAccount:
-          create: true
-          name: service-token-reader
-          annotations:
-            azure.workload.identity/client-id: "99dd63fe-721e-4abb-b30d-e2b782d2893d"
-          labels:
-            azure.workload.identity/use: "true"
       valueFiles:
         - values-staging.yaml
+      valuesObject:
+        app:
+          ingress:
+            host: "alerthub-stage-api.ifrc.org"
+            tls:
+              secretName: "alerthub-helm-secret-cert"
+          env:
+            APP_FRONTEND_HOST: "https://alerthub-stage.ifrc.org"
+            APP_DOMAIN: "alerthub-stage-api.ifrc.org"
+            DJANGO_ALLOWED_HOSTS: "alerthub-stage-api.ifrc.org"
+            SESSION_COOKIE_DOMAIN: ".ifrc.org"
+            CSRF_COOKIE_DOMAIN: ".ifrc.org"
+            CORS_ALLOWED_ORIGINS: "https://alerthub-stage.ifrc.org"
+            # Blob Storage Configs
+            USE_AZURE_STORAGE: "true"
+            AZURE_CLIENT_ID: 99dd63fe-721e-4abb-b30d-e2b782d2893d
+            AZURE_TENANT_ID: a2b53be5-734e-4e6c-ab0d-d184f60fd917
+            AZURE_STORAGE_MEDIA_CONTAINER: alert-hub-staging-media-container
+            AZURE_STORAGE_STATIC_CONTAINER: alert-hub-staging-static-container
+            AZURE_STORAGE_ACCOUNT_NAME: ifrctgo
+            AZURE_STORAGE_MANAGED_IDENTITY: "true"
+          serviceAccount:
+            annotations:
+              azure.workload.identity/client-id: "99dd63fe-721e-4abb-b30d-e2b782d2893d"
+          secretsStoreCsiDriver:
+            parameters:
+              clientID: "99dd63fe-721e-4abb-b30d-e2b782d2893d"
+              keyvaultName: "alert-hub-staging-kv"
+              tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
   destination:
     server: https://kubernetes.default.svc
     namespace: alert-hub
