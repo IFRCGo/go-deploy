@@ -9,11 +9,8 @@ spec:
   project: default
   sources:
   - repoURL: https://devseed.com/eoapi-k8s/
-  # - repoURL: https://github.com/developmentseed/eoapi-k8s.git
     chart: eoapi
-    targetRevision: 0.7.10
-    # targetRevision: "stac.overrideRootPath"
-    # path: charts/eoapi
+    targetRevision: 0.7.13
     helm:
       valuesObject:
         ingress:
@@ -85,6 +82,10 @@ spec:
           # image:
           #   name: ghcr.io/stac-utils/pgstac
           #   tag: v0.9.5
+          queryables:
+            - file: "montandon-eoapi/queryables.json"
+              indexFields: ["monty:country_codes", "monty:corr_id", "monty:hazard_codes"]
+              deleteMissing: true
           settings:
             labels:
               azure.workload.identity/use: "true"
