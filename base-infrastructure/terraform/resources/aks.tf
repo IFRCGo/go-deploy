@@ -8,6 +8,9 @@ resource "azurerm_kubernetes_cluster" "ifrcgo" {
   resource_group_name = data.azurerm_resource_group.ifrcgo.name
   dns_prefix          = "${local.prefix}-cluster"
 
+  # XXX: Make sure to user azure supported versions
+  # https://releases.aks.azure.com/
+  # https://endoflife.date/azure-kubernetes-service
   # renovate: datasource=github-tags depName=kubernetes/kubernetes
   kubernetes_version = "1.33.3"
 
