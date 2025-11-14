@@ -9,11 +9,11 @@ spec:
   project: default
   source:
     repoURL: ghcr.io/ifrcgo
-    # chart: ifrcgo-alert-hub-helm
-    chart: ifrcgo-alert-hub-dev-helm
-    targetRevision: 0.1.1-feat-msg-type-cancel.c026cbfa
+    chart: ifrcgo-alert-hub-helm
+    targetRevision: 0.1.1-develop.cf42ebe0
     helm:
       valueFiles:
+        - values-go-deploy.yaml
         - values-staging.yaml
       valuesObject:
         app:
