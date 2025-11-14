@@ -32,7 +32,7 @@ jobs:
     displayName: "Deploy staging instance of go-api"
     env:
       ENVIRONMENT: staging
-      VERSION: "0.0.2-develop.cba9d061"
+      VERSION: "0.0.2-develop.cf171c69"
       # For Azure CLI
       AZURE_TENANT_ID: $(TERRAFORM_TENANT_ID)
       AZURE_CLIENT_ID: $(TERRAFORM_SERVICE_PRINCIPAL_ID)
@@ -120,7 +120,7 @@ jobs:
     displayName: "Deploy production instance of go-api"
     env:
       ENVIRONMENT: production
-      VERSION: "0.0.2-master.c423bf17"
+      VERSION: "0.0.2-master.c0c72736"
       # For Azure CLI
       AZURE_TENANT_ID: $(TERRAFORM_TENANT_ID)
       AZURE_CLIENT_ID: $(TERRAFORM_SERVICE_PRINCIPAL_ID)
@@ -201,4 +201,3 @@ jobs:
       OIDC_ENABLE: $(PRODUCTION_OIDC_ENABLE)
       OIDC_RSA_PRIVATE_KEY_BASE64_ENCODED: $(PRODUCTION_OIDC_RSA_PRIVATE_KEY_BASE64_ENCODED)
       OIDC_RSA_PUBLIC_KEY_BASE64_ENCODED: $(PRODUCTION_OIDC_RSA_PUBLIC_KEY_BASE64_ENCODED)
-

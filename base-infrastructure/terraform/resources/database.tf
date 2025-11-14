@@ -1,3 +1,4 @@
+# tflint-ignore: terraform_unused_declarations
 data "azurerm_postgresql_flexible_server" "ifrcgo" {
   name                = var.environment == "staging" ? var.ifrcgo_test_resources_db_server : var.ifrcgo_prod_resources_db_server
   resource_group_name = data.azurerm_resource_group.ifrcgo.name
@@ -52,7 +53,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
 resource "azurerm_postgresql_flexible_server_configuration" "alerthub_postgres_config" {
   for_each = {
     #    effective_cache_size             = "12288000"   # 12GB - About 75% of total RAM
-    #    shared_buffers                   = "2097152"    # 2GB 
+    #    shared_buffers                   = "2097152"    # 2GB
     #    work_mem                         = "65536"      # 64MB
     #    maintenance_work_mem             = "1048576"    # 1GB - About 6.4% of RAM
     #    random_page_cost                 = "1.1"        # Lower value for SSD storage

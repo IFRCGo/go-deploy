@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# NOTE: Make sure to sync this with ./apply-infra.sh
 set -x
 set -e
 
@@ -11,5 +12,5 @@ cd base-infrastructure/terraform
 sed -i "s/ENVIRONMENT_TO_REPLACE/$TF_VAR_environment/g" main.tf
 
 terraform init
+
 terraform plan
-terraform apply -auto-approve

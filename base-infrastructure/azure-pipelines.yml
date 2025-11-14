@@ -3,7 +3,8 @@ trigger:
 - develop
 
 # no PR triggers
-pr: none
+pr:
+  drafts: "false"
 
 resources:
   repositories:
@@ -11,7 +12,7 @@ resources:
     type: github
     endpoint: IFRCGo
     name: IFRCGo/go-deploy
-    ref: ${{ variables['Build.SourceBranchName'] }}
+    ref: ${{ variables['Build.SourceBranch'] }}
 
 pool:
   vmImage: ubuntu-latest
@@ -23,16 +24,50 @@ jobs:
     displayName: "Checkout go-deploy"
     path: go-deploy
 
+  - task: PowerShell@2
+    name: GetTerraformVersion
+    inputs:
+      targetType: 'inline'
+      script: |
+        $version = Get-Content .terraform-version | Select-Object -First 1
+        Write-Host "Terraform version found: $version"
+        # Set pipeline variable
+        Write-Host "##vso[task.setvariable variable=terraformVersion]$version"
+
   - task: "TerraformInstaller@1"
     inputs:
-      terraformVersion: '1.11.3'
+      terraformVersion: '$(terraformVersion)'
 
   # Deploy Terraform managed infrastructure to staging
-  - script: chmod +x $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/setup-infra.sh
-    displayName: "Make setup-infra executable"
+  - script: chmod +x $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/apply-infra.sh
+    displayName: "Make apply-infra executable"
 
-  - bash: $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/setup-infra.sh
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
+  # TODO: add plan-infra for main branch (when PR created from develop)
+  - bash: $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/plan-infra.sh
+    condition: and(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['System.PullRequest.targetBranchName'], 'develop'))
+    displayName: "Plan Staging Infrastructure"
+    env:
+      TF_VAR_environment: staging
+      TF_VAR_subscriptionId: $(TERRAFORM_SUBSCRIPTION_ID)
+      # DB resources
+      TF_VAR_RESOURCES_DB_SERVER: $(STAGING_RESOURCES_DB_SERVER)
+      TF_VAR_RESOURCES_DB_NAME: $(STAGING_RESOURCES_DB_NAME)
+      TF_VAR_REGION: $(STAGING_REGION)
+
+      # For azurerm backend
+      ARM_SUBSCRIPTION_ID: $(TERRAFORM_SUBSCRIPTION_ID)
+      ARM_TENANT_ID: $(TERRAFORM_TENANT_ID)
+      ARM_CLIENT_ID: $(TERRAFORM_SERVICE_PRINCIPAL_ID)
+      ARM_CLIENT_SECRET: $(TERRAFORM_SERVICE_PRINCIPAL_KEY)
+      ARM_ACCESS_KEY: $(TERRAFORM_STORAGE_KEY)
+
+      # For Azure CLI
+      AZURE_TENANT_ID: $(TERRAFORM_TENANT_ID)
+      AZURE_CLIENT_ID: $(TERRAFORM_SERVICE_PRINCIPAL_ID)
+      AZURE_CLIENT_SECRET: $(TERRAFORM_SERVICE_PRINCIPAL_KEY)
+
+  - bash: $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/apply-infra.sh
+    condition: and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
     displayName: "Deploy Staging Infrastructure"
     env:
       TF_VAR_environment: staging
@@ -55,8 +90,8 @@ jobs:
       AZURE_CLIENT_SECRET: $(TERRAFORM_SERVICE_PRINCIPAL_KEY)
 
   # Deploy Terraform managed infrastructure to production
-  - bash: $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/setup-infra.sh
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  - bash: $(Pipeline.Workspace)/go-deploy/base-infrastructure/scripts/apply-infra.sh
+    condition: and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     displayName: "Deploy Production Infrastructure"
     env:
       TF_VAR_environment: production

@@ -1,22 +1,31 @@
 resource "azurerm_kubernetes_cluster" "ifrcgo" {
-#  lifecycle {
-#    ignore_changes = all
-#  }
-  
+  #  lifecycle {
+  #    ignore_changes = all
+  #  }
+
   name                = "${local.prefix}-cluster"
   location            = data.azurerm_resource_group.ifrcgo.location
   resource_group_name = data.azurerm_resource_group.ifrcgo.name
   dns_prefix          = "${local.prefix}-cluster"
-  kubernetes_version  = "1.33.0"
+
+  # XXX: Make sure to user azure supported versions
+  # https://releases.aks.azure.com/
+  # https://endoflife.date/azure-kubernetes-service
+  # renovate: datasource=github-tags depName=kubernetes/kubernetes
+  kubernetes_version = "1.33.3"
 
   default_node_pool {
-    name           = "nodepool1"
-    vm_size        = "Standard_DS3_v2"
-    vnet_subnet_id = azurerm_subnet.aks.id
-    enable_auto_scaling   = true
-    min_count             = 1
-    max_count             = 5
+    name                        = "nodepool1"
+    vm_size                     = "Standard_DS3_v2"
+    vnet_subnet_id              = azurerm_subnet.aks.id
+    enable_auto_scaling         = true
+    min_count                   = 1
+    max_count                   = 5
     temporary_name_for_rotation = "nodepooltemp"
+
+    upgrade_settings {
+      max_surge = "10%"
+    }
   }
 
   identity {
@@ -53,13 +62,13 @@ resource "azurerm_role_assignment" "storage" {
 # create k8s configmaps and secrets
 
 provider "kubernetes" {
-  host                   = azurerm_kubernetes_cluster.ifrcgo.kube_config.0.host
-  client_certificate     = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config.0.client_certificate)
-  client_key             = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config.0.client_key)
-  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config.0.cluster_ca_certificate)
+  host                   = azurerm_kubernetes_cluster.ifrcgo.kube_config[0].host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config[0].client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config[0].client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.ifrcgo.kube_config[0].cluster_ca_certificate)
 }
 
-# This ConfigMap stores configurations for resources created by Terraform which 
+# This ConfigMap stores configurations for resources created by Terraform which
 # are later referenced in the go-api Helm chart. Values from this ConfigMap
 # are either directly utilized in Kubernetes resource definitions or provided
 # as parameters to the Helm chart.
