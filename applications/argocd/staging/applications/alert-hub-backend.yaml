@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-alert-hub-helm
-    targetRevision: 0.1.1-develop.cf42ebe0
+    targetRevision: 0.1.1-develop.cfa7aea0
     helm:
       valueFiles:
         - values-go-deploy.yaml
