@@ -10,72 +10,37 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/montandon-etl
     chart: montandon-etl-helm
-    targetRevision: 0.0.1-develop.533c27f
+    targetRevision: 0.1.1-develop.cad5f87e
     helm:
-      valuesObject:
-        global:
-          security:
-            allowInsecureImages: true
-        redis:
-          image:
-            repository: bitnamilegacy/redis
-        image:
-          name: ghcr.io/ifrcgo/montandon-etl
-          tag: develop.533c27f
-        ingress:
-          enabled: true
-          host: montandon-etl-stage.ifrc.org
-          className: nginx
-          tls:
-            enabled: true
-            secretName: montandon-helm-secret-cert
-
-        localCacheVolume:
-          storageClass: azurefile-csi
-
-        api:
-          resources:
-            requests:
-              cpu: "0.2"
-              memory: 0.5Gi
-        worker:
-          beat:
-            resources:
-              requests:
-                cpu: "0.2"
-                memory: 0.5Gi
-        # Environment variables
-        env:
-          DJANGO_DEBUG: false
-          DJANGO_TIME_ZONE: UTC
-          # App Domain
-          DJANGO_ALLOWED_HOSTS: "*"
-          # Azure configs
-          AZURE_STORAGE_ENABLE: true
-          AZURE_STORAGE_ACCOUNT_NAME: montystaging6757
-          AZURE_STORAGE_MEDIA_CONTAINER: montandon-etl-staging-media-container
-          AZURE_STORAGE_STATIC_CONTAINER: montandon-etl-staging-static-container
-          # ETL Load config
-          EOAPI_DOMAIN: "montandon-eoapi-stage.ifrc.org"
-        # Azure configurations
-        azure:
-          aksSecretsProviderAvailable: true
-          keyvault:
-            name: "montandon-etl-staging-kv"
-            clientId: "bcc2593b-4885-46b4-8430-b85b34a22737"
-            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
-        serviceAccount:
-          # Specifies whether a service account should be created
-          # Required when using workload identity to access Azure Key Vault Secrets
-          create: true
-          automount: true
-          annotations:
-            azure.workload.identity/client-id : "bcc2593b-4885-46b4-8430-b85b34a22737"
-          labels:
-            azure.workload.identity/use: "true"
-          name: "service-token-reader"
       valueFiles:
-        - values-test.yaml
+        - values/operators.yaml
+        - values/go-deploy.yaml
+        - values/staging.yaml
+      valuesObject:
+        app:
+          ingress:
+            host: montandon-etl-stage.ifrc.org
+            tls:
+              secretName: montandon-helm-secret-cert
+          env:
+            # Azure configs
+            AZURE_STORAGE_ENABLE: "true"
+            AZURE_CLIENT_ID: bcc2593b-4885-46b4-8430-b85b34a22737
+            AZURE_TENANT_ID: a2b53be5-734e-4e6c-ab0d-d184f60fd917
+            AZURE_STORAGE_MEDIA_CONTAINER: montandon-etl-staging-media-container
+            AZURE_STORAGE_STATIC_CONTAINER: montandon-etl-staging-static-container
+            AZURE_STORAGE_ACCOUNT_NAME: montystaging6757
+            AZURE_STORAGE_MANAGED_IDENTITY: "true"
+            # ETL Load config
+            EOAPI_DOMAIN: "montandon-eoapi-stage.ifrc.org"
+          serviceAccount:
+            annotations:
+              azure.workload.identity/client-id : "bcc2593b-4885-46b4-8430-b85b34a22737"
+          secretsStoreCsiDriver:
+            parameters:
+              clientID: "bcc2593b-4885-46b4-8430-b85b34a22737"
+              keyvaultName: "montandon-etl-staging-kv"
+              tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-etl
