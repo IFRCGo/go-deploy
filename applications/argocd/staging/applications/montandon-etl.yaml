@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/montandon-etl
     chart: montandon-etl-helm
-    targetRevision: 0.1.1-develop.c831e02d
+    targetRevision: 0.1.1-develop.cf940c39
     helm:
       valueFiles:
         - values/operators.yaml
@@ -32,7 +32,7 @@ spec:
             AZURE_STORAGE_ACCOUNT_NAME: montystaging6757
             AZURE_STORAGE_MANAGED_IDENTITY: "true"
             # ETL Load config
-            EOAPI_DOMAIN: "montandon-eoapi-stage.ifrc.org"
+            EOAPI_STAC_API: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local:8080/"
           serviceAccount:
             annotations:
               azure.workload.identity/client-id : "bcc2593b-4885-46b4-8430-b85b34a22737"
