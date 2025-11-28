@@ -135,7 +135,7 @@ resource "azurerm_postgresql_flexible_server" "montandon" {
   administrator_login           = "postgres"
   administrator_password        = random_password.montandon_db_user.result
   backup_retention_days         = 35
-  storage_mb                    = 32768
+  auto_grow_enabled             = true
   sku_name                      = "GP_Standard_D2ds_v5"
   delegated_subnet_id           = azurerm_subnet.postgres.id
   private_dns_zone_id           = azurerm_private_dns_zone.ifrcgo.id
