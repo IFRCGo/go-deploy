@@ -142,8 +142,8 @@ spec:
           # UPSTREAM_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
           OIDC_DISCOVERY_URL: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
           OVERRIDE_HOST: "0"
-          COLLECTIONS_FILTER_CLS: stac_auth_proxy.contrib.montandon_filters:CollectionsFilter
-          ITEMS_FILTER_CLS: stac_auth_proxy.contrib.montandon_filters:ItemsFilter
+          COLLECTIONS_FILTER_CLS: stac_auth_proxy.montandon_filters:CollectionsFilter
+          ITEMS_FILTER_CLS: stac_auth_proxy.montandon_filters:ItemsFilter
         ingress:
           enabled: "true"
           host: "stac-test.whydidweevendothis.com"
@@ -160,7 +160,8 @@ spec:
               name: stac-auth-proxy-filters
         extraVolumeMounts:
           - name: filters
-            mountPath: /app/src/stac_auth_proxy/contrib
+            mountPath: /app/src/stac_auth_proxy/montandon_filters.py
+            subPath: montandon_filters.py
             readOnly: true
   destination:
     server: https://kubernetes.default.svc

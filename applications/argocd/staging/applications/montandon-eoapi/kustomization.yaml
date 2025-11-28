@@ -9,5 +9,4 @@ resources:
 configMapGenerator:
   - name: stac-auth-proxy-filters
     files:
-      - __init__.py=stac-auth-proxy-filters/__init__.py
-      - montandon_filters.py=stac-auth-proxy-filters/montandon_filters.py
+      - montandon_filters.py=stac-auth-proxy/montandon_filters.py
