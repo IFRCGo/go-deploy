@@ -21,10 +21,16 @@ class CollectionsFilter:
 
     collections_claim: str = "collections"  # JWT claim with allowed collection IDs
     admin_claim: str = "superuser"  # JWT claim indicating superuser status
-    public_collections_filter: str = "private IS NULL OR private = false"
+    public_collections_filter: str = "(private IS NULL OR private = false)"
 
     async def __call__(self, context: dict[str, Any]) -> str:
-        jwt_payload = context.get("payload", {})
+        jwt_payload: Optional[dict[str, Any]] = context.get("payload")
+
+        # Anonymous: only public collections
+        if not jwt_payload:
+            return self.public_collections_filter
+
+        # Superuser: no filter
         if jwt_payload.get(self.admin_claim):
             logger.info(
                 f"Superuser detected for sub {jwt_payload.get('sub')}, "
@@ -32,7 +38,7 @@ class CollectionsFilter:
             )
             return "1=1"  # No filter for superusers
 
-        # Allowed to access collections in specified collections
+        # Authenticated user: Allowed to access collections mentioned in JWT
         permitted_collections = jwt_payload.get(self.collections_claim, [])
         return " OR ".join(
             [
@@ -52,7 +58,7 @@ class ItemsFilter:
 
     collections_claim: str = "collections"  # JWT claim with allowed collection IDs
     admin_claim: str = "superuser"  # JWT claim indicating superuser status
-    public_collections_filter: str = "private IS NULL OR private = false"
+    public_collections_filter: str = "(private IS NULL OR private = false)"
 
     cache_ttl: int = 30  # TTL for caching public collections, in seconds
     _client: httpx.AsyncClient = dataclasses.field(
@@ -115,18 +121,22 @@ class ItemsFilter:
         return ids
 
     async def __call__(self, context: dict[str, Any]) -> str:
-        jwt_payload = context.get("payload", {})
-        if jwt_payload.get(self.admin_claim):
+        jwt_payload: Optional[dict[str, Any]] = context.get("payload")
+
+        # Superuser: no filter
+        if jwt_payload and jwt_payload.get(self.admin_claim):
             logger.info(
                 f"Superuser detected for sub {jwt_payload.get('sub')}, "
                 "no filter applied for items"
             )
-            return "1=1"  # No filter for superusers
+            return "1=1"
 
-        # Allowed to access items in specified collections
-        permitted_collections = set(jwt_payload.get(self.collections_claim, []))
-        # Allowed to access items in public collections
-        permitted_collections.update(await self._get_public_collections_ids())
+        # Everyone: Allowed access to items in public collections
+        permitted_collections = set(await self._get_public_collections_ids())
+
+        # Authenticated user: Allowed to access items in collections mentioned in JWT
+        if jwt_payload:
+            permitted_collections.update(jwt_payload.get(self.collections_claim, []))
 
         return " OR ".join(
             f"collection = '{collection_id}'" for collection_id in permitted_collections
