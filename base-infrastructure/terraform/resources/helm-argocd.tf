@@ -14,6 +14,9 @@ resource "helm_release" "argo-cd" {
   values = [
     yamlencode({
       configs = {
+        params = {
+          "server.insecure" : "true" # To avoid redirect when argocd is behind ingress - https://argo-cd.readthedocs.io/en/latest/operator-manual/ingress/
+        }
         cm = {
           "timeout.reconciliation" : "60s"
           "timeout.hard.reconciliation" : "90s"
