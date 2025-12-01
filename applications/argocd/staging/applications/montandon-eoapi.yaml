@@ -14,16 +14,17 @@ spec:
     helm:
       valuesObject:
         ingress:
-          host: "montandon-eoapi-stage.ifrc.org"
-          tls:
-            enabled: true
-            secretName: montandon-eoapi-helm-secret-cert
-          annotations:
-            # increase the max body size to 100MB
-            nginx.ingress.kubernetes.io/proxy-body-size: "100m"
-            nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-            nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-            nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+          enabled: false
+          # host: "montandon-eoapi-stage.ifrc.org"
+          # tls:
+          #   enabled: true
+          #   secretName: montandon-eoapi-helm-secret-cert
+          # annotations:
+          #   # increase the max body size to 100MB
+          #   nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+          #   nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+          #   nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+          #   nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
         raster:
           enabled: false
         stac:
@@ -140,13 +141,11 @@ spec:
           OVERRIDE_HOST: "0"
         ingress:
           enabled: "true"
-          host: "stac-test.whydidweevendothis.com"
+          host: "montandon-eoapi-stage.ifrc.org"
           className: "nginx"
-          annotations:
-            cert-manager.io/cluster-issuer: "letsencrypt-prod-issuer"
           tls:
             enabled: "true"
-            secretName: "stac-auth-proxy-tls-cert"
+            secretName: "montandon-eoapi-helm-secret-cert"
         replicaCount: 1
   destination:
     server: https://kubernetes.default.svc
