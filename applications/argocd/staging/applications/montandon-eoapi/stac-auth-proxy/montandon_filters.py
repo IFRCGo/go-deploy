@@ -58,7 +58,7 @@ class CollectionsFilter:
             return self.public_collections_filter
 
         # Superuser: no filter
-        if jwt_payload.get(self.admin_claim):
+        if jwt_payload.get(self.admin_claim) == 'true':
             logger.debug(
                 f"Superuser detected for sub {jwt_payload.get('sub')}, "
                 "no filter applied for collections"
@@ -165,7 +165,7 @@ class ItemsFilter:
         jwt_payload: Optional[dict[str, Any]] = context.get("payload")
 
         # Superuser: no filter
-        if jwt_payload and jwt_payload.get(self.admin_claim):
+        if jwt_payload and jwt_payload.get(self.admin_claim) == 'true':
             logger.debug(
                 f"Superuser detected for sub {jwt_payload.get('sub')}, "
                 "no filter applied for items"
