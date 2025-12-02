@@ -19,7 +19,7 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-if not (UPSTREAM_URL := os.environ.get("UPSTREAM_URL"))
+if not (UPSTREAM_URL := os.environ.get("UPSTREAM_URL")):
     raise ValueError("Failed to retrieve upstream URL")
 
 
