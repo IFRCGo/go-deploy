@@ -53,12 +53,13 @@ class CollectionsFilter:
     async def __call__(self, context: dict[str, Any]) -> str:
         jwt_payload: Optional[dict[str, Any]] = context.get("payload")
 
-        # Anonymous: only public collections
+        # Anonymous: no data
         if not jwt_payload:
-            return self.public_collections_filter
+            logger.debug("Anonymous user, no collections permitted to be viewed")
+            return "1=0"
 
-        # Superuser: no filter
-        if jwt_payload.get(self.admin_claim) == 'true':
+        # Superuser: all data
+        if jwt_payload.get(self.admin_claim) == "true":
             logger.debug(
                 f"Superuser detected for sub {jwt_payload.get('sub')}, "
                 "no filter applied for collections"
@@ -164,8 +165,13 @@ class ItemsFilter:
     async def __call__(self, context: dict[str, Any]) -> str:
         jwt_payload: Optional[dict[str, Any]] = context.get("payload")
 
-        # Superuser: no filter
-        if jwt_payload and jwt_payload.get(self.admin_claim) == 'true':
+        # Anonymous: no data
+        if not jwt_payload:
+            logger.debug("Anonymous user, no items permitted to be viewed")
+            return "1=0"
+
+        # Superuser: all data
+        if jwt_payload.get(self.admin_claim) == "true":
             logger.debug(
                 f"Superuser detected for sub {jwt_payload.get('sub')}, "
                 "no filter applied for items"
