@@ -49,9 +49,9 @@ spec:
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
               CORS_ORIGIN_REGEX: ".*"
+              CORS_HEADERS: "Accept, Authorization, Content-Type, Origin, X-Requested-With"
               CORS_METHODS: "GET,OPTIONS"
-              CORS_CREDENTIALS: "True"
-              CORS_HEADERS: "*"
+              CORS_CREDENTIALS: "true"
             # extraEnvFrom:
             #   - secretRef:
             #       name: pgstac-secrets-montandon-eoapi
