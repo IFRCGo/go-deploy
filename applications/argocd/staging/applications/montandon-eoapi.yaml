@@ -44,7 +44,7 @@ spec:
               ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
               FORWARDED_ALLOW_IPS: "*"
               PROXY_HEADERS: True
-              CORS_ORIGIN: "https://*"
+              CORS_ORIGIN: "https://localhost:3000,https://alerthub-stage.ifrc.org,https://montandon-eoapi-stage.ifrc.org"
               CORS_ORIGIN_REGEX: ".*"
               CORS_HEADERS: "Accept, Authorization, Content-Type, Origin, X-Requested-With"
               CORS_METHODS: "GET,OPTIONS"
