@@ -77,15 +77,15 @@ spec:
           image:
             tag: v0.9.8
           settings:
-            labels:
-              azure.workload.identity/use: "true"
-            extraVolumes:
-              - name: azure-keyvault-secrets
-                csi:
-                  driver: secrets-store.csi.k8s.io
-                  readOnly: true
-                  volumeAttributes:
-                    secretProviderClass: azure-secret-provider-montandon-eoapi
+            # labels:
+            #   azure.workload.identity/use: "true"
+            # extraVolumes:
+            #   - name: azure-keyvault-secrets
+            #     csi:
+            #       driver: secrets-store.csi.k8s.io
+            #       readOnly: true
+            #       volumeAttributes:
+            #         secretProviderClass: azure-secret-provider-montandon-eoapi
             queryables:
               # configMap
               - name: "stac-queryables.json"
