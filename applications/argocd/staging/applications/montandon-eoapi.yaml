@@ -40,7 +40,7 @@ spec:
               limits:
                 memory: "4096Mi"
                 cpu: "1000m"
-            overrideRootPath: ""
+            # overrideRootPath: ""
             envVars:
               ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
               FORWARDED_ALLOW_IPS: "*"
@@ -136,7 +136,7 @@ spec:
     helm:
       valuesObject:
         env:
-          UPSTREAM_URL: "http://montandon-eoapi-stac:8080"
+          UPSTREAM_URL: "http://montandon-eoapi-stac:8080/stac"
           # UPSTREAM_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
           OIDC_DISCOVERY_URL: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
           OVERRIDE_HOST: "0"
