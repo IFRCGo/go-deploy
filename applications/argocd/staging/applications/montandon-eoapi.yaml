@@ -140,6 +140,7 @@ spec:
           # UPSTREAM_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
           OIDC_DISCOVERY_URL: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
           OVERRIDE_HOST: "0"
+          ROOT_PATH: "/stac"
         ingress:
           enabled: "true"
           host: "montandon-eoapi-stage.ifrc.org"
