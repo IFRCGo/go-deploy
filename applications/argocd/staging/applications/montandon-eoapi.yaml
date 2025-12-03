@@ -30,6 +30,7 @@ spec:
         stac:
           image:
             tag: 6.1.2
+          overrideRootPath: ""
           settings:
             labels:
               azure.workload.identity/use: "true"
@@ -40,7 +41,6 @@ spec:
               limits:
                 memory: "4096Mi"
                 cpu: "1000m"
-            overrideRootPath: "/"
             envVars:
               ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
               FORWARDED_ALLOW_IPS: "*"
