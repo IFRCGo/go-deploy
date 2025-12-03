@@ -44,6 +44,7 @@ spec:
               ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
               FORWARDED_ALLOW_IPS: "*"
               PROXY_HEADERS: True
+              CORS_ORIGIN: ""
               CORS_ORIGIN_REGEX: ".*"
               CORS_HEADERS: "Accept, Authorization, Content-Type, Origin, X-Requested-With"
               CORS_METHODS: "GET,OPTIONS"
