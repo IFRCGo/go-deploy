@@ -41,20 +41,13 @@ spec:
                 memory: "4096Mi"
                 cpu: "1000m"
             envVars:
-              # https://stac-utils.github.io/stac-fastapi-pgstac/settings/#application-extension
               ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
-            extraEnvVars:
               FORWARDED_ALLOW_IPS: "*"
               PROXY_HEADERS: True
-              POSTGRES_USER: postgres
-              POSTGRES_PORT: 5432
               CORS_ORIGIN_REGEX: ".*"
               CORS_HEADERS: "Accept, Authorization, Content-Type, Origin, X-Requested-With"
               CORS_METHODS: "GET,OPTIONS"
               CORS_CREDENTIALS: "true"
-            # extraEnvFrom:
-            #   - secretRef:
-            #       name: pgstac-secrets-montandon-eoapi
             extraVolumeMounts:
               - name: azure-keyvault-secrets
                 mountPath: /mnt/secrets-store
