@@ -1,0 +1,127 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: montandon-eoapi-stac-queryables
+data:
+  stac_queryables.json: |
+    {
+      "$schema": "https://json-schema.org/draft/2019-09/schema",
+      "$id": "https://example.com/stac/queryables",
+      "type": "object",
+      "title": "Queryables for Monty STAC API",
+      "description": "Queryable names for the Monty STAC API",
+      "properties": {
+        "id": {
+          "description": "Item identifier",
+          "type": "string"
+        },
+        "collection": {
+          "description": "Collection identifier",
+          "type": "string"
+        },
+        "datetime": {
+          "description": "Datetime",
+          "type": "string",
+          "format": "date-time"
+        },
+        "geometry": {
+          "description": "Geometry",
+          "type": "object"
+        },
+        "monty:episode_number": {
+          "description": "The episode number of the event (deprecated)",
+          "type": "integer"
+        },
+        "monty:country_codes": {
+          "description": "The country codes of the countries affected by the event, hazard, impact or response",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^([A-Z]{3})|AB9$"
+          }
+        },
+        "monty:corr_id": {
+          "description": "The unique identifier assigned by the Monty system to the reference event",
+          "type": "string"
+        },
+        "monty:hazard_codes": {
+          "description": "The hazard codes of the hazards affecting the event",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^([A-Z]{2}(?:\\d{4}$){0,1})|([a-z]{3}-[a-z]{3}-[a-z]{3}-[a-z]{3})|([A-Z]{2})$"
+          }
+        },
+        "roles": {
+          "description": "The roles of the item",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["event", "reference", "source", "hazard", "impact", "response"]
+          }
+        },
+        "monty:hazard_detail.cluster": {
+          "description": "The cluster of the hazard (deprecated)",
+          "type": "string"
+        },
+        "monty:hazard_detail.severity_value": {
+          "description": "The estimated maximum hazard intensity/magnitude/severity value",
+          "type": "number"
+        },
+        "monty:hazard_detail.severity_unit": {
+          "description": "The unit of the severity value",
+          "type": "string"
+        },
+        "monty:hazard_detail.estimate_type": {
+          "description": "The type of the estimate",
+          "type": "string",
+          "enum": ["primary", "secondary", "modelled"]
+        },
+        "monty:impact_detail.category": {
+          "description": "The category of impact",
+          "type": "string",
+          "enum": [
+            "people", "crops", "women", "men", "children_0_4", "children_5_9", 
+            "children_10_14", "children_15_19", "adult_20_24", "adult_25_29", 
+            "adult_30_34", "adult_35_39", "adult_40_44", "adult_45_49", 
+            "adult_50_54", "adult_55_59", "adult_60_64", "elderly", 
+            "wheelchair_users", "roads", "railways", "vulnerable_employment", 
+            "buildings", "reconstruction_costs", "hospitals", "schools", 
+            "local_currency", "global_currency", "local_currency_adj", 
+            "global_currency_adj", "usd_uncertain", "cattle", "aid_general", 
+            "ifrc_contribution", "ifrc_requested", "alertscore", "households"
+          ]
+        },
+        "monty:impact_detail.type": {
+          "description": "The estimated value type of the impact",
+          "type": "string",
+          "enum": [
+            "unspecified", "unaffected", "damaged", "destroyed", "potentially_damaged", 
+            "affected_total", "affected_direct", "affected_indirect", "death", 
+            "missing", "injured", "evacuated", "relocated", "assisted", 
+            "shelter_emergency", "shelter_temporary", "shelter_longterm", "in_need", 
+            "targeted", "disrupted", "cost", "homeless", "displaced_internal", 
+            "displaced_external", "displaced_total", "alertscore", "potentially_affected", 
+            "highest_risk"
+          ]
+        },
+        "monty:impact_detail.value": {
+          "description": "The estimated impact value",
+          "type": "number"
+        },
+        "monty:impact_detail.unit": {
+          "description": "The units of the impact estimate",
+          "type": "string"
+        },
+        "monty:impact_detail.estimate_type": {
+          "description": "The type of the estimate",
+          "type": "string",
+          "enum": ["primary", "secondary", "modelled"]
+        },
+        "monty:impact_detail.description": {
+          "description": "The description of the impact",
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }

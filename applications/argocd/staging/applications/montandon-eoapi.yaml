@@ -28,9 +28,8 @@ spec:
         raster:
           enabled: false
         stac:
-          # image:
-          #   name: ghcr.io/sunu/stac-fastapi-pgstac
-          #   tag: 5.0.0-test7
+          image:
+            tag: 6.1.2
           settings:
             labels:
               azure.workload.identity/use: "true"
@@ -49,7 +48,7 @@ spec:
               PROXY_HEADERS: True
               POSTGRES_USER: postgres
               POSTGRES_PORT: 5432
-              CORS_ORIGINS: "http://localhost:8000"
+              CORS_ORIGIN_REGEX: ".*"
               CORS_METHODS: "GET,OPTIONS"
               CORS_CREDENTIALS: "True"
               CORS_HEADERS: "*"
@@ -80,9 +79,8 @@ spec:
 
         pgstacBootstrap:
           enabled: false
-          # image:
-          #   name: ghcr.io/stac-utils/pgstac
-          #   tag: v0.9.5
+          image:
+            tag: v0.9.8
           settings:
             labels:
               azure.workload.identity/use: "true"
@@ -99,6 +97,14 @@ spec:
                   readOnly: true
                   volumeAttributes:
                     secretProviderClass: azure-secret-provider-montandon-eoapi
+            queryables:
+              # configMap
+              - name: "stac-queryables.json"
+                configMapRef:
+                  name: montandon-eoapi-stac-queryables
+                  key: stac_queryables.json
+                indexFields: ["monty:hazard_codes", "monty:country_codes", "roles"]
+                deleteMissing: true
         postgresql:
           type: "external-secret"
           external:
