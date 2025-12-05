@@ -20,7 +20,7 @@ resource "azurerm_kubernetes_cluster" "ifrcgo" {
     vnet_subnet_id              = azurerm_subnet.aks.id
     enable_auto_scaling         = true
     min_count                   = 1
-    max_count                   = var.environment == "staging" ? 5 : 6
+    max_count                   = var.environment == "staging" ? 6 : 6
     temporary_name_for_rotation = "nodepooltemp"
 
     upgrade_settings {
