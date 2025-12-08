@@ -73,17 +73,17 @@ spec:
             azure.workload.identity/use: "true"
 
         pgstacBootstrap:
-          enabled: false
+          enabled: true
           settings:
-            labels:
-              azure.workload.identity/use: "true"
-            extraVolumes:
-              - name: azure-keyvault-secrets
-                csi:
-                  driver: secrets-store.csi.k8s.io
-                  readOnly: true
-                  volumeAttributes:
-                    secretProviderClass: azure-secret-provider-montandon-eoapi
+            # labels:
+            #   azure.workload.identity/use: "true"
+            # extraVolumes:
+            #   - name: azure-keyvault-secrets
+            #     csi:
+            #       driver: secrets-store.csi.k8s.io
+            #       readOnly: true
+            #       volumeAttributes:
+            #         secretProviderClass: azure-secret-provider-montandon-eoapi
             queryables:
               # configMap
               - name: "stac-queryables.json"
@@ -91,7 +91,7 @@ spec:
                   name: montandon-eoapi-stac-queryables
                   key: stac_queryables.json
                 indexFields: ["monty:hazard_codes", "monty:country_codes", "roles"]
-                deleteMissing: false
+                deleteMissing: true
         postgresql:
           type: "external-secret"
           external:
