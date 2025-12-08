@@ -73,7 +73,7 @@ spec:
             azure.workload.identity/use: "true"
 
         pgstacBootstrap:
-          enabled: false
+          enabled: true
           image:
             tag: v0.9.8
           settings:
