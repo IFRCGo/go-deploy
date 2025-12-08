@@ -91,7 +91,7 @@ spec:
                   name: montandon-eoapi-stac-queryables
                   key: stac_queryables.json
                 indexFields: ["monty:hazard_codes", "monty:country_codes", "roles"]
-                deleteMissing: true
+                deleteMissing: false
         postgresql:
           type: "external-secret"
           external:
