@@ -10,7 +10,7 @@ spec:
   sources:
   - repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: fix-queryables
+    targetRevision: 0.8.1
     helm:
       valuesObject:
         ingress:
