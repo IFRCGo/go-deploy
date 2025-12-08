@@ -89,7 +89,7 @@ spec:
             queryables:
               # configMap
               - name: "stac-queryables.json"
-                file: null
+                file: false
                 configMapRef:
                   name: montandon-eoapi-stac-queryables
                   key: stac_queryables.json
