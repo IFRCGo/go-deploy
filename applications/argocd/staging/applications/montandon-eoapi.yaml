@@ -10,7 +10,7 @@ spec:
   sources:
   - repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.8.0
+    targetRevision: fix-queryables
     helm:
       valuesObject:
         ingress:
@@ -73,7 +73,7 @@ spec:
             azure.workload.identity/use: "true"
 
         pgstacBootstrap:
-          enabled: false
+          enabled: true
           image:
             tag: v0.9.8
           settings:
@@ -89,7 +89,6 @@ spec:
             queryables:
               # configMap
               - name: "stac-queryables.json"
-                file: false
                 configMapRef:
                   name: montandon-eoapi-stac-queryables
                   key: stac_queryables.json
