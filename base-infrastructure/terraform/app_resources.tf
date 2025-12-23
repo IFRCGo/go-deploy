@@ -61,8 +61,8 @@ module "alert_hub_resources" {
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16",
-    "32053268-3970-48f3-9b09-c4280cd0b67d"
+    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
+    "32053268-3970-48f3-9b09-c4280cd0b67d", # Moses (DFS)
   ]
 }
 
@@ -112,8 +112,8 @@ module "sdt_resources" {
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16",
-    "32053268-3970-48f3-9b09-c4280cd0b67d"
+    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
+    "32053268-3970-48f3-9b09-c4280cd0b67d", # Moses (DFS)
   ]
 }
 
@@ -160,8 +160,8 @@ module "montandon_etl_resources" {
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16",
-    "32053268-3970-48f3-9b09-c4280cd0b67d"
+    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
+    "32053268-3970-48f3-9b09-c4280cd0b67d", # Moses (DFS)
   ]
 }
 
@@ -191,7 +191,7 @@ module "montandon_eoapi_resources" {
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16",
-    "32053268-3970-48f3-9b09-c4280cd0b67d"
+    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
+    "32053268-3970-48f3-9b09-c4280cd0b67d", # Moses (DFS)
   ]
 }
