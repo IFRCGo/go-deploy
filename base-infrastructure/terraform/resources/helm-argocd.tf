@@ -20,6 +20,14 @@ resource "helm_release" "argo-cd" {
         cm = {
           "timeout.reconciliation" : "60s"
           "timeout.hard.reconciliation" : "90s"
+          # NOTE: Additional users for readonly access - https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#create-new-user
+          "accounts.readonly" : "login",
+          "accounts.readonly.enabled" : "true"
+        }
+        rbac = {
+          "policy.csv" = <<-EOT
+            g, readonly, role:readonly
+          EOT
         }
       }
     })
