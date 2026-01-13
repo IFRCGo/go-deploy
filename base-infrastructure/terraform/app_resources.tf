@@ -160,8 +160,9 @@ module "montandon_etl_resources" {
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16",
-    "32053268-3970-48f3-9b09-c4280cd0b67d"
+    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
+    "32053268-3970-48f3-9b09-c4280cd0b67d", # Moses (DFS)
+    "fc0ebb01-c8f1-456b-a7a5-0a2d6c79e6d9", # Ranjan (TC)
   ]
 }
 
@@ -191,7 +192,8 @@ module "montandon_eoapi_resources" {
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16",
-    "32053268-3970-48f3-9b09-c4280cd0b67d"
+    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
+    "32053268-3970-48f3-9b09-c4280cd0b67d", # Moses (DFS)
+    "fc0ebb01-c8f1-456b-a7a5-0a2d6c79e6d9", # Ranjan (TC)
   ]
 }
