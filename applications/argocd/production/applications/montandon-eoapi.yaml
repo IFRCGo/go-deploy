@@ -11,7 +11,7 @@ spec:
   - repoURL: https://devseed.com/eoapi-k8s/
   # - repoURL: https://github.com/developmentseed/eoapi-k8s.git
     chart: eoapi
-    targetRevision: 0.7.10
+    targetRevision: 0.8.1
     # targetRevision: "stac.overrideRootPath"
     # path: charts/eoapi
     helm:
@@ -31,6 +31,9 @@ spec:
         raster:
           enabled: false
         stac:
+          image:
+            tag: 6.1.2
+          overrideRootPath: ""
           settings:
             labels:
               azure.workload.identity/use: "true"
@@ -42,16 +45,14 @@ spec:
                 memory: "4096Mi"
                 cpu: "1000m"
             envVars:
+              ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
               FORWARDED_ALLOW_IPS: "*"
               PROXY_HEADERS: True
-              POSTGRES_USER: postgres
-              POSTGRES_PORT: 5432
-              CORS_HEADERS: '["*"]'
-              CORS_METHODS: '["GET","OPTIONS"]'
-              CORS_ORIGINS: '["http://localhost:8000"]'
-              CORS_CREDENTIALS: "True"
-              # https://stac-utils.github.io/stac-fastapi-pgstac/settings/#application-extension
-              ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
+              CORS_ORIGINS: "https://localhost:3000,https://alerthub.ifrc.org,https://montandon-eoapi.ifrc.org"
+              CORS_ORIGIN_REGEX: ".*"
+              CORS_HEADERS: "Accept, Authorization, Content-Type, Origin, X-Requested-With"
+              CORS_METHODS: "GET,OPTIONS,POST"
+              CORS_CREDENTIALS: "true"
             extraVolumeMounts:
               - name: azure-keyvault-secrets
                 mountPath: /mnt/secrets-store
@@ -75,26 +76,25 @@ spec:
             azure.workload.identity/use: "true"
 
         pgstacBootstrap:
-          enabled: false
-          # image:
-          #   name: ghcr.io/stac-utils/pgstac
-          #   tag: v0.9.5
+          enabled: true
           settings:
-            labels:
-              azure.workload.identity/use: "true"
-            extraEnvVars:
-              POSTGRES_USER: postgres
-              POSTGRES_PORT: 5432
-            # extraEnvFrom:
-            #   - secretRef:
-            #       name: pgstac-secrets-montandon-eoapi
-            extraVolumes:
-              - name: azure-keyvault-secrets
-                csi:
-                  driver: secrets-store.csi.k8s.io
-                  readOnly: true
-                  volumeAttributes:
-                    secretProviderClass: azure-secret-provider-montandon-eoapi
+            # labels:
+            #   azure.workload.identity/use: "true"
+            # extraVolumes:
+            #   - name: azure-keyvault-secrets
+            #     csi:
+            #       driver: secrets-store.csi.k8s.io
+            #       readOnly: true
+            #       volumeAttributes:
+            #         secretProviderClass: azure-secret-provider-montandon-eoapi
+            queryables:
+              # configMap
+              - name: "stac-queryables.json"
+                configMapRef:
+                  name: montandon-eoapi-stac-queryables
+                  key: stac_queryables.json
+                indexFields: ["monty:hazard_codes", "monty:country_codes", "roles"]
+                deleteMissing: true
         postgresql:
           type: "external-secret"
           external:
@@ -122,8 +122,10 @@ spec:
       valuesObject:
         env:
           UPSTREAM_URL: "http://montandon-eoapi-stac:8080"
+          # UPSTREAM_URL: "https://montandon-eoapi.ifrc.org/stac"
           OIDC_DISCOVERY_URL: "https://goadmin.ifrc.org/o/.well-known/openid-configuration"
           OVERRIDE_HOST: "0"
+          ROOT_PATH: "/stac"
         ingress:
           enabled: "true"
           host: "montandon-eoapi.ifrc.org" # Decide on URL etc
