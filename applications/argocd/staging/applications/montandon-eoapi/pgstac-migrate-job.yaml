@@ -19,32 +19,6 @@ spec:
         component: database
     spec:
       restartPolicy: Never
-      initContainers:
-        - name: wait-for-postgres
-          image: postgres:16-alpine
-          command:
-            - "/bin/sh"
-            - "-c"
-          args:
-            - |
-              echo "Waiting for PostgreSQL to be ready..."
-              until pg_isready -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER"; do
-                echo "PostgreSQL not ready, waiting..."
-                sleep 5
-              done
-              echo "PostgreSQL is ready!"
-          env:
-            - name: POSTGRES_HOST
-              value: "eoapi-primary"  # Customize: PostgreSQL service name
-            - name: POSTGRES_PORT
-              value: "5432"
-            - name: POSTGRES_USER
-              value: "postgres"  # Customize: PostgreSQL username
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: eoapi-pguser-postgres
-                  key: password
       containers:
         - name: pgstac-migrate
           image: ghcr.io/stac-utils/pgstac-pypgstac:v0.9.8  # Customize: image version
@@ -53,7 +27,7 @@ spec:
             - "-c"
           args:
             - |
-              # Wait for database readiness (redundant check)
+              # Wait for database readiness
               echo "Double-checking database readiness..."
               pypgstac pgready
 
@@ -63,10 +37,6 @@ spec:
               # Run PgSTAC migrations
               echo "Running PgSTAC migrations..."
               pypgstac migrate
-
-              # Apply custom settings (optional)
-              echo "Applying PgSTAC settings..."
-              # psql -f /opt/settings/pgstac-settings.sql
 
               echo "PgSTAC migration complete"
           env:

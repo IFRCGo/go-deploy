@@ -1,6 +1,6 @@
 # Static job for loading PgSTAC sample data
-# This job can be used independently of the pgstacBootstrap feature
-# Uncomment and customize the values below for your deployment
+# This job can be used to load sample data into PgSTAC
+# Currently, this is a dummy job to fix dependencies in STAC API start
 ---
 apiVersion: batch/v1
 kind: Job
@@ -19,32 +19,6 @@ spec:
         component: database
     spec:
       restartPolicy: Never
-      initContainers:
-        - name: wait-for-postgres
-          image: postgres:16-alpine
-          command:
-            - "/bin/sh"
-            - "-c"
-          args:
-            - |
-              echo "Waiting for PostgreSQL to be ready..."
-              until pg_isready -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER"; do
-                echo "PostgreSQL not ready, waiting..."
-                sleep 5
-              done
-              echo "PostgreSQL is ready!"
-          env:
-            - name: POSTGRES_HOST
-              value: "eoapi-primary"  # Customize: PostgreSQL service name
-            - name: POSTGRES_PORT
-              value: "5432"
-            - name: POSTGRES_USER
-              value: "postgres"  # Customize: PostgreSQL username
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: eoapi-pguser-postgres
-                  key: password
       containers:
         - name: dummy-load-samples
           image: ghcr.io/stac-utils/pgstac-pypgstac:v0.9.8  # Customize: image version
@@ -53,7 +27,7 @@ spec:
             - "-c"
           args:
             - |
-              # Wait for database readiness (redundant check)
+              # Wait for database readiness
               echo "Double-checking database readiness..."
               pypgstac pgready
           env:
