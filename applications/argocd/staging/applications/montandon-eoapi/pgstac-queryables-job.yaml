@@ -1,0 +1,161 @@
+# Static job for loading PgSTAC queryables
+# This job should run after pgstac-migrate completes
+# Uncomment and customize the values below for your deployment
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: montandon-eoapi-load-queryables
+  namespace: montandon-eoapi
+  # namespace: eoapi  # Customize namespace
+  labels:
+    app: montandon-eoapi-load-queryables
+    component: database
+  # annotations:
+    # Optional: Add FluxCD/ArgoCD annotations here
+    # For FluxCD HelmRelease dependencies, use dependsOn field instead
+    # argocd.argoproj.io/hook: "PreSync"
+    # argocd.argoproj.io/sync-wave: "0"  # Run after migrate (wave -1)
+spec:
+  template:
+    metadata:
+      labels:
+        app: montandon-eoapi-load-queryables
+        component: database
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: wait-for-pgstac-schema
+          image: postgres:16-alpine
+          command:
+            - "/bin/sh"
+            - "-c"
+          args:
+            - |
+              echo "Waiting for PgSTAC schema to be ready..."
+              until psql -c "SELECT 1 FROM pgstac.migrations WHERE version IS NOT NULL LIMIT 1;" > /dev/null 2>&1; do
+                echo "PgSTAC schema not ready, waiting..."
+                sleep 10
+              done
+              echo "PgSTAC schema is ready!"
+          env:
+            # Database connection settings
+            - name: POSTGRES_HOST
+              value: "eoapi-primary"  # Customize: PostgreSQL service name
+            - name: PGHOST
+              value: "eoapi-primary"  # Customize: PostgreSQL service name
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: "postgres"  # Customize: PostgreSQL username
+            - name: PGUSER
+              value: "postgres"  # Customize: PostgreSQL username
+            - name: POSTGRES_DB
+              value: "eoapi"  # Customize: database name
+            - name: PGDATABASE
+              value: "eoapi"  # Customize: database name
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: eoapi-pguser-postgres
+                  key: password
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: eoapi-pguser-postgres
+                  key: password
+      containers:
+        - name: pgstac-load-queryables
+          image: ghcr.io/stac-utils/pgstac-pypgstac:v0.9.8  # Customize: image version
+          command:
+            - "/bin/sh"
+            - "-c"
+          args:
+            - |
+              # Exit on any error
+              set -e
+
+              # Wait for database readiness (redundant check)
+              echo "Checking database readiness..."
+              pypgstac pgready
+
+              echo "Loading queryables configurations..."
+
+              # Example queryables loading - customize as needed
+              # Replace with your actual queryables files/configurations
+
+              pypgstac load-queryables /opt/queryables/stac_queryables.json \
+                --index-fields ["monty:hazard_codes","monty:country_codes","roles"] \
+                --delete-missing
+
+              echo "Queryables loading complete"
+          env:
+            # Database connection settings
+            - name: POSTGRES_HOST
+              value: "eoapi-primary"  # Customize: PostgreSQL service name
+            - name: PGHOST
+              value: "eoapi-primary"  # Customize: PostgreSQL service name
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: "postgres"  # Customize: PostgreSQL username
+            - name: PGUSER
+              value: "postgres"  # Customize: PostgreSQL username
+            - name: POSTGRES_DB
+              value: "eoapi"  # Customize: database name
+            - name: PGDATABASE
+              value: "eoapi"  # Customize: database name
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: eoapi-pguser-postgres
+                  key: password
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: eoapi-pguser-postgres
+                  key: password
+
+          # resources:
+          #   requests:
+          #     memory: "256Mi"
+          #     cpu: "100m"
+          #   limits:
+          #     memory: "512Mi"
+          #     cpu: "250m"
+          volumeMounts:
+            - name: queryables-config
+              mountPath: /opt/queryables
+              readOnly: true
+      volumes:
+        - name: queryables-config
+          configMap:
+            name: montandon-eoapi-stac-queryables # Customize: ConfigMap name
+            # Optional: specify specific files
+            # items:
+            #   - key: test-queryables.json
+            #     path: test-queryables.json
+            #   - key: custom-queryables.json
+            #     path: custom-queryables.json
+
+      # Optional: Node affinity and tolerations
+      # affinity:
+      #   nodeAffinity:
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #     - weight: 100
+      #       preference:
+      #         matchExpressions:
+      #         - key: node-type
+      #           operator: In
+      #           values: ["database"]
+      # tolerations:
+      #   - key: "database"
+      #     operator: "Equal"
+      #     value: "true"
+      #     effect: "NoSchedule"
+  backoffLimit: 3  # Customize: number of retries
+  # activeDeadlineSeconds: 600  # Customize: job timeout (10 minutes)

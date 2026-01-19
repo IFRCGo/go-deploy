@@ -1,0 +1,76 @@
+# Static job for PgSTAC schema migration
+# This job can be used independently of the pgstacBootstrap feature
+# Uncomment and customize the values below for your deployment
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: montandon-eoapi-pgstac-migrate
+  namespace: montandon-eoapi
+  # namespace: eoapi  # Customize namespace
+  labels:
+    app: montandon-eoapi-pgstac-migrate
+    component: database
+spec:
+  template:
+    metadata:
+      labels:
+        app: montandon-eoapi-pgstac-migrate
+        component: database
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: pgstac-migrate
+          image: ghcr.io/stac-utils/pgstac-pypgstac:v0.9.8  # Customize: image version
+          command:
+            - "/bin/sh"
+            - "-c"
+          args:
+            - |
+              # Exit on any error
+              set -e
+
+              # Wait for database readiness
+              echo "Double-checking database readiness..."
+              pypgstac pgready
+              # Run PgSTAC migrations
+              echo "Running PgSTAC migrations..."
+              pypgstac migrate
+
+              echo "PgSTAC migration complete"
+          env:
+            # Database connection settings
+            - name: POSTGRES_HOST
+              value: "eoapi-primary"  # Customize: PostgreSQL service name
+            - name: PGHOST
+              value: "eoapi-primary"  # Customize: PostgreSQL service name
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: PGPORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: "postgres"  # Customize: PostgreSQL username
+            - name: PGUSER
+              value: "postgres"  # Customize: PostgreSQL username
+            - name: POSTGRES_DB
+              value: "eoapi"  # Customize: database name
+            - name: PGDATABASE
+              value: "eoapi"  # Customize: database name
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: eoapi-pguser-postgres
+                  key: password
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: eoapi-pguser-postgres
+                  key: password
+
+            # Optional PgSTAC settings
+            - name: PGSTAC_USE_QUEUE
+              value: "false"  # Customize: enable/disable queue
+            - name: PGSTAC_QUEUE_TIMEOUT
+              value: "30"     # Customize: queue timeout in seconds
+
+  backoffLimit: 3  # Customize: number of retries
