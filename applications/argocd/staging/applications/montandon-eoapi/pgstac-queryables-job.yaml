@@ -43,7 +43,7 @@ spec:
             - name: POSTGRES_HOST
               value: "eoapi-primary"  # Customize: PostgreSQL service name
             - name: PGHOST
-              value: "eoapi-primary"  # Customize: PostgreSQL service name  
+              value: "eoapi-primary"  # Customize: PostgreSQL service name
             - name: POSTGRES_PORT
               value: "5432"
             - name: PGPORT
@@ -82,14 +82,14 @@ spec:
               pypgstac pgready
 
               echo "Loading queryables configurations..."
-              
+
               # Example queryables loading - customize as needed
               # Replace with your actual queryables files/configurations
-              
+
               pypgstac load-queryables /opt/queryables/sentinel-2.json \
                 --collection-ids '["sentinel-2-l2a","sentinel-2-l1c"]' \
                 --index-fields "collection" \
-                --delete-missing                
+                --delete-missing
 
               echo "Queryables loading complete"
           env:
@@ -97,7 +97,7 @@ spec:
             - name: POSTGRES_HOST
               value: "eoapi-primary"  # Customize: PostgreSQL service name
             - name: PGHOST
-              value: "eoapi-primary"  # Customize: PostgreSQL service name  
+              value: "eoapi-primary"  # Customize: PostgreSQL service name
             - name: POSTGRES_PORT
               value: "5432"
             - name: PGPORT
@@ -120,7 +120,7 @@ spec:
                 secretKeyRef:
                   name: eoapi-pguser-postgres
                   key: password
-            
+
           # resources:
           #   requests:
           #     memory: "256Mi"
@@ -142,7 +142,7 @@ spec:
             #     path: test-queryables.json
             #   - key: custom-queryables.json
             #     path: custom-queryables.json
-      
+
       # Optional: Node affinity and tolerations
       # affinity:
       #   nodeAffinity:
@@ -160,4 +160,3 @@ spec:
       #     effect: "NoSchedule"
   backoffLimit: 3  # Customize: number of retries
   # activeDeadlineSeconds: 600  # Customize: job timeout (10 minutes)
-

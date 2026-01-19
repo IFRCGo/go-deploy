@@ -74,7 +74,7 @@ spec:
             - name: POSTGRES_HOST
               value: "eoapi-primary"  # Customize: PostgreSQL service name
             - name: PGHOST
-              value: "eoapi-primary"  # Customize: PostgreSQL service name  
+              value: "eoapi-primary"  # Customize: PostgreSQL service name
             - name: POSTGRES_PORT
               value: "5432"
             - name: PGPORT
@@ -97,11 +97,11 @@ spec:
                 secretKeyRef:
                   name: eoapi-pguser-postgres
                   key: password
-            
+
             # Optional PgSTAC settings
             - name: PGSTAC_USE_QUEUE
               value: "false"  # Customize: enable/disable queue
             - name: PGSTAC_QUEUE_TIMEOUT
               value: "30"     # Customize: queue timeout in seconds
-       
+
   backoffLimit: 3  # Customize: number of retries
