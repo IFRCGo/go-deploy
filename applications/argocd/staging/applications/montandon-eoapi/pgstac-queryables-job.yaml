@@ -86,9 +86,8 @@ spec:
               # Example queryables loading - customize as needed
               # Replace with your actual queryables files/configurations
 
-              pypgstac load-queryables /opt/queryables/sentinel-2.json \
-                --collection-ids '["sentinel-2-l2a","sentinel-2-l1c"]' \
-                --index-fields "collection" \
+              pypgstac load-queryables /opt/queryables/stac_queryables.json \
+                --index-fields ["monty:hazard_codes","monty:country_codes","roles"] \
                 --delete-missing
 
               echo "Queryables loading complete"
