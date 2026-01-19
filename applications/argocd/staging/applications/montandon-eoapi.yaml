@@ -53,7 +53,7 @@ spec:
               STAC_FASTAPI_VERSION: "1.0.0"
               STAC_FASTAPI_TITLE: "Montandon STAC API"
               STAC_FASTAPI_DESCRIPTION: "Welcome to the [Montandon](https://ifrcgo.org/monty-stac-extension/) STAC API. This API provides the main entry to access the Global Crisis Data Bank, a database that brings in hazard and impact data for current, historical and forecasted disasters around the globe"
-              STAC_FASTAPI_LANDING_ID: "montandon-seoapi"
+              STAC_FASTAPI_LANDING_ID: "montandon-eoapi"
             extraVolumeMounts:
               - name: azure-keyvault-secrets
                 mountPath: /mnt/secrets-store
