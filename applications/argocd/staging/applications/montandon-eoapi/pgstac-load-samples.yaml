@@ -1,4 +1,4 @@
-# Static job for PgSTAC schema migration
+# Static job for loading PgSTAC sample data
 # This job can be used independently of the pgstacBootstrap feature
 # Uncomment and customize the values below for your deployment
 ---
