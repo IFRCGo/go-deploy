@@ -6,7 +6,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: montandon-eoapi-pgstac-migrate
-  namespace: core
+  namespace: montandon-eoapi
   # namespace: eoapi  # Customize namespace
   labels:
     app: montandon-eoapi-pgstac-migrate
