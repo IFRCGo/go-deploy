@@ -135,7 +135,7 @@ spec:
       volumes:
         - name: queryables-config
           configMap:
-            name: eoapi-stac-queryables # Customize: ConfigMap name
+            name: montandon-eoapi-stac-queryables # Customize: ConfigMap name
             # Optional: specify specific files
             # items:
             #   - key: test-queryables.json
