@@ -59,13 +59,13 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: eoapi-pguser-postgres
-                  key: password
+                  name: pgstac-secrets-montandon-eoapi
+                  key: DB_PASSWORD
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: eoapi-pguser-postgres
-                  key: password
+                  name: pgstac-secrets-montandon-eoapi
+                  key: DB_PASSWORD
       containers:
         - name: pgstac-load-queryables
           image: ghcr.io/stac-utils/pgstac-pypgstac:v0.9.8  # Customize: image version
@@ -112,13 +112,13 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: eoapi-pguser-postgres
-                  key: password
+                  name: pgstac-secrets-montandon-eoapi
+                  key: DB_PASSWORD
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: eoapi-pguser-postgres
-                  key: password
+                  name: pgstac-secrets-montandon-eoapi
+                  key: DB_PASSWORD
 
           # resources:
           #   requests:

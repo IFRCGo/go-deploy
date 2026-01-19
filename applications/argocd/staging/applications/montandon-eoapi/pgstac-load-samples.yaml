@@ -51,13 +51,13 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: eoapi-pguser-postgres
-                  key: password
+                  name: pgstac-secrets-montandon-eoapi
+                  key: DB_PASSWORD
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: eoapi-pguser-postgres
-                  key: password
+                  name: pgstac-secrets-montandon-eoapi
+                  key: DB_PASSWORD
 
             # Optional PgSTAC settings
             - name: PGSTAC_USE_QUEUE
