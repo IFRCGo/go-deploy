@@ -27,13 +27,12 @@ spec:
             - "-c"
           args:
             - |
-              # Wait for database readiness
-              echo "Double-checking database readiness..."
-              pypgstac pgready
-
               # Exit on any error
               set -e
 
+              # Wait for database readiness
+              echo "Double-checking database readiness..."
+              pypgstac pgready
               # Run PgSTAC migrations
               echo "Running PgSTAC migrations..."
               pypgstac migrate
