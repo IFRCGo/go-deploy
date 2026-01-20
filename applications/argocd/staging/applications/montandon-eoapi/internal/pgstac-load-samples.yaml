@@ -6,8 +6,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: montandon-eoapi-pgstac-load-samples
-  namespace: montandon-eoapi
-  # namespace: eoapi  # Customize namespace
   labels:
     app: montandon-eoapi-pgstac-load-samples
     component: database

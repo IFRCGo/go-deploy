@@ -6,8 +6,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: montandon-eoapi-pgstac-migrate
-  namespace: montandon-eoapi
-  # namespace: eoapi  # Customize namespace
   labels:
     app: montandon-eoapi-pgstac-migrate
     component: database
@@ -90,7 +88,7 @@ spec:
                 secretKeyRef:
                   name: pgstac-secrets-montandon-eoapi
                   key: DB_PASSWORD
-                  
+
             # Optional PgSTAC settings
             - name: PGSTAC_USE_QUEUE
               value: "false"  # Customize: enable/disable queue
