@@ -125,7 +125,7 @@ spec:
           #         storage: "600Gi"
           #         cpu: "1024m"
           #         memory: "3048Mi"
-  - path: applications/argocd/staging/applications/montandon-eoapi/
+  - path: applications/argocd/staging/applications/montandon-eoapi/internal/
     targetRevision: develop
     repoURL: https://github.com/IFRCGo/go-deploy.git
   - repoURL: https://github.com/developmentseed/stac-auth-proxy.git
