@@ -50,6 +50,8 @@ spec:
               CORS_METHODS: '["GET","OPTIONS"]'
               CORS_ORIGINS: '["http://localhost:8000"]'
               CORS_CREDENTIALS: "True"
+              # https://stac-utils.github.io/stac-fastapi-pgstac/settings/#application-extension
+              ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
             extraVolumeMounts:
               - name: azure-keyvault-secrets
                 mountPath: /mnt/secrets-store

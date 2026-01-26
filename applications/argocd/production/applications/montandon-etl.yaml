@@ -10,36 +10,36 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/montandon-etl
     chart: montandon-etl-helm
-    targetRevision: 0.1.1-develop.c7b357cf
+    targetRevision: 0.1.1-develop.c2cb07b5
     helm:
       valueFiles:
         - values/operators.yaml
         - values/go-deploy.yaml
-        - values/staging.yaml
+        - values/prod.yaml
       valuesObject:
         app:
           ingress:
-            host: montandon-etl-stage.ifrc.org
+            host: montandon-etl.ifrc.org
             tls:
               secretName: montandon-helm-secret-cert
           env:
             # Azure configs
             AZURE_STORAGE_ENABLE: "true"
-            AZURE_CLIENT_ID: bcc2593b-4885-46b4-8430-b85b34a22737
+            AZURE_CLIENT_ID: 4de225d2-e993-4b72-b4d1-e4e9372a4c5a
             AZURE_TENANT_ID: a2b53be5-734e-4e6c-ab0d-d184f60fd917
-            AZURE_STORAGE_MEDIA_CONTAINER: montandon-etl-staging-media-container
-            AZURE_STORAGE_STATIC_CONTAINER: montandon-etl-staging-static-container
-            AZURE_STORAGE_ACCOUNT_NAME: montystaging6757
+            AZURE_STORAGE_MEDIA_CONTAINER: montandon-etl-production-media-container
+            AZURE_STORAGE_STATIC_CONTAINER: montandon-etl-production-static-container
+            AZURE_STORAGE_ACCOUNT_NAME: montyproduction9012
             AZURE_STORAGE_MANAGED_IDENTITY: "true"
             # ETL Load config
             EOAPI_STAC_API: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local:8080/"
           serviceAccount:
             annotations:
-              azure.workload.identity/client-id : "bcc2593b-4885-46b4-8430-b85b34a22737"
+              azure.workload.identity/client-id : "4de225d2-e993-4b72-b4d1-e4e9372a4c5a"
           secretsStoreCsiDriver:
             parameters:
-              clientID: "bcc2593b-4885-46b4-8430-b85b34a22737"
-              keyvaultName: "montandon-etl-staging-kv"
+              clientID: "4de225d2-e993-4b72-b4d1-e4e9372a4c5a"
+              keyvaultName: "montandon-etl-production"
               tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
   destination:
     server: https://kubernetes.default.svc

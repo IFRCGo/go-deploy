@@ -117,7 +117,7 @@ Workload Identities allow Kubernetes workloads to authenticate with Azure servic
 
 The [Application Resources Terraform Module](../../base-infrastructure/terraform/app_resources) is used to define and provision the necessary infrastructure and resources for the application in a consistent, and repeatable manner. The module creates the application's key-vault, any storage containers, a database on a specified database server, as well as an Azure Workload Identity for the application with appropriate permissions on the aforementioned resources. Typical usage of the module would look like this:
 
-```
+```terraform
 module "some_application_resources" {
   source = "./app_resources"
 
@@ -164,6 +164,15 @@ module "some_application_resources" {
   ]
 }
 ```
+> [!Tip]
+> `vault_admin_ids` needs a **user ID**.
+>
+> Get your user ID with:
+> - `az ad signed-in-user show | jq '.id'`
+> - https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/Overview -> `My feed`
+>
+> You can confirm it by opening:
+> `https://portal.azure.com/#view/Microsoft_AAD_UsersAndTenants/UserProfileMenuBlade/~/overview/userId/<user-id>`
 
 ## 5. Common Container Registry
 The Common Container Registry is a centralized repository for storing and managing Docker container images. It ensures that all necessary container images are readily available for deployment. Within the terraform code is contained the integration between the container registry and the AKS cluster's kubelets such that imagePullSecrets are not required in most cases.
