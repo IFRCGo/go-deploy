@@ -8,25 +8,46 @@ metadata:
 spec:
   project: default
   sources:
+
   - repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
     targetRevision: 0.10.0
     helm:
       valuesObject:
-        ingress:
+        postgrescluster:
+          # Using azure databae
           enabled: false
-          # host: "montandon-eoapi-stage.ifrc.org"
-          # tls:
-          #   enabled: true
-          #   secretName: montandon-eoapi-helm-secret-cert
-          # annotations:
-          #   # increase the max body size to 100MB
-          #   nginx.ingress.kubernetes.io/proxy-body-size: "100m"
-          #   nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-          #   nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-          #   nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+        vector:
+          enabled: false
         raster:
           enabled: false
+        ingress:
+          # Using stac-auth-proxy
+          enabled: false
+
+        serviceAccount:
+          create: true
+          automount: true
+          annotations:
+            azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
+          labels:
+            azure.workload.identity/use: "true"
+
+        postgresql:
+          type: "external-secret"
+          external:
+            existingSecret:
+              # Defined here: internal/montandon-eoapi-spc.yaml
+              name: pgstac-secrets-montandon-eoapi
+              keys:
+                username: "DB_USER"
+                password: "DB_PASSWORD"
+                # Optional: if these are provided in the secret
+                # Note: These values override external.host, external.port and external.database if defined
+                host: "DB_HOST"
+                database: "DB_NAME"
+                port: "DB_PORT"
+
         stac:
           image:
             tag: 6.1.2
@@ -59,75 +80,29 @@ spec:
                 mountPath: /mnt/secrets-store
                 readOnly: true
             extraVolumes:
+              # Not required for eoAPI, but secrets-store.csi.k8s.io needs at least one pod to mount SecretProviderClass to sync Azure Key Vault with the Kubernetes secret pgstac-secrets-montandon-eoapi
               - name: azure-keyvault-secrets
                 csi:
                   driver: secrets-store.csi.k8s.io
                   readOnly: true
                   volumeAttributes:
                     secretProviderClass: azure-secret-provider-montandon-eoapi
-        vector:
-          enabled: false
 
-        serviceAccount:
-          create: true
-          automount: true
-          annotations:
-            azure.workload.identity/client-id : "9b1f12a8-4ae9-4281-afa9-948451f77dce"
-          labels:
-            azure.workload.identity/use: "true"
+        pgstacBootstrap:
+          enabled: true
+          loadSamples: false
+          queryables:
+            - name: "stac_queryables.json"
+              indexFields: ["monty:hazard_codes","monty:country_codes","roles"]
+              deleteMissing: true
+              configMapRef:
+                name: montandon-eoapi-stac-queryables
+                key: stac_queryables.json
 
-        # pgstacBootstrap:
-        #   enabled: true
-        #   settings:
-        #     annotations:
-        #       argocd.argoproj.io/hook: Sync
-        #     # labels:
-        #     #   azure.workload.identity/use: "true"
-        #     # extraVolumes:
-        #     #   - name: azure-keyvault-secrets
-        #     #     csi:
-        #     #       driver: secrets-store.csi.k8s.io
-        #     #       readOnly: true
-        #     #       volumeAttributes:
-        #     #         secretProviderClass: azure-secret-provider-montandon-eoapi
-        #     queryables:
-        #       # configMap
-        #       - name: "stac-queryables.json"
-        #         configMapRef:
-        #           name: montandon-eoapi-stac-queryables
-        #           key: stac_queryables.json
-        #         indexFields: ["monty:hazard_codes", "monty:country_codes", "roles"]
-        #         deleteMissing: true
-        postgresql:
-          type: "external-secret"
-          external:
-            existingSecret:
-              name: pgstac-secrets-montandon-eoapi
-              keys:
-                username: "DB_USER"
-                password: "DB_PASSWORD"
-                # Optional: if these are provided in the secret
-                # Note: These values override external.host, external.port and external.database if defined
-                host: "DB_HOST"
-                database: "DB_NAME"
-                port: "DB_PORT"
-
-        postgrescluster:
-          enabled: false
-          # instances:
-          # - name: eoapi
-          #   replicas: 1
-          #   dataVolumeClaimSpec:
-          #     accessModes:
-          #     - "ReadWriteOnce"
-          #     resources:
-          #       requests:
-          #         storage: "600Gi"
-          #         cpu: "1024m"
-          #         memory: "3048Mi"
   - path: applications/argocd/staging/applications/montandon-eoapi/internal/
     targetRevision: develop
     repoURL: https://github.com/IFRCGo/go-deploy.git
+
   - repoURL: https://github.com/developmentseed/stac-auth-proxy.git
     targetRevision: v0.9.2
     path: helm/
@@ -147,6 +122,7 @@ spec:
             enabled: "true"
             secretName: "montandon-eoapi-helm-secret-cert"
         replicaCount: 1
+
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-eoapi

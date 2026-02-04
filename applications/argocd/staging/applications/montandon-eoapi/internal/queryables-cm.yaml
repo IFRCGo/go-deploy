@@ -2,6 +2,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: montandon-eoapi-stac-queryables
+  annotations:
+    argocd.argoproj.io/hook: "PreSync"
+    argocd.argoproj.io/sync-wave: "-7"
+    argocd.argoproj.io/hook-delete-policy: "BeforeHookCreation"
 data:
   stac_queryables.json: |
     {
