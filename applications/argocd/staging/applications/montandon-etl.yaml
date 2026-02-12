@@ -9,8 +9,8 @@ spec:
   project: default
   source:
     repoURL: ghcr.io/ifrcgo/montandon-etl
-    chart: montandon-etl-helm
-    targetRevision: 0.1.1-develop.c7b357cf
+    chart: montandon-etl-helm-alpha
+    targetRevision: 0.1.1-project-fix-rabbitmq-ack-issue.c28f6ef5
     helm:
       valueFiles:
         - values/operators.yaml
