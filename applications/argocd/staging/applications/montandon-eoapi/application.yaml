@@ -11,8 +11,10 @@ spec:
 
   - repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.10.0
+    targetRevision: 0.11.1
     helm:
+      valueFiles:
+        - values/argocd.yaml
       valuesObject:
         postgrescluster:
           # Using azure databae
