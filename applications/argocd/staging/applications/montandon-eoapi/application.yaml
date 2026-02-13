@@ -90,14 +90,15 @@ spec:
 
         pgstacBootstrap:
           enabled: true
-          loadSamples: false
-          queryables:
-            - name: "stac_queryables.json"
-              indexFields: ["monty:hazard_codes","monty:country_codes","roles"]
-              deleteMissing: true
-              configMapRef:
-                name: montandon-eoapi-stac-queryables
-                key: stac_queryables.json
+          settings:
+            loadSamples: false
+            queryables:
+              - name: "stac_queryables.json"
+                indexFields: ["monty:hazard_codes","monty:country_codes","roles"]
+                deleteMissing: true
+                configMapRef:
+                  name: montandon-eoapi-stac-queryables
+                  key: stac_queryables.json
 
   - path: applications/argocd/staging/applications/montandon-eoapi/internal/
     targetRevision: develop
