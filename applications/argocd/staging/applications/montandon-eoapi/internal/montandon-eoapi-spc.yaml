@@ -3,7 +3,7 @@ kind: SecretProviderClass
 metadata:
   name: azure-secret-provider-montandon-eoapi
   annotations:
-    argocd.argoproj.io/hook: "PreSync"
+    argocd.argoproj.io/hook: "Sync"
     argocd.argoproj.io/sync-wave: "-7"
     argocd.argoproj.io/hook-delete-policy: "BeforeHookCreation"
 spec:
