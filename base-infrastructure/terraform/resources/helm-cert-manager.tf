@@ -6,7 +6,7 @@ resource "helm_release" "ifrcgo-cert-manager" {
   name             = "cert-manager"
   repository       = "https://charts.jetstack.io"
   chart            = "cert-manager"
-  version          = "v1.6.1"
+  version          = "v1.19.3"
   namespace        = "cert-manager"
   create_namespace = true
 
