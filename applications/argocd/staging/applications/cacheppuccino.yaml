@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: cacheppuccino-helm
-    targetRevision: 0.1.0-9e2e888
+    targetRevision: 0.1.0-b413077
     helm:
       valuesObject:
         fullnameOverride: ifrcgo-cacheppuccino
