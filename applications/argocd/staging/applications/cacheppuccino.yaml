@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cacheppuccino
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/ifrcgo
+    chart: cacheppuccino-helm
+    targetRevision: 0.1.0-b413077
+    helm:
+      valuesObject:
+        fullnameOverride: ifrcgo-cacheppuccino
+        ingress:
+          enabled: true
+          host: cacheppuccino-stage.ifrc.org
+          className: nginx
+          tls:
+            enabled: true
+            secretName: cacheppuccino-helm-secret-cert
+        app:
+          translation:
+            baseUrl: "https://ifrc-translationapi.azurewebsites.net"
+            applicationId: "18"
+            existingSecret:
+              name: "cacheppuccino-api-token-secret"
+              key: "TRANSLATION_API_KEY"
+        sqlite:
+          pvc:
+            size: 512Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cacheppuccino
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
