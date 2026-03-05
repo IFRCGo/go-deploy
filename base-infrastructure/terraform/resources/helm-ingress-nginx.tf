@@ -29,6 +29,7 @@ resource "helm_release" "ifrcgo-ingress-nginx" {
     value = azurerm_public_ip.ifrcgo.ip_address
   }
 
+  # IP logging (preserve client IPs for ingress logs)
   set {
     name  = "controller.config.use-forwarded-headers"
     value = "true"
@@ -46,7 +47,7 @@ resource "helm_release" "ifrcgo-ingress-nginx" {
 
   set {
     name  = "controller.config.set-real-ip-from"
-    value = "10.1.0.0/16"
+    value = local.aks_subnet_cidr
   }
 
 }
