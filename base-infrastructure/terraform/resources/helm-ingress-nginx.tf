@@ -29,5 +29,24 @@ resource "helm_release" "ifrcgo-ingress-nginx" {
     value = azurerm_public_ip.ifrcgo.ip_address
   }
 
+  set {
+    name  = "controller.config.use-forwarded-headers"
+    value = "true"
+  }
+
+  set {
+    name  = "controller.config.compute-full-forwarded-for"
+    value = "true"
+  }
+
+  set {
+    name  = "controller.config.real-ip-header"
+    value = "X-Forwarded-For"
+  }
+
+  set {
+    name  = "controller.config.set-real-ip-from"
+    value = "10.1.0.0/16"
+  }
 
 }
