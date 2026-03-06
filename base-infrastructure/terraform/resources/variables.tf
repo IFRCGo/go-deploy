@@ -85,8 +85,9 @@ variable "ifrcgo_prod_resources_db_server" {
 # Local variables
 
 locals {
-  location = lower(replace(var.REGION, " ", ""))
-  prefix   = var.environment == "staging" ? "ifrctgo" : "ifrcpgo"
+  location        = lower(replace(var.REGION, " ", ""))
+  prefix          = var.environment == "staging" ? "ifrctgo" : "ifrcpgo"
+  aks_subnet_cidr = "10.1.0.0/16"
   # stack_id = "ifrcgo"
   # prefixnodashes        = "${local.stack_id}${var.environment}"
   storage = local.prefix

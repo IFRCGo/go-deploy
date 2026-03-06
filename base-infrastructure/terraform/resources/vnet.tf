@@ -10,7 +10,7 @@ resource "azurerm_subnet" "aks" {
   name                 = "${local.prefix}-aks-subnet"
   virtual_network_name = azurerm_virtual_network.ifrcgo-cluster.name
   resource_group_name  = data.azurerm_resource_group.ifrcgo.name
-  address_prefixes     = ["10.1.0.0/16"]
+  address_prefixes     = [local.aks_subnet_cidr]
 }
 
 # subnet for postgres that's delegated
