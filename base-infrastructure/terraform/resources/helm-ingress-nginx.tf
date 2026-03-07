@@ -3,7 +3,7 @@ resource "helm_release" "ifrcgo-ingress-nginx" {
   repository       = "https://kubernetes.github.io/ingress-nginx"
   chart            = "ingress-nginx"
   namespace        = "ingress-nginx"
-  version          = "4.12.1"
+  version          = "4.14.3"
   create_namespace = true
   depends_on = [
     azurerm_public_ip.ifrcgo
