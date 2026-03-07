@@ -105,6 +105,13 @@ spec:
   - path: applications/argocd/staging/applications/montandon-eoapi/internal/
     targetRevision: develop
     repoURL: https://github.com/IFRCGo/go-deploy.git
+    helm:
+      valuesObject:
+        azure:
+          clientID: 9b1f12a8-4ae9-4281-afa9-948451f77dce
+          secretProviderClass:
+            enabled: true
+            keyvaultName: montandon-eoapi-staging
 
   - repoURL: https://github.com/developmentseed/stac-auth-proxy.git
     targetRevision: v0.9.2
