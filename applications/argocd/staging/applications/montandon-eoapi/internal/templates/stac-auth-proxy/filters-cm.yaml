@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stac-auth-proxy-filters
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  montandon_filters.py: |
+{{ .Files.Get "files/stac-auth-proxy/montandon_filters.py" | indent 4 }}

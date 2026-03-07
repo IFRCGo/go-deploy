@@ -105,6 +105,13 @@ spec:
   - path: applications/argocd/staging/applications/montandon-eoapi/internal/
     targetRevision: develop
     repoURL: https://github.com/IFRCGo/go-deploy.git
+    helm:
+      valuesObject:
+        azure:
+          clientID: 9b1f12a8-4ae9-4281-afa9-948451f77dce
+          secretProviderClass:
+            enabled: true
+            keyvaultName: montandon-eoapi-staging
 
   - repoURL: https://github.com/developmentseed/stac-auth-proxy.git
     targetRevision: v0.9.2
@@ -117,6 +124,8 @@ spec:
           OIDC_DISCOVERY_URL: "https://goadmin-stage.ifrc.org/o/.well-known/openid-configuration"
           OVERRIDE_HOST: "0"
           ROOT_PATH: "/stac"
+          COLLECTIONS_FILTER_CLS: stac_auth_proxy.montandon_filters:CollectionsFilter
+          ITEMS_FILTER_CLS: stac_auth_proxy.montandon_filters:ItemsFilter
         ingress:
           enabled: "true"
           host: "montandon-eoapi-stage.ifrc.org"
@@ -125,7 +134,15 @@ spec:
             enabled: "true"
             secretName: "montandon-eoapi-helm-secret-cert"
         replicaCount: 1
-
+        extraVolumes:
+          - name: filters
+            configMap:
+              name: stac-auth-proxy-filters
+        extraVolumeMounts:
+          - name: filters
+            mountPath: /app/src/stac_auth_proxy/montandon_filters.py
+            subPath: montandon_filters.py
+            readOnly: true
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-eoapi
