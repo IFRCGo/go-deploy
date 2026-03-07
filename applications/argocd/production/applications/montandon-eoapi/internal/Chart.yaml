@@ -1,0 +1,7 @@
+apiVersion: v2
+name: montandon-eoapi-extra-manifests
+description: Montandon eoAPI extra manifests
+type: application
+
+version: 0.1.0
+appVersion: "1.0"
