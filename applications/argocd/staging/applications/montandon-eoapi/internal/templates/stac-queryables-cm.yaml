@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: montandon-eoapi-stac-queryables
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  stac_queryables.json: |
+{{ .Files.Get "files/stac_queryables.json" | indent 4 }}
