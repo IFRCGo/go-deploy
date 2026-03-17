@@ -38,3 +38,11 @@ output "motandon_eoapi_app_resource_details" {
     workload_id    = module.montandon_eoapi_resources.workload_client_id
   }
 }
+
+output "cacheppuccino_app_resource_details" {
+  value = {
+    key_vault_name = module.cacheppuccino_resources.key_vault_name
+    tenant_id      = module.cacheppuccino_resources.tenant_id
+    workload_id    = module.cacheppuccino_resources.workload_client_id
+  }
+}
