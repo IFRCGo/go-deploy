@@ -211,11 +211,6 @@ module "cacheppuccino_resources" {
     service_account_name    = "ifrcgo-cacheppuccino"
   }
 
-  secrets = {
-    # TODO(susilnem): DO we have it through variables?
-    TRANSLATION_API_KEY = var.cacheppuccino_translation_api_key
-  }
-
   vault_admin_ids = [
     "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
     "fd7b3704-8168-4b27-901c-f984b6b82c9a", # Sushil (TC)

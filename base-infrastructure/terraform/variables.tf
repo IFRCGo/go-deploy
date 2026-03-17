@@ -21,9 +21,3 @@ variable "REGION" {
 #   type    = string
 #   default = ""
 # }
-
-variable "cacheppuccino_translation_api_key" {
-  type        = string
-  sensitive   = true
-  description = "Translation API key for cacheppuccino"
-}
