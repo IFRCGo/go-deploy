@@ -12,25 +12,27 @@ spec:
     chart: cacheppuccino-helm
     targetRevision: 0.1.0-b413077
     helm:
+      valueFiles:
+        - values/go-deploy.yaml
       valuesObject:
         fullnameOverride: ifrcgo-cacheppuccino
         ingress:
-          enabled: true
           host: cacheppuccino-stage.ifrc.org
-          className: nginx
           tls:
-            enabled: true
             secretName: cacheppuccino-helm-secret-cert
-        app:
-          translation:
-            baseUrl: "https://ifrc-translationapi.azurewebsites.net"
-            applicationId: "18"
-            existingSecret:
-              name: "cacheppuccino-api-token-secret"
-              key: "TRANSLATION_API_KEY"
         sqlite:
           pvc:
             size: 512Mi
+        serviceAccount:
+          annotations:
+            # TODO(susilnem): update this after resource has been created.
+            azure.workload.identity/client-id: ""
+        # TODO(susilnem): update this after resource has been created.
+        secretsStoreCsiDriver:
+          parameters:
+            clientID: ""
+            keyvaultName: ""
+            tenantId: ""
   destination:
     server: https://kubernetes.default.svc
     namespace: cacheppuccino
