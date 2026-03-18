@@ -197,3 +197,22 @@ module "montandon_eoapi_resources" {
     "fc0ebb01-c8f1-456b-a7a5-0a2d6c79e6d9", # Ranjan (TC)
   ]
 }
+
+module "cacheppuccino_resources" {
+  source = "./app_resources"
+
+  app_name            = "cacheppuccino"
+  environment         = var.environment
+  resource_group_name = module.resources.resource_group
+
+  aks_config = {
+    cluster_namespace       = "cacheppuccino"
+    cluster_oidc_issuer_url = module.resources.cluster_oidc_issuer_url
+    service_account_name    = "ifrcgo-cacheppuccino"
+  }
+
+  vault_admin_ids = [
+    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
+    "fd7b3704-8168-4b27-901c-f984b6b82c9a", # Sushil (TC)
+  ]
+}
