@@ -10,13 +10,15 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: cacheppuccino-helm
-    targetRevision: 0.1.0-b413077
+    targetRevision: 0.1.0-73c0e19
     helm:
       valueFiles:
         - values/go-deploy.yaml
+        - values/staging.yaml
       valuesObject:
         fullnameOverride: ifrcgo-cacheppuccino
         ingress:
+          className: nginx
           host: cacheppuccino-stage.ifrc.org
           tls:
             secretName: cacheppuccino-helm-secret-cert
@@ -25,14 +27,12 @@ spec:
             size: 512Mi
         serviceAccount:
           annotations:
-            # TODO(susilnem): update this after resource has been created.
-            azure.workload.identity/client-id: ""
-        # TODO(susilnem): update this after resource has been created.
+            azure.workload.identity/client-id: "f39be471-33b8-4a7b-ae8b-e156427a6589"
         secretsStoreCsiDriver:
           parameters:
-            clientID: ""
-            keyvaultName: ""
-            tenantId: ""
+            clientID: "f39be471-33b8-4a7b-ae8b-e156427a6589"
+            keyvaultName: "cacheppuccino-staging-kv"
+            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
   destination:
     server: https://kubernetes.default.svc
     namespace: cacheppuccino
