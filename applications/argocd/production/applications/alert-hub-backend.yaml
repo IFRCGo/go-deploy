@@ -44,6 +44,13 @@ spec:
               clientID: "5853dc85-0d06-4f6d-9145-c72680a65ad9"
               keyvaultName: "alert-hub-production-kv"
               tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+          # App level configs - temporary
+          api:
+            resources:
+              requests:
+                memory: 2Gi
+              limits:
+                memory: 2Gi
   destination:
     server: https://kubernetes.default.svc
     namespace: alert-hub
