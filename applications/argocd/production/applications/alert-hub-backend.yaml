@@ -46,6 +46,7 @@ spec:
               tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
           # App level configs - temporary
           api:
+            replicaCount: 2
             resources:
               requests:
                 memory: 2Gi
