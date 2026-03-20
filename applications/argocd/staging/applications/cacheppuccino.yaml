@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: cacheppuccino-helm
-    targetRevision: 0.1.0-7e61229
+    targetRevision: 0.1.0-cadf32b
     helm:
       valueFiles:
         - values/go-deploy.yaml
