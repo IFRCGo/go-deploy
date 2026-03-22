@@ -38,6 +38,14 @@ output "azure_storage_connection_string" {
   value = azurerm_storage_account.ifrcgo.primary_connection_string
 }
 
+output "storage_account_name" {
+  value = azurerm_storage_account.ifrcgo.name
+}
+
+output "storage_account_id" {
+  value = azurerm_storage_account.ifrcgo.id
+}
+
 # Alert Hub ----------------------------------------
 output "alert_hub_db_admin_password" {
   value = random_password.alert_hub_db_admin.result
@@ -88,7 +96,7 @@ output "montandon_eoapi_db_server_id" {
 
 # Survey Design Tool ----------------------------------------
 
-# SDT DB Details
+# DB
 output "sdt_db_admin_password" {
   value = random_password.sdt_db_admin.result
 }
@@ -101,18 +109,11 @@ output "sdt_db_server_id" {
   value = azurerm_postgresql_flexible_server.sdt.id
 }
 
+# Storage
 output "sdt_storage_account_id" {
   value = azurerm_storage_account.sdt.id
 }
 
 output "sdt_storage_account_name" {
   value = azurerm_storage_account.sdt.name
-}
-
-output "storage_account_name" {
-  value = azurerm_storage_account.ifrcgo.name
-}
-
-output "storage_account_id" {
-  value = azurerm_storage_account.ifrcgo.id
 }

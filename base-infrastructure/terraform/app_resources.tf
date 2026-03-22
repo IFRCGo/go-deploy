@@ -1,4 +1,13 @@
 locals {
+  user_principal_ids = {
+    tc_navin  = "c31baae7-afbf-4ad3-8e01-5abbd68adb16"
+    tc_ranjan = "fc0ebb01-c8f1-456b-a7a5-0a2d6c79e6d9"
+    tc_sushil = "fd7b3704-8168-4b27-901c-f984b6b82c9a"
+
+    # TODO: remove this
+    dfs_moses = "32053268-3970-48f3-9b09-c4280cd0b67d"
+  }
+
   alerthub_db_name        = "alerthubdb"
   montandon_db_name       = "montandondb"
   sdt_db_name             = "sdtdb"
@@ -56,14 +65,15 @@ module "alert_hub_resources" {
       }
     ]
 
-    enabled              = true
+    enabled = true
+    # FIXME: This is using go-api storage account id?
     storage_account_id   = module.resources.storage_account_id
     storage_account_name = module.resources.storage_account_name
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
-    "32053268-3970-48f3-9b09-c4280cd0b67d", # Moses (DFS)
+    local.user_principal_ids.tc_navin,
+    local.user_principal_ids.dfs_moses,
   ]
 }
 
@@ -113,8 +123,8 @@ module "sdt_resources" {
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
-    "32053268-3970-48f3-9b09-c4280cd0b67d", # Moses (DFS)
+    local.user_principal_ids.tc_navin,
+    local.user_principal_ids.dfs_moses,
   ]
 }
 
@@ -161,9 +171,9 @@ module "montandon_etl_resources" {
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
-    "32053268-3970-48f3-9b09-c4280cd0b67d", # Moses (DFS)
-    "fc0ebb01-c8f1-456b-a7a5-0a2d6c79e6d9", # Ranjan (TC)
+    local.user_principal_ids.tc_navin,
+    local.user_principal_ids.dfs_moses,
+    local.user_principal_ids.tc_ranjan,
   ]
 }
 
@@ -193,9 +203,9 @@ module "montandon_eoapi_resources" {
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
-    "32053268-3970-48f3-9b09-c4280cd0b67d", # Moses (DFS)
-    "fc0ebb01-c8f1-456b-a7a5-0a2d6c79e6d9", # Ranjan (TC)
+    local.user_principal_ids.tc_navin,
+    local.user_principal_ids.dfs_moses,
+    local.user_principal_ids.tc_ranjan,
   ]
 }
 
@@ -213,7 +223,7 @@ module "cacheppuccino_resources" {
   }
 
   vault_admin_ids = [
-    "c31baae7-afbf-4ad3-8e01-5abbd68adb16", # Navin (TC)
-    "fd7b3704-8168-4b27-901c-f984b6b82c9a", # Sushil (TC)
+    local.user_principal_ids.tc_navin,
+    local.user_principal_ids.tc_sushil,
   ]
 }
