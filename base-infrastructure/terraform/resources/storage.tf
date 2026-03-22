@@ -51,3 +51,17 @@ resource "azurerm_storage_account" "montandon" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
+
+# Risk module --------------------------------------
+resource "random_integer" "risk_module_storage_account_suffix" {
+  min = 1000
+  max = 9999
+}
+
+resource "azurerm_storage_account" "risk_module" {
+  name                     = "riskmodule${var.environment}${random_integer.risk_module_storage_account_suffix.result}"
+  resource_group_name      = data.azurerm_resource_group.ifrcgo.name
+  location                 = data.azurerm_resource_group.ifrcgo.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}

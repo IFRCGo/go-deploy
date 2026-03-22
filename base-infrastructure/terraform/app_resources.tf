@@ -8,6 +8,7 @@ locals {
     dfs_moses = "32053268-3970-48f3-9b09-c4280cd0b67d"
   }
 
+  risk_module_db_name     = "riskmodule"
   alerthub_db_name        = "alerthubdb"
   montandon_db_name       = "montandondb"
   sdt_db_name             = "sdtdb"
@@ -27,6 +28,39 @@ module "risk_module_resources" {
   environment         = var.environment
   resource_group_name = module.resources.resource_group
 
+  database_config = {
+    create_database = true
+    database_name   = local.risk_module_db_name
+    server_id       = module.resources.risk_module_db_server_id
+  }
+
+  storage_config = {
+    container_refs = [
+      {
+        container_ref = "storage"
+        access_type   = "blob"
+      }
+    ]
+
+    enabled              = true
+    storage_account_id   = module.resources.risk_module_storage_account_id
+    storage_account_name = module.resources.risk_module_storage_account_name
+  }
+
+  secrets = {
+    # DB
+    DATABASE_NAME     = local.risk_module_db_name
+    DATABASE_HOST     = module.resources.risk_module_db_host
+    DATABASE_USER     = module.resources.risk_module_db_user
+    DATABASE_PASSWORD = module.resources.risk_module_db_user_password
+    DATABASE_PORT     = 5432
+  }
+
+
+  vault_admin_ids = [
+    local.user_principal_ids.tc_navin,
+    local.user_principal_ids.tc_ranjan,
+  ]
 }
 
 module "alert_hub_resources" {

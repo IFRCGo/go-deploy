@@ -117,3 +117,31 @@ output "sdt_storage_account_id" {
 output "sdt_storage_account_name" {
   value = azurerm_storage_account.sdt.name
 }
+
+# Risk Module ----------------------------------------
+
+# DB
+output "risk_module_db_server_id" {
+  value = azurerm_postgresql_flexible_server.risk_module.id
+}
+
+output "risk_module_db_host" {
+  value = azurerm_postgresql_flexible_server.risk_module.fqdn
+}
+
+output "risk_module_db_user" {
+  value = azurerm_postgresql_flexible_server.risk_module.administrator_login
+}
+
+output "risk_module_db_user_password" {
+  value = random_password.risk_module_db_user.result
+}
+
+# Storage
+output "risk_module_storage_account_id" {
+  value = azurerm_storage_account.risk_module.id
+}
+
+output "risk_module_storage_account_name" {
+  value = azurerm_storage_account.risk_module.name
+}
