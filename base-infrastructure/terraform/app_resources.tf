@@ -1,3 +1,10 @@
+locals {
+  alerthub_db_name        = "alerthubdb"
+  montandon_db_name       = "montandondb"
+  sdt_db_name             = "sdtdb"
+  montandon_eoapi_db_name = "montandoneoapidb"
+}
+
 module "risk_module_resources" {
   source = "./app_resources"
 
@@ -10,13 +17,7 @@ module "risk_module_resources" {
   app_name            = "risk-module"
   environment         = var.environment
   resource_group_name = module.resources.resource_group
-}
 
-locals {
-  alerthub_db_name        = "alerthubdb"
-  montandon_db_name       = "montandondb"
-  sdt_db_name             = "sdtdb"
-  montandon_eoapi_db_name = "montandoneoapidb"
 }
 
 module "alert_hub_resources" {

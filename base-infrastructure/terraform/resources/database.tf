@@ -4,7 +4,7 @@ data "azurerm_postgresql_flexible_server" "ifrcgo" {
   resource_group_name = data.azurerm_resource_group.ifrcgo.name
 }
 
-# Database for AlertHub
+# Database for AlertHub --------------------------------------
 resource "random_password" "alert_hub_db_admin" {
   length  = 16
   special = true
@@ -67,7 +67,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "alerthub_postgres_c
   value     = each.value
 }
 
-# Database for SDT
+# Database for Survey Design Tool  --------------------------------------
 resource "random_password" "sdt_db_admin" {
   length  = 16
   special = true
@@ -117,7 +117,8 @@ resource "azurerm_postgresql_flexible_server_configuration" "sdt_db_extensions" 
   value     = "CITEXT"
 }
 
-# Database for Montandon
+# Database for Montandon --------------------------------------
+# Montandon ETL **********************************************
 resource "random_password" "montandon_db_user" {
   length  = 16
   special = true
@@ -167,6 +168,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "montandon_db_extens
   value     = "POSTGIS"
 }
 
+# Montandon eoAPI **********************************************
 resource "random_password" "montandon_eoapi_db_user" {
   length  = 16
   special = true

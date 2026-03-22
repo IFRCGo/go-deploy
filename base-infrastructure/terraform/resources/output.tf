@@ -1,11 +1,3 @@
-output "alert_hub_db_admin_password" {
-  value = random_password.alert_hub_db_admin.result
-}
-
-output "alert_hub_db_server_id" {
-  value = azurerm_postgresql_flexible_server.alerthub.id
-}
-
 output "environment" {
   value = var.environment
 }
@@ -46,6 +38,18 @@ output "azure_storage_connection_string" {
   value = azurerm_storage_account.ifrcgo.primary_connection_string
 }
 
+# Alert Hub ----------------------------------------
+output "alert_hub_db_admin_password" {
+  value = random_password.alert_hub_db_admin.result
+}
+
+output "alert_hub_db_server_id" {
+  value = azurerm_postgresql_flexible_server.alerthub.id
+}
+
+# Montandon ----------------------------------------
+# -- ETL
+
 # Montandon DB Details
 output "montandon_db_user_password" {
   value = random_password.montandon_db_user.result
@@ -67,6 +71,8 @@ output "montandon_storage_account_name" {
   value = azurerm_storage_account.montandon.name
 }
 
+# -- eoAPI
+
 # Montandon eoAPI DB Details
 output "montandon_eoapi_db_user_password" {
   value = random_password.montandon_eoapi_db_user.result
@@ -79,6 +85,8 @@ output "montandon_eoapi_db_host" {
 output "montandon_eoapi_db_server_id" {
   value = azurerm_postgresql_flexible_server.montandon_eoapi.id
 }
+
+# Survey Design Tool ----------------------------------------
 
 # SDT DB Details
 output "sdt_db_admin_password" {
