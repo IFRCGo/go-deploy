@@ -67,7 +67,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "alerthub_postgres_c
   value     = each.value
 }
 
-# Database for Survey Design Tool  --------------------------------------
+# Database for Survey designer  --------------------------------------
 resource "random_password" "sdt_db_admin" {
   length  = 16
   special = true

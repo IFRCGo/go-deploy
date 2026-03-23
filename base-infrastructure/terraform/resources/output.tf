@@ -94,7 +94,7 @@ output "montandon_eoapi_db_server_id" {
   value = azurerm_postgresql_flexible_server.montandon_eoapi.id
 }
 
-# Survey Design Tool ----------------------------------------
+# Survey designer  --------------------------------------
 
 # DB
 output "sdt_db_admin_password" {
