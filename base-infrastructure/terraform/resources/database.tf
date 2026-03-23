@@ -235,6 +235,7 @@ resource "azurerm_postgresql_flexible_server" "risk_module" {
   name                          = "risk-module-${var.environment}-psql-flexible-server"
   resource_group_name           = data.azurerm_resource_group.ifrcgo.name
   location                      = data.azurerm_resource_group.ifrcgo.location
+  version                       = "16"
   administrator_login           = "postgres"
   administrator_password        = random_password.risk_module_db_user.result
   backup_retention_days         = 35
