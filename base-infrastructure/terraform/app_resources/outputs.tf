@@ -14,6 +14,10 @@ output "storage_containers" {
   value = var.storage_config.enabled ? azurerm_storage_container.app_container[*].name : null
 }
 
+output "storage_account_name" {
+  value = var.storage_config.enabled ? var.storage_config.storage_account_name : null
+}
+
 output "tenant_id" {
   value = data.azurerm_client_config.current.tenant_id
 }
