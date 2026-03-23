@@ -1,11 +1,3 @@
-output "alert_hub_db_admin_password" {
-  value = random_password.alert_hub_db_admin.result
-}
-
-output "alert_hub_db_server_id" {
-  value = azurerm_postgresql_flexible_server.alerthub.id
-}
-
 output "environment" {
   value = var.environment
 }
@@ -46,6 +38,26 @@ output "azure_storage_connection_string" {
   value = azurerm_storage_account.ifrcgo.primary_connection_string
 }
 
+output "storage_account_name" {
+  value = azurerm_storage_account.ifrcgo.name
+}
+
+output "storage_account_id" {
+  value = azurerm_storage_account.ifrcgo.id
+}
+
+# Alert Hub ----------------------------------------
+output "alert_hub_db_admin_password" {
+  value = random_password.alert_hub_db_admin.result
+}
+
+output "alert_hub_db_server_id" {
+  value = azurerm_postgresql_flexible_server.alerthub.id
+}
+
+# Montandon ----------------------------------------
+# -- ETL
+
 # Montandon DB Details
 output "montandon_db_user_password" {
   value = random_password.montandon_db_user.result
@@ -67,6 +79,8 @@ output "montandon_storage_account_name" {
   value = azurerm_storage_account.montandon.name
 }
 
+# -- eoAPI
+
 # Montandon eoAPI DB Details
 output "montandon_eoapi_db_user_password" {
   value = random_password.montandon_eoapi_db_user.result
@@ -80,7 +94,9 @@ output "montandon_eoapi_db_server_id" {
   value = azurerm_postgresql_flexible_server.montandon_eoapi.id
 }
 
-# SDT DB Details
+# Survey designer  --------------------------------------
+
+# DB
 output "sdt_db_admin_password" {
   value = random_password.sdt_db_admin.result
 }
@@ -93,6 +109,7 @@ output "sdt_db_server_id" {
   value = azurerm_postgresql_flexible_server.sdt.id
 }
 
+# Storage
 output "sdt_storage_account_id" {
   value = azurerm_storage_account.sdt.id
 }
@@ -101,10 +118,30 @@ output "sdt_storage_account_name" {
   value = azurerm_storage_account.sdt.name
 }
 
-output "storage_account_name" {
-  value = azurerm_storage_account.ifrcgo.name
+# Risk Module ----------------------------------------
+
+# DB
+output "risk_module_db_server_id" {
+  value = azurerm_postgresql_flexible_server.risk_module.id
 }
 
-output "storage_account_id" {
-  value = azurerm_storage_account.ifrcgo.id
+output "risk_module_db_host" {
+  value = azurerm_postgresql_flexible_server.risk_module.fqdn
+}
+
+output "risk_module_db_user" {
+  value = azurerm_postgresql_flexible_server.risk_module.administrator_login
+}
+
+output "risk_module_db_user_password" {
+  value = random_password.risk_module_db_user.result
+}
+
+# Storage
+output "risk_module_storage_account_id" {
+  value = azurerm_storage_account.risk_module.id
+}
+
+output "risk_module_storage_account_name" {
+  value = azurerm_storage_account.risk_module.name
 }

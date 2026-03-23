@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: risk-module
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/ifrcgo
+    chart: ifrcgo-risk-module-helm
+    targetRevision: 0.0.1-develop.c8fef799
+    helm:
+      valueFiles:
+        - values/operators.yaml
+        - values/go-deploy.yaml
+        - values/staging.yaml
+      valuesObject:
+        app:
+          ingress:
+            host: "go-risk-api-stage.ifrc.org"
+            tls:
+              secretName: "risk-helm-secret-cert"
+          env:
+            RISK_API_FQDN: "https://go-risk-api-stage.ifrc.org"
+            DJANGO_ALLOWED_HOSTS: "go-risk-api-stage.ifrc.org"
+            # Blob Storage Configs
+            USE_AZURE_STORAGE: "true"
+            AZURE_CLIENT_ID: "1a891bd5-87e2-4489-8050-84f26c3f99ce"
+            AZURE_TENANT_ID: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+            AZURE_STORAGE_CONTAINER: "risk-module-staging-storage-container"
+            AZURE_STORAGE_ACCOUNT_NAME: "riskmodulestaging4254"
+            AZURE_STORAGE_MANAGED_IDENTITY: "true"
+          serviceAccount:
+            annotations:
+              azure.workload.identity/client-id:
+          secretsStoreCsiDriver:
+            parameters:
+              clientID: "1a891bd5-87e2-4489-8050-84f26c3f99ce"
+              keyvaultName: "risk-module-staging-kv"
+              tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: risk-module
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
