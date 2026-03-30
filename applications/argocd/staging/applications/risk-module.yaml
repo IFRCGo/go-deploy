@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-risk-module-helm
-    targetRevision: 0.0.1-develop.c8fef799
+    targetRevision: 0.0.1-develop.cf300c49
     helm:
       valueFiles:
         - values/operators.yaml
