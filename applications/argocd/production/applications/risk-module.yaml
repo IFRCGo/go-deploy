@@ -15,30 +15,30 @@ spec:
       valueFiles:
         - values/operators.yaml
         - values/go-deploy.yaml
-        - values/staging.yaml
+        - values/production.yaml
       valuesObject:
         app:
           ingress:
-            host: "go-risk-api-stage.ifrc.org"
+            host: "go-risk-api.ifrc.org"
             tls:
               secretName: "risk-helm-secret-cert"
           env:
-            RISK_API_FQDN: "https://go-risk-api-stage.ifrc.org"
-            DJANGO_ALLOWED_HOSTS: "go-risk-api-stage.ifrc.org"
+            RISK_API_FQDN: "https://go-risk-api.ifrc.org"
+            DJANGO_ALLOWED_HOSTS: "go-risk-api.ifrc.org"
             # Blob Storage Configs
             USE_AZURE_STORAGE: "true"
-            AZURE_CLIENT_ID: "1a891bd5-87e2-4489-8050-84f26c3f99ce"
+            AZURE_CLIENT_ID: "d4f63346-0745-4e82-b4fb-332a49d56e0d"
             AZURE_TENANT_ID: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
-            AZURE_STORAGE_CONTAINER: "risk-module-staging-storage-container"
-            AZURE_STORAGE_ACCOUNT_NAME: "riskmodulestaging4254"
+            AZURE_STORAGE_CONTAINER: "risk-module-production-storage-container"
+            AZURE_STORAGE_ACCOUNT_NAME: "riskmoduleproduction2832"
             AZURE_STORAGE_MANAGED_IDENTITY: "true"
           serviceAccount:
             annotations:
-              azure.workload.identity/client-id: "1a891bd5-87e2-4489-8050-84f26c3f99ce"
+              azure.workload.identity/client-id: "d4f63346-0745-4e82-b4fb-332a49d56e0d"
           secretsStoreCsiDriver:
             parameters:
-              clientID: "1a891bd5-87e2-4489-8050-84f26c3f99ce"
-              keyvaultName: "risk-module-staging-kv"
+              clientID: "d4f63346-0745-4e82-b4fb-332a49d56e0d"
+              keyvaultName: "risk-module-production-k"
               tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
   destination:
     server: https://kubernetes.default.svc
