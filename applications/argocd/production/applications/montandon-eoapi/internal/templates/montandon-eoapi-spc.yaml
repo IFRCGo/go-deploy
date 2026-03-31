@@ -1,14 +1,20 @@
+{{- if .Values.azure.secretProviderClass.enabled -}}
+
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
   name: azure-secret-provider-montandon-eoapi
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   provider: azure
   parameters:
     usePodIdentity: "false"
-    clientID: "8bf208ec-d73c-42d1-a4a9-817d2936a883"
-    keyvaultName: "montandon-eoapi-producti"
-    tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+    clientID: {{ required "azure.clientID" .Values.azure.clientID }}
+    tenantId: {{ required "azure.tenantId" .Values.azure.tenantId }}
+    keyvaultName: {{ required "azure.secretProviderClass.keyvaultName" .Values.azure.secretProviderClass.keyvaultName }}
     objects: |
       array:
         - |
@@ -70,3 +76,5 @@ spec:
           key: DB_PORT
         - objectName: DB-PORT
           key: port
+
+{{- end }}
