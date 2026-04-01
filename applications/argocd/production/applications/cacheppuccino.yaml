@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cacheppuccino
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/ifrcgo
+    chart: cacheppuccino-helm
+    targetRevision: 0.1.0-c1bdee99
+    helm:
+      valueFiles:
+        - values/go-deploy.yaml
+        - values/production.yaml
+      valuesObject:
+        fullnameOverride: ifrcgo-cacheppuccino
+        ingress:
+          className: nginx
+          host: cacheppuccino.ifrc.org
+          tls:
+            secretName: cacheppuccino-helm-secret-cert
+        sqlite:
+          pvc:
+            size: 512Mi
+        serviceAccount:
+          annotations:
+            azure.workload.identity/client-id: "e2cb56dd-1c99-45cb-89f1-92b2b1b30984"
+        secretsStoreCsiDriver:
+          parameters:
+            clientID: "e2cb56dd-1c99-45cb-89f1-92b2b1b30984"
+            keyvaultName: "cacheppuccino-production"
+            tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cacheppuccino
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
