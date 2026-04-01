@@ -71,14 +71,13 @@ spec:
           prometheusSpec:
             # TODO: Increase/decrease as needed
             # https://prometheus.io/docs/prometheus/latest/storage/#right-sizing-retention-size
-            retention: 90d  # How long to retain metrics
-            retentionSize: "18GB"  # Maximum size of metrics
+            retentionSize: "20GB"  # Maximum size of metrics
             storageSpec:
               volumeClaimTemplate:
                 spec:
                   resources:
                     requests:
-                      storage: 20Gi
+                      storage: 32Gi  # Cost is defined at tier level
 
         # TODO: Enable and configure this
         alertmanager:

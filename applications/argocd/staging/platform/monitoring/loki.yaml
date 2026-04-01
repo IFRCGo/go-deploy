@@ -85,7 +85,7 @@ spec:
             enabled: true
             persistence:
               enabled: true
-              size: 20Gi
+              size: 32Gi  # Cost is defined at tier level
 
           # Zero out replica counts of other deployment modes
           backend:
