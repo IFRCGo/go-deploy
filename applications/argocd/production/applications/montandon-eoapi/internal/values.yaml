@@ -1,0 +1,12 @@
+# Create all resources before normal sync
+commonAnnotations:
+  argocd.argoproj.io/hook: "Sync"
+  argocd.argoproj.io/sync-wave: "-7"
+  argocd.argoproj.io/hook-delete-policy: "BeforeHookCreation"
+
+azure:
+  tenantId: a2b53be5-734e-4e6c-ab0d-d184f60fd917
+  clientID:
+  secretProviderClass:
+    enabled: true
+    keyvaultName:

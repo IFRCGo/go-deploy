@@ -114,10 +114,20 @@ spec:
             keyvaultName: montandon-eoapi-staging
 
   - repoURL: https://github.com/developmentseed/stac-auth-proxy.git
-    targetRevision: v0.11.1
+    targetRevision: v1.0.3
     path: helm/
     helm:
       valuesObject:
+        # HealthCheck endpoints - https://github.com/developmentseed/stac-auth-proxy/pull/143
+        startupProbe:
+          httpGet:
+            path: /stac/healthz
+        livenessProbe:
+          httpGet:
+            path: /stac/healthz
+        readinessProbe:
+          httpGet:
+            path: /stac/healthz
         env:
           UPSTREAM_URL: "http://montandon-eoapi-stac:8080"
           # UPSTREAM_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
