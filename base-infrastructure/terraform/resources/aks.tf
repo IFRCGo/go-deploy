@@ -12,7 +12,7 @@ resource "azurerm_kubernetes_cluster" "ifrcgo" {
   # https://releases.aks.azure.com/
   # https://endoflife.date/azure-kubernetes-service
   # renovate: datasource=github-tags depName=kubernetes/kubernetes
-  kubernetes_version = "1.34.0"
+  kubernetes_version = "1.36.0"
 
   default_node_pool {
     name                        = "nodepool1"
