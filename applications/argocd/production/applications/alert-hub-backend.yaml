@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-alert-hub-helm
-    targetRevision: 0.1.1-develop.ca9d3c81
+    targetRevision: 0.1.1-develop.cb870e50
     helm:
       valueFiles:
         - values-go-deploy.yaml
@@ -44,14 +44,6 @@ spec:
               clientID: "5853dc85-0d06-4f6d-9145-c72680a65ad9"
               keyvaultName: "alert-hub-production-kv"
               tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
-          # App level configs - temporary
-          api:
-            replicaCount: 2
-            resources:
-              requests:
-                memory: 2Gi
-              limits:
-                memory: 2Gi
   destination:
     server: https://kubernetes.default.svc
     namespace: alert-hub
