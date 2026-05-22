@@ -28,7 +28,7 @@ api:
   replicaCount: 1
   resources:
     requests:
-      cpu: "0.5"
+      cpu: "0.2"
       memory: 4Gi
     limits:
       cpu: "2"
@@ -39,7 +39,7 @@ redis:
     repository: bitnamilegacy/redis
   resources:
     requests:
-      cpu: "0.1"
+      cpu: "0.2"
       memory: 0.5Gi
     limits:
       cpu: "1"
@@ -49,7 +49,7 @@ celery:
   replicaCount: 1
   resources:
     requests:
-      cpu: "0.1"
+      cpu: "0.2"
       memory: 0.4Gi
     limits:
       cpu: "2"
@@ -60,7 +60,7 @@ elasticsearch:
     uri: /subscriptions/39308fb0-9929-4b29-aafa-b3c78a8b0658/resourceGroups/ifrctgo002rg/providers/Microsoft.Compute/disks/ifrctgo-disk001
   resources:
     requests:
-      cpu: "0.5"
+      cpu: "0.2"
       memory: 4Gi
     limits:
       cpu: "2"
@@ -69,10 +69,10 @@ elasticsearch:
 sshBastion:
   resources:
     requests:
-      cpu: "0.1"
+      cpu: "0.2"
       memory: 0.05Gi
     limits:
-      cpu: "0.5"
+      cpu: "1"
       memory: 0.2Gi
 
 serviceAccount:
