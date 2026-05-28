@@ -114,7 +114,7 @@ spec:
             keyvaultName: montandon-eoapi-producti
 
   - repoURL: https://github.com/developmentseed/stac-auth-proxy.git
-    targetRevision: v1.0.3
+    targetRevision: v1.1.1
     path: helm/
     helm:
       valuesObject:
