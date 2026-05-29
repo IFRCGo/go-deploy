@@ -132,16 +132,17 @@ spec:
           UPSTREAM_URL: "http://montandon-eoapi-stac:8080"
           # UPSTREAM_URL: "https://montandon-eoapi.ifrc.org/stac"
           OIDC_DISCOVERY_URL: "https://goadmin.ifrc.org/o/.well-known/openid-configuration"
+          OIDC_DISCOVERY_INTERNAL_URL: "https://goadmin.ifrc.org/o/.well-known/openid-configuration"
           OVERRIDE_HOST: "0"
           ROOT_PATH: "/stac"
           COLLECTIONS_FILTER_CLS: stac_auth_proxy.montandon_filters:CollectionsFilter
           ITEMS_FILTER_CLS: stac_auth_proxy.montandon_filters:ItemsFilter
         ingress:
-          enabled: "true"
+          enabled: true
           host: "montandon-eoapi.ifrc.org"
           className: "nginx"
           tls:
-            enabled: "true"
+            enabled: true
             secretName: "montandon-eoapi-helm-secret-cert"
         replicaCount: 1
         extraVolumes:
