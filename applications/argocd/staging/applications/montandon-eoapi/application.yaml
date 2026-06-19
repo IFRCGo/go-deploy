@@ -54,17 +54,32 @@ spec:
           image:
             tag: 6.1.2
           overrideRootPath: ""
+          autoscaling:
+            enabled: true
+            minReplicas: 1
+            maxReplicas: 3
+            type: "cpu"
+            targets:
+              cpu: 70
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 300
+              scaleUp:
+                stabilizationWindowSeconds: 60
           settings:
             labels:
               azure.workload.identity/use: "true"
             resources:
               requests:
                 memory: "2048Mi"
-                cpu: "10m"
+                cpu: "500m"
               limits:
                 memory: "4096Mi"
                 cpu: "1000m"
             envVars:
+              WEB_CONCURRENCY: "4"
+              DB_MIN_CONN_SIZE: "1"
+              DB_MAX_CONN_SIZE: "2"
               ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
               FORWARDED_ALLOW_IPS: "*"
               PROXY_HEADERS: True
@@ -144,7 +159,11 @@ spec:
           tls:
             enabled: true
             secretName: "montandon-eoapi-helm-secret-cert"
-        replicaCount: 1
+        autoscaling:
+          enabled: true
+          minReplicas: 1
+          maxReplicas: 3
+          targetCPUUtilizationPercentage: 75
         resources:
           limits:
             cpu: 500m
