@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-risk-module-helm
-    targetRevision: 0.0.1-develop.c0c63878
+    targetRevision: 0.0.1-develop.ccf7671c
     helm:
       valueFiles:
         - values/operators.yaml
@@ -18,10 +18,11 @@ spec:
         - values/staging.yaml
       valuesObject:
         app:
-          ingress:
-            host: "go-risk-api-stage.ifrc.org"
-            tls:
-              secretName: "risk-helm-secret-cert"
+          api:
+            ingress:
+              host: "go-risk-api-stage.ifrc.org"
+              tls:
+                secretName: "risk-helm-secret-cert"
           env:
             RISK_API_FQDN: "https://go-risk-api-stage.ifrc.org"
             DJANGO_ALLOWED_HOSTS: "go-risk-api-stage.ifrc.org"
