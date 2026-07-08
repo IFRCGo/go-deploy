@@ -21,6 +21,8 @@ env:
   IFRC_TRANSLATION_DOMAIN: https://ifrc-translationapi-staging.azurewebsites.net
   SENTRY_DSN: https://342632f67ea942c9bde214c0bb7e91be@sentry.northeurope.cloudapp.azure.com/2
   SENTRY_SAMPLE_RATE: "0.3"
+  SESSION_COOKIE_DOMAIN: ".ifrc.org"
+  CSRF_COOKIE_DOMAIN: ".ifrc.org"
 
 api:
   domain: goadmin-stage.ifrc.org
