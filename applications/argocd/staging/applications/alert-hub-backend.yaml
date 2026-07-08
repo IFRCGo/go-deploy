@@ -10,17 +10,19 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-alert-hub-helm
-    targetRevision: 0.1.1-develop.c6f10f53
+    targetRevision: 0.1.1-develop.c20477cc
     helm:
       valueFiles:
-        - values-go-deploy.yaml
-        - values-staging.yaml
+        - values/operators.yaml
+        - values/go-deploy.yaml
+        - values/staging.yaml
       valuesObject:
         app:
-          ingress:
-            host: "alerthub-stage-api.ifrc.org"
-            tls:
-              secretName: "alerthub-helm-secret-cert"
+          api:
+            ingress:
+              host: "alerthub-stage-api.ifrc.org"
+              tls:
+                secretName: "alerthub-helm-secret-cert"
           env:
             APP_FRONTEND_HOST: "https://alerthub-stage.ifrc.org"
             APP_DOMAIN: "alerthub-stage-api.ifrc.org"
