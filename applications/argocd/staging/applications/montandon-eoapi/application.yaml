@@ -145,6 +145,13 @@ spec:
             enabled: true
             secretName: "montandon-eoapi-helm-secret-cert"
         replicaCount: 1
+        resources:
+          limits:
+            cpu: 500m
+            memory: "2048Mi"
+          requests:
+            cpu: 200m
+            memory: "1024Mi"
         extraVolumes:
           - name: filters
             configMap:
