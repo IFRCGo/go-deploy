@@ -1,0 +1,74 @@
+# https://github.com/toggle-corp/helm-charts/tree/main/toggle/raw
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: go-user-library
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/toggle-corp/helm-charts
+    chart: raw
+    targetRevision: v0.1.0
+    helm:
+      valuesObject:
+        host: go-user-library.ifrc.org
+        ingressClassName: traefik
+        redirectUrl: "https://www.chromatic.com/library?appId=66557be6b68dacbf0a96db23&branch=develop"
+        tlsSecretName: ifrcgo-helm-secret-api-cert
+        templates:
+          - |
+            apiVersion: v1
+            kind: Service
+            metadata:
+              name: go-user-library-placeholder
+            spec:
+              ports:
+                - port: 80
+                  targetPort: 80
+          - |
+            apiVersion: traefik.io/v1alpha1
+            kind: Middleware
+            metadata:
+              name: go-user-library-redirect
+            spec:
+              redirectRegex:
+                regex: "^.*"
+                replacement: {{ .Values.redirectUrl | quote }}
+                permanent: true
+          - |
+            apiVersion: networking.k8s.io/v1
+            kind: Ingress
+            metadata:
+              name: go-user-library-ingress
+              annotations:
+                traefik.ingress.kubernetes.io/router.middlewares: {{ .Release.Namespace }}-go-user-library-redirect@kubernetescrd
+            spec:
+              ingressClassName: {{ .Values.ingressClassName }}
+              tls:
+                - hosts:
+                    - {{ .Values.host }}
+                  secretName: {{ .Values.tlsSecretName }}
+              rules:
+                - host: {{ .Values.host }}
+                  http:
+                    paths:
+                      - path: /
+                        pathType: Prefix
+                        backend:
+                          service:
+                            name: go-user-library-placeholder
+                            port:
+                              number: 80
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
