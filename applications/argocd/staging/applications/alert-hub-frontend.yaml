@@ -10,12 +10,10 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: alert-hub-web-app-helm
-    targetRevision: 0.0.1-develop.c6e6cec6
+    targetRevision: 0.0.1-develop.c2098b00
     helm:
       parameters:
         - name: app.ingress.hostname
-          value: "alerthub-stage.ifrc.org"
-        - name: app.ingress.host  # NOTE: Bug
           value: "alerthub-stage.ifrc.org"
         - name: app.ingress.ingressClassName
           value: nginx
@@ -24,7 +22,7 @@ spec:
         - name: app.env.APP_GRAPHQL_API_ENDPOINT
           value: https://alerthub-stage-api.ifrc.org/graphql/
       valueFiles:
-        - values-staging.yaml
+        - values/staging.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: alert-hub
