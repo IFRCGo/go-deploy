@@ -152,6 +152,11 @@ spec:
           ROOT_PATH: "/stac"
           COLLECTIONS_FILTER_CLS: stac_auth_proxy.montandon_filters:CollectionsFilter
           ITEMS_FILTER_CLS: stac_auth_proxy.montandon_filters:ItemsFilter
+          # External-token revocation (go-api issue #2794), injected via montandon_revocation.py.
+          GOAPI_TOKEN_VERIFY_TTL: "300"
+          GOAPI_TOKEN_VERIFY_TIMEOUT: "3"
+          GOAPI_TOKEN_VERIFY_FAIL_OPEN: "true"
+          GOAPI_TOKEN_STATIC_BLACKLIST: "fec23689-bf00-401e-9f9c-a65684f44b5f"  # NOTE: Token ID used in hackathon
         ingress:
           enabled: true
           host: "montandon-eoapi-stage.ifrc.org"
@@ -172,13 +177,17 @@ spec:
             cpu: 200m
             memory: "1024Mi"
         extraVolumes:
-          - name: filters
+          - name: custom-modules
             configMap:
-              name: stac-auth-proxy-filters
+              name: stac-auth-proxy-modules
         extraVolumeMounts:
-          - name: filters
+          - name: custom-modules
             mountPath: /app/src/stac_auth_proxy/montandon_filters.py
             subPath: montandon_filters.py
+            readOnly: true
+          - name: custom-modules
+            mountPath: /app/src/stac_auth_proxy/montandon_revocation.py
+            subPath: montandon_revocation.py
             readOnly: true
   destination:
     server: https://kubernetes.default.svc
