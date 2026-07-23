@@ -5,7 +5,7 @@ resource "helm_release" "dragonfly-operator" {
   max_history      = 10
 
   chart   = "oci://ghcr.io/dragonflydb/dragonfly-operator/helm/dragonfly-operator"
-  version = "v1.3.0"
+  version = "v1.6.1"
 
   depends_on = [
     azurerm_kubernetes_cluster.ifrcgo
