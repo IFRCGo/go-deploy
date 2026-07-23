@@ -109,6 +109,8 @@ spec:
           enabled: true
           settings:
             loadSamples: false
+            pgstacSettings:
+              context: "off"
             queryables:
               - name: "stac_queryables.json"
                 indexFields: ["monty:hazard_codes","monty:country_codes","roles"]
