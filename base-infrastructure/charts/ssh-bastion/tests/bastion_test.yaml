@@ -48,7 +48,7 @@ tests:
       - exists:
           path: spec.template.metadata.annotations["checksum/config"]
 
-  - it: pins the PVC storage class
+  - it: pins the PVC storage class when provided
     template: templates/statefulset.yaml
     set:
       persistence.storageClass: managed-csi-premium
@@ -57,11 +57,18 @@ tests:
           path: spec.volumeClaimTemplates[0].spec.storageClassName
           value: managed-csi-premium
 
+  - it: omits storageClassName when unset (falls back to the cluster default)
+    template: templates/statefulset.yaml
+    asserts:
+      - notExists:
+          path: spec.volumeClaimTemplates[0].spec.storageClassName
+
   - it: exposes an internet LoadBalancer that preserves the client source IP
     template: templates/service.yaml
     set:
       service.loadBalancerIP: 20.1.2.3
-      service.azureResourceGroup: ifrctgo002rg
+      service.annotations:
+        service.beta.kubernetes.io/azure-load-balancer-resource-group: ifrctgo002rg
     asserts:
       - equal:
           path: spec.type

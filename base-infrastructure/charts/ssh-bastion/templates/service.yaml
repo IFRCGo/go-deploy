@@ -4,10 +4,10 @@ metadata:
   name: {{ include "ssh-bastion.name" . }}
   labels:
     {{- include "ssh-bastion.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
   annotations:
-    {{- with .Values.service.azureResourceGroup }}
-    service.beta.kubernetes.io/azure-load-balancer-resource-group: {{ . | quote }}
-    {{- end }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: LoadBalancer
   # Open to the internet; access is gated by SSH public-key auth only (team members do not
