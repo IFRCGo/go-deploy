@@ -68,6 +68,37 @@ locals {
   }
 }
 
+locals {
+  # Fail-closed config assertion. The image boots sshd even when our drop-in is ignored
+  # (wrong mount path, an image change to the include behaviour, etc.), silently falling
+  # back to insecure defaults. The probes below dump the *running* sshd config (`sshd -T`)
+  # and require every directive we shipped to be present. On mismatch the pod is pulled
+  # from the LoadBalancer (readiness) and restarted / crash-looped (startup + liveness)
+  # instead of accepting connections with unintended settings.
+  #
+  # Derived from the drop-in so the two never drift: normalise to `sshd -T`'s lowercase,
+  # comment/blank-stripped form.
+  bastion_expected = join("\n", [
+    for l in split("\n", lower(local.bastion_sshd_config)) :
+    trimspace(l) if trimspace(l) != "" && !startswith(trimspace(l), "#")
+  ])
+
+  bastion_config_assert = ["sh", "-c", <<-EOT
+    set -f
+    # sshd must be accepting connections ...
+    nc -z 127.0.0.1 2222 || exit 1
+    # ... and its effective config must contain every directive we shipped.
+    eff=$(sshd.pam -T -f /config/sshd/sshd_config 2>/dev/null | tr 'A-Z' 'a-z')
+    exp='${local.bastion_expected}'
+    missing=$(printf '%s\n' "$exp" | while IFS= read -r d; do
+      [ -n "$d" ] || continue
+      printf '%s\n' "$eff" | grep -qF "$d" || printf '%s\n' "$d"
+    done)
+    [ -z "$missing" ] || { echo "sshd config assertion FAILED (missing directives):" >&2; printf '%s\n' "$missing" >&2; exit 1; }
+  EOT
+  ]
+}
+
 resource "kubernetes_namespace" "bastion" {
   metadata {
     name = "bastion"
@@ -155,6 +186,37 @@ resource "kubernetes_stateful_set" "bastion" {
               cpu    = local.bastion_resources.limits.cpu
               memory = local.bastion_resources.limits.memory
             }
+          }
+
+          # Gate readiness/liveness until sshd is up and the config assertion passes. Given
+          # a generous budget for first-boot host-key generation; if the config never
+          # applies the pod never starts (CrashLoopBackOff) rather than serving.
+          startup_probe {
+            exec {
+              command = local.bastion_config_assert
+            }
+            period_seconds    = 10
+            timeout_seconds   = 5
+            failure_threshold = 30
+          }
+          # Pull the pod out of the Service/LoadBalancer endpoints if the effective config
+          # ever regresses — no connections are routed to a misconfigured bastion.
+          readiness_probe {
+            exec {
+              command = local.bastion_config_assert
+            }
+            period_seconds    = 30
+            timeout_seconds   = 5
+            failure_threshold = 2
+          }
+          # Restart (crash-loop) the pod on a runtime config regression.
+          liveness_probe {
+            exec {
+              command = local.bastion_config_assert
+            }
+            period_seconds    = 60
+            timeout_seconds   = 5
+            failure_threshold = 3
           }
 
           env {
