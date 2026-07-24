@@ -15,6 +15,17 @@
       ],
       versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
     },
+    {
+      // Container image references (`key = "registry/repo:tag"`) annotated with
+      // a `# renovate:` comment. Complements the manager above, which only
+      // matches bare digit-leading versions (no registry/tag colon).
+      customType: "regex",
+      managerFilePatterns: ["*"],
+      matchStrings: [
+        '# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: versioning=(?<versioning>\\S+))?\\s*[A-Za-z0-9._-]+\\s*[:=]\\s*"[^"\\s]+:(?<currentValue>[^":\\s]+)"',
+      ],
+      versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
+    },
   ],
   "argocd": {
     "managerFilePatterns": [
