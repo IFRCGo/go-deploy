@@ -9,12 +9,12 @@ locals {
   bastion_image = "lscr.io/linuxserver/openssh-server:version-10.3_p1-r0"
 
   # Idle SSH jump host — kept small, tuned per environment, NOTE: matches the sizing the go-api chart overrides used previously
-  bastion_resources = var.environment == "staging" ? {
-    requests = { cpu = "0.2", memory = "0.05Gi" }
-    limits   = { cpu = "1", memory = "0.2Gi" }
-    } : {
-    requests = { cpu = "0.1", memory = "0.05Gi" }
-    limits   = { cpu = "1", memory = "0.2Gi" }
+  bastion_resources = {
+    requests = {
+      cpu    = var.environment == "staging" ? "0.2" : "0.1"
+      memory = "0.05Gi"
+    }
+    limits = { cpu = "1", memory = "0.2Gi" }
   }
 
   # Authorized SSH *public* keys (filename => key)
@@ -48,18 +48,33 @@ resource "kubernetes_config_map" "bastion_authorized_keys" {
   data = local.bastion_keys
 }
 
-# linuxserver/openssh-server ships with agent + TCP forwarding disabled; this init script flips them on so the host can be used as a jump box.
+# linuxserver/openssh-server ships with TCP forwarding disabled (AllowTcpForwarding no).
+# The image's /etc/ssh/sshd_config has `Include /etc/ssh/sshd_config.d/*.conf` near the top,
+# above that directive, so a drop-in here wins (sshd uses the first value obtained).
+# Agent forwarding is intentionally NOT enabled: this box is used for port-forwarding /
+# ProxyJump, which only needs TCP forwarding, and agent forwarding is a security downgrade.
 resource "kubernetes_config_map" "bastion_fix_sshd_config" {
   metadata {
     name      = "ssh-bastion-fix-sshd-config"
     namespace = kubernetes_namespace.bastion.metadata[0].name
   }
   data = {
-    "fix-sshd-config.sh" = <<-EOT
-      #!/bin/bash
-      # set -e
-      sed -i 's/#AllowAgentForwarding yes/AllowAgentForwarding yes/g' /etc/ssh/sshd_config
-      sed -i 's/AllowTcpForwarding no/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
+    "100-ifrc-forwarding.conf" = <<-EOT
+      # Jump host for port-forwarding / ProxyJump. Key-only auth (PasswordAuthentication
+      # no, GatewayPorts no, X11Forwarding no are already set by the image defaults).
+      AllowTcpForwarding yes
+
+      # Auth hardening (internet-exposed LoadBalancer)
+      PermitRootLogin no
+      KbdInteractiveAuthentication no
+      MaxAuthTries 3
+      LoginGraceTime 30
+      AllowUsers user
+
+      # Audit trail (log key fingerprint per login) + reap dead sessions/tunnels
+      LogLevel VERBOSE
+      ClientAliveInterval 300
+      ClientAliveCountMax 2
     EOT
   }
 }
@@ -147,8 +162,9 @@ resource "kubernetes_stateful_set" "bastion" {
           }
           volume_mount {
             name       = "fix-sshd-config"
-            mount_path = "/custom-cont-init.d/fix-sshd-config.sh"
-            sub_path   = "fix-sshd-config.sh"
+            mount_path = "/etc/ssh/sshd_config.d/100-ifrc-forwarding.conf"
+            sub_path   = "100-ifrc-forwarding.conf"
+            read_only  = true
           }
         }
 
@@ -196,6 +212,10 @@ resource "kubernetes_service" "bastion" {
       "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.ifrcgo.name
     }
   }
+
+  depends_on = [
+    azurerm_public_ip.bastion,
+  ]
 
   spec {
     type = "LoadBalancer"

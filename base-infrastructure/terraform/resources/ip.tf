@@ -31,7 +31,7 @@ resource "azurerm_public_ip" "traefik" {
 # SSH bastion Public IP (see bastion.tf) — reserved so the bastion endpoint is
 # stable across recreations (fixed IP / DNS can be put in front later).
 resource "azurerm_public_ip" "bastion" {
-  name                = "${local.prefix}-bastion-PublicIP"
+  name                = "${local.prefix}BastionPublicIP"
   resource_group_name = data.azurerm_resource_group.ifrcgo.name
   location            = data.azurerm_resource_group.ifrcgo.location
   allocation_method   = "Static"
