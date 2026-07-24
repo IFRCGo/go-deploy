@@ -17,6 +17,13 @@ from typing import Any, Literal, Optional, Sequence
 
 import httpx
 
+# Apply the external-token revocation monkeypatch to EnforceAuthMiddleware. stac-auth-proxy
+# imports this filter module during app construction (before serving requests), which is the
+# only Helm-reachable hook to run the patch. Keep this call.
+from .montandon_revocation import apply_patch
+
+apply_patch()
+
 logger = logging.getLogger(__name__)
 
 if not (UPSTREAM_URL := os.environ.get("UPSTREAM_URL")):
