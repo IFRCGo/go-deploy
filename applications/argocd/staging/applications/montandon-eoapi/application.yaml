@@ -154,6 +154,12 @@ spec:
           ITEMS_FILTER_CLS: stac_auth_proxy.montandon_filters:ItemsFilter
           # External-token revocation (go-api issue #2794), injected via montandon_revocation.py.
           GOAPI_TOKEN_VERIFY_TTL: "300"
+          # Short TTL for a fail-open allow served during a go-api outage, so revocation
+          # resumes within seconds of recovery instead of being masked for a full TTL.
+          GOAPI_TOKEN_VERIFY_OUTAGE_TTL: "30"
+          # TTL for a definitive deny (go-api reported the jti inactive/unknown): 24h, so a
+          # known-revoked token is not re-checked against go-api on every request.
+          GOAPI_TOKEN_VERIFY_DENY_TTL: "86400"
           GOAPI_TOKEN_VERIFY_TIMEOUT: "3"
           GOAPI_TOKEN_VERIFY_FAIL_OPEN: "true"
           GOAPI_TOKEN_STATIC_BLACKLIST: "fec23689-bf00-401e-9f9c-a65684f44b5f"  # NOTE: Token ID used in hackathon

@@ -68,6 +68,14 @@ def _verify_url_from_oidc() -> str:
 
 VERIFY_URL: str = _verify_url_from_oidc()
 CACHE_TTL: float = float(os.environ.get("GOAPI_TOKEN_VERIFY_TTL", "300"))
+# Short TTL for a fail-open "allow" served during a go-api outage, so revocation resumes
+# within seconds of go-api recovering instead of being masked for a full CACHE_TTL window.
+OUTAGE_CACHE_TTL: float = float(os.environ.get("GOAPI_TOKEN_VERIFY_OUTAGE_TTL", "30"))
+# TTL for a definitive deny (go-api reported the jti inactive/unknown). Long, since a
+# revoked/unknown jti effectively never becomes valid again; avoids re-hitting go-api on
+# every request from an abandoned or leaked token. Only definitive denials are cached here
+# (never a transient fail-closed outage), so recovery is not masked.
+DENY_CACHE_TTL: float = float(os.environ.get("GOAPI_TOKEN_VERIFY_DENY_TTL", "86400"))
 VERIFY_TIMEOUT: float = float(os.environ.get("GOAPI_TOKEN_VERIFY_TIMEOUT", "3"))
 FAIL_OPEN: bool = _bool_env("GOAPI_TOKEN_VERIFY_FAIL_OPEN", False)
 STATIC_BLACKLIST: frozenset[str] = frozenset(
@@ -76,29 +84,32 @@ STATIC_BLACKLIST: frozenset[str] = frozenset(
     if jti.strip()
 )
 
-# --- Positive-only in-memory cache (per pod) --------------------------------------------
-# jti -> monotonic expiry. Single-process/single-event-loop deployment, but guard with a
-# lock anyway since we are called from a sync context.
-_cache: dict[str, float] = {}
+# --- In-memory decision cache (per pod) -------------------------------------------------
+# jti -> (allowed, monotonic expiry). Caches both allows (short TTL) and definitive denies
+# (long TTL). Single-process/single-event-loop deployment, but guard with a lock anyway
+# since we are called from a sync context.
+_cache: dict[str, tuple[bool, float]] = {}
 _cache_lock = threading.Lock()
 
 _client = httpx.Client(timeout=VERIFY_TIMEOUT)
 
 
-def _cache_get(jti: str) -> bool:
+def _cache_get(jti: str) -> bool | None:
+    """Return the cached decision (True=allow, False=deny), or None on miss/expiry."""
     with _cache_lock:
-        expiry = _cache.get(jti)
-        if expiry is None:
-            return False
+        entry = _cache.get(jti)
+        if entry is None:
+            return None
+        allowed, expiry = entry
         if expiry <= time.monotonic():
             _cache.pop(jti, None)
-            return False
-        return True
+            return None
+        return allowed
 
 
-def _cache_put(jti: str) -> None:
+def _cache_put(jti: str, allowed: bool, ttl: float) -> None:
     with _cache_lock:
-        _cache[jti] = time.monotonic() + CACHE_TTL
+        _cache[jti] = (allowed, time.monotonic() + ttl)
 
 
 def _reject(detail: str) -> HTTPException:
@@ -109,8 +120,17 @@ def _reject(detail: str) -> HTTPException:
     )
 
 
-def _is_active(jti: str) -> bool:
-    """Ask go-api whether the token is still active. Applies fail policy on outage."""
+def _verify(jti: str) -> tuple[bool, float]:
+    """Ask go-api whether the token is active.
+
+    Returns ``(allowed, cache_ttl)`` where cache_ttl is how long THIS decision may be
+    cached (0 = do not cache). Outcomes:
+    - 200 active:true  -> (True, CACHE_TTL)         verified allow, short TTL
+    - 200 active:false -> (False, DENY_CACHE_TTL)   definitive deny, long TTL
+    - outage/other     -> fail policy; a fail-open allow caches briefly (OUTAGE_CACHE_TTL),
+                          a fail-closed deny is NOT cached (0) so recovery isn't masked
+    - 400 / non-JSON   -> (False, 0)                anomalous, reject but don't cache
+    """
     try:
         resp = _client.post(VERIFY_URL, json={"jti": jti})
     except httpx.HTTPError as exc:
@@ -119,23 +139,24 @@ def _is_active(jti: str) -> bool:
             type(exc).__name__,
             FAIL_OPEN,
         )
-        return FAIL_OPEN
+        return FAIL_OPEN, (OUTAGE_CACHE_TTL if FAIL_OPEN else 0)
 
     if resp.status_code == 200:
         try:
-            return bool(resp.json().get("active"))
+            active = bool(resp.json().get("active"))
         except ValueError:
             logger.error("go-api verify returned non-JSON 200; rejecting")
-            return False
+            return False, 0
+        return active, (CACHE_TTL if active else DENY_CACHE_TTL)
     if resp.status_code == 400:
         # Malformed jti. Should not happen (jti comes from a validated token). Reject.
         logger.error("go-api verify returned 400 for jti; rejecting")
-        return False
+        return False, 0
     # Any other status (incl. 404 before the endpoint is live) -> outage -> fail policy.
     logger.warning(
         "go-api verify returned %s; fail_open=%s", resp.status_code, FAIL_OPEN
     )
-    return FAIL_OPEN
+    return FAIL_OPEN, (OUTAGE_CACHE_TTL if FAIL_OPEN else 0)
 
 
 def check_revocation(payload: dict | None) -> None:
@@ -153,14 +174,19 @@ def check_revocation(payload: dict | None) -> None:
         logger.info("Rejecting statically-blacklisted jti %s", jti)
         raise _reject("Token has been revoked")
 
-    if _cache_get(jti):
+    cached = _cache_get(jti)
+    if cached is True:
         return
-
-    if not _is_active(jti):
-        logger.info("Rejecting revoked/unknown jti %s", jti)
+    if cached is False:
+        logger.info("Rejecting cached-inactive jti %s", jti)
         raise _reject("Token has been revoked")
 
-    _cache_put(jti)
+    allowed, ttl = _verify(jti)
+    if ttl > 0:
+        _cache_put(jti, allowed, ttl)
+    if not allowed:
+        logger.info("Rejecting revoked/unknown jti %s", jti)
+        raise _reject("Token has been revoked")
 
 
 # --- Monkeypatch --------------------------------------------------------------------------
