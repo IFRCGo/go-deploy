@@ -160,6 +160,8 @@ spec:
           # TTL for a definitive deny (go-api reported the jti inactive/unknown): 24h, so a
           # known-revoked token is not re-checked against go-api on every request.
           GOAPI_TOKEN_VERIFY_DENY_TTL: "86400"
+          # Upper bound on cached jti decisions (memory guard on a long-lived pod).
+          GOAPI_TOKEN_VERIFY_CACHE_MAX: "50000"
           GOAPI_TOKEN_VERIFY_TIMEOUT: "3"
           GOAPI_TOKEN_VERIFY_FAIL_OPEN: "true"
           GOAPI_TOKEN_STATIC_BLACKLIST: "fec23689-bf00-401e-9f9c-a65684f44b5f"  # NOTE: Token ID used in hackathon
