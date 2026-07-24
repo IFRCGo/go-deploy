@@ -84,11 +84,16 @@ locals {
   ])
 
   bastion_config_assert = ["sh", "-c", <<-EOT
-    set -f
     # sshd must be accepting connections ...
     nc -z 127.0.0.1 2222 || exit 1
-    # ... and its effective config must contain every directive we shipped.
-    eff=$(sshd.pam -T -f /config/sshd/sshd_config 2>/dev/null | tr 'A-Z' 'a-z')
+    # ... and its effective config must contain every directive we shipped. Pass the host
+    # keys explicitly (as the service does): `sshd -T` otherwise reads them from the stock
+    # location and exits "no hostkeys available" when the probe runs as a non-root user.
+    h=""
+    for k in /config/ssh_host_keys/ssh_host_*_key; do
+      [ -f "$k" ] && h="$h -h $k"
+    done
+    eff=$(sshd.pam -T -f /config/sshd/sshd_config $h 2>/dev/null | tr 'A-Z' 'a-z')
     exp='${local.bastion_expected}'
     missing=$(printf '%s\n' "$exp" | while IFS= read -r d; do
       [ -n "$d" ] || continue
