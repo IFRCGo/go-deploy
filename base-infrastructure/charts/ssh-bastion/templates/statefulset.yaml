@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "ssh-bastion.name" . }}
+  labels:
+    {{- include "ssh-bastion.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  serviceName: {{ include "ssh-bastion.name" . }}
+  selector:
+    matchLabels:
+      app: ssh-bastion
+  template:
+    metadata:
+      labels:
+        app: ssh-bastion
+      annotations:
+        # Roll the pod when keys or sshd config change (the container ingests both only at
+        # start), otherwise a ConfigMap edit applies but the running pod keeps the old data.
+        checksum/authorized-keys: {{ include (print $.Template.BasePath "/configmap-authorized-keys.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-config.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: ssh-bastion
+          image: {{ .Values.image | quote }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: USER_NAME
+              value: {{ .Values.user | quote }}
+            - name: PASSWORD_ACCESS
+              value: "false"
+            - name: SUDO_ACCESS
+              value: "false"
+          # Gate readiness/liveness until sshd is up and the config assertion passes. If the
+          # config never applies the pod never starts (CrashLoopBackOff) rather than serving.
+          startupProbe:
+            exec:
+              command: ["sh", "/etc/ifrc/assert-sshd.sh"]
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          # Pull the pod out of the Service/LoadBalancer endpoints if the effective config
+          # ever regresses — no connections are routed to a misconfigured bastion.
+          readinessProbe:
+            exec:
+              command: ["sh", "/etc/ifrc/assert-sshd.sh"]
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 2
+          # Restart (crash-loop) the pod on a runtime config regression.
+          livenessProbe:
+            exec:
+              command: ["sh", "/etc/ifrc/assert-sshd.sh"]
+            periodSeconds: 60
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            # Authoritative authorized_keys — sshd reads it via AuthorizedKeysFile (drop-in).
+            # root-owned read-only file, which satisfies sshd's ownership checks.
+            - name: authorized-keys
+              mountPath: /etc/ssh/authorized_keys
+              subPath: authorized_keys
+              readOnly: true
+            - name: config-volume
+              mountPath: /config
+            # Must live under /config/sshd/sshd_config.d/ for the image to include it.
+            - name: config
+              mountPath: /config/sshd/sshd_config.d/100-ifrc-forwarding.conf
+              subPath: 100-ifrc-forwarding.conf
+              readOnly: true
+            - name: config
+              mountPath: /etc/ifrc/assert-sshd.sh
+              subPath: assert-sshd.sh
+              readOnly: true
+      volumes:
+        - name: authorized-keys
+          configMap:
+            name: {{ include "ssh-bastion.name" . }}-authorized-keys
+        - name: config
+          configMap:
+            name: {{ include "ssh-bastion.name" . }}-config
+  # Persists the server host keys across pod restarts (avoids host-key-changed warnings).
+  volumeClaimTemplates:
+    - metadata:
+        name: config-volume
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.persistence.storageClass | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}

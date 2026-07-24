@@ -1,0 +1,106 @@
+suite: ssh-bastion
+templates:
+  - templates/statefulset.yaml
+  - templates/service.yaml
+  - templates/configmap-config.yaml
+  - templates/configmap-authorized-keys.yaml
+tests:
+  - it: mounts the sshd drop-in under /config/sshd/sshd_config.d (not the ignored /etc/ssh path)
+    template: templates/statefulset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: config
+            mountPath: /config/sshd/sshd_config.d/100-ifrc-forwarding.conf
+            subPath: 100-ifrc-forwarding.conf
+            readOnly: true
+
+  - it: mounts the authoritative authorized_keys at the AuthorizedKeysFile path
+    template: templates/statefulset.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: authorized-keys
+            mountPath: /etc/ssh/authorized_keys
+            subPath: authorized_keys
+            readOnly: true
+
+  - it: runs the fail-closed config assertion on all three probes
+    template: templates/statefulset.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].startupProbe.exec.command
+          value: ["sh", "/etc/ifrc/assert-sshd.sh"]
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.exec.command
+          value: ["sh", "/etc/ifrc/assert-sshd.sh"]
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.exec.command
+          value: ["sh", "/etc/ifrc/assert-sshd.sh"]
+
+  - it: rolls the pod when keys or config change (checksum annotations present)
+    template: templates/statefulset.yaml
+    asserts:
+      - exists:
+          path: spec.template.metadata.annotations["checksum/authorized-keys"]
+      - exists:
+          path: spec.template.metadata.annotations["checksum/config"]
+
+  - it: pins the PVC storage class
+    template: templates/statefulset.yaml
+    set:
+      persistence.storageClass: managed-csi-premium
+    asserts:
+      - equal:
+          path: spec.volumeClaimTemplates[0].spec.storageClassName
+          value: managed-csi-premium
+
+  - it: exposes an internet LoadBalancer that preserves the client source IP
+    template: templates/service.yaml
+    set:
+      service.loadBalancerIP: 20.1.2.3
+      service.azureResourceGroup: ifrctgo002rg
+    asserts:
+      - equal:
+          path: spec.type
+          value: LoadBalancer
+      - equal:
+          path: spec.externalTrafficPolicy
+          value: Local
+      - equal:
+          path: spec.loadBalancerIP
+          value: "20.1.2.3"
+      - equal:
+          path: metadata.annotations["service.beta.kubernetes.io/azure-load-balancer-resource-group"]
+          value: ifrctgo002rg
+
+  - it: drives AllowUsers from the single user value
+    template: templates/configmap-config.yaml
+    set:
+      user: svc-jump
+    asserts:
+      - matchRegex:
+          path: data["100-ifrc-forwarding.conf"]
+          pattern: "AllowUsers svc-jump"
+      - matchRegex:
+          path: data["100-ifrc-forwarding.conf"]
+          pattern: "AllowTcpForwarding yes"
+      - matchRegex:
+          path: data["100-ifrc-forwarding.conf"]
+          pattern: "AuthorizedKeysFile /etc/ssh/authorized_keys"
+
+  - it: concatenates all provided public keys into authorized_keys
+    template: templates/configmap-authorized-keys.yaml
+    set:
+      keys:
+        - "ssh-ed25519 AAAAKEYONE a@x"
+        - "ssh-ed25519 AAAAKEYTWO b@y"
+    asserts:
+      - matchRegex:
+          path: data.authorized_keys
+          pattern: "AAAAKEYONE a@x"
+      - matchRegex:
+          path: data.authorized_keys
+          pattern: "AAAAKEYTWO b@y"
