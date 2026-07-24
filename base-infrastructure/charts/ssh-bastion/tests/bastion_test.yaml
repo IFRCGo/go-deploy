@@ -4,6 +4,7 @@ templates:
   - templates/service.yaml
   - templates/configmap-config.yaml
   - templates/configmap-authorized-keys.yaml
+  - templates/networkpolicy.yaml
 tests:
   - it: mounts the sshd drop-in under /config/sshd/sshd_config.d (not the ignored /etc/ssh path)
     template: templates/statefulset.yaml
@@ -97,6 +98,71 @@ tests:
       - matchRegex:
           path: data["100-ifrc-forwarding.conf"]
           pattern: "AuthorizedKeysFile /etc/ssh/authorized_keys"
+
+  - it: enforces forwarding-only by default (no shell / exec / sftp)
+    template: templates/configmap-config.yaml
+    asserts:
+      - matchRegex:
+          path: data["100-ifrc-forwarding.conf"]
+          pattern: "PermitTTY no"
+      - matchRegex:
+          path: data["100-ifrc-forwarding.conf"]
+          pattern: "ForceCommand /bin/false"
+
+  - it: allows a shell when forwardingOnly is disabled
+    template: templates/configmap-config.yaml
+    set:
+      forwardingOnly: false
+    asserts:
+      - notMatchRegex:
+          path: data["100-ifrc-forwarding.conf"]
+          pattern: "ForceCommand"
+
+  - it: renders a PermitOpen allowlist when provided
+    template: templates/configmap-config.yaml
+    set:
+      sshd.permitOpen:
+        - "10.96.0.1:443"
+        - "10.0.0.5:5432"
+    asserts:
+      - matchRegex:
+          path: data["100-ifrc-forwarding.conf"]
+          pattern: "PermitOpen 10.96.0.1:443 10.0.0.5:5432"
+
+  - it: omits PermitOpen when unset (unrestricted)
+    template: templates/configmap-config.yaml
+    asserts:
+      - notMatchRegex:
+          path: data["100-ifrc-forwarding.conf"]
+          pattern: "PermitOpen"
+
+  - it: no NetworkPolicy by default
+    templates:
+      - templates/networkpolicy.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: NetworkPolicy restricts ingress to SSH and egress to an allowlist (no internet/metadata)
+    templates:
+      - templates/networkpolicy.yaml
+    set:
+      networkPolicy.enabled: true
+    asserts:
+      - isKind:
+          of: NetworkPolicy
+      - equal:
+          path: spec.ingress[0].ports[0].port
+          value: 2222
+      # egress[0] = DNS, egress[1] = allowlisted CIDRs; 0.0.0.0/0 must NOT appear
+      - equal:
+          path: spec.egress[1].to[0].ipBlock.cidr
+          value: 10.0.0.0/8
+      - notContains:
+          path: spec.egress[1].to
+          content:
+            ipBlock:
+              cidr: 0.0.0.0/0
 
   - it: concatenates all provided public keys into authorized_keys
     template: templates/configmap-authorized-keys.yaml

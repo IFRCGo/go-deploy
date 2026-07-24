@@ -5,6 +5,19 @@ image: "lscr.io/linuxserver/openssh-server:version-10.3_p1-r0"
 # (AllowUsers, in the drop-in). Both are driven from this single value.
 user: user
 
+# Forwarding-only jump host: no shell, no exec, no SFTP/SCP — only TCP forwarding
+# (ssh -N -L / -D and ProxyJump -J / -W). Strongly recommended: it stops a holder of a
+# valid key from reading anything on the box, including the sshd host private key (which
+# the image necessarily makes readable to the account sshd runs as). Interactive sessions
+# get a forced no-op command and exit.
+forwardingOnly: true
+
+sshd:
+  # Optional allowlist of forward destinations, each "host:port" (globs allowed, e.g.
+  # "10.0.0.5:5432"). Empty = unrestricted (any). Set this to constrain how far a key
+  # holder can pivot through the bastion.
+  permitOpen: []
+
 # Free-form environment label (set by Terraform, e.g. "staging" / "production").
 environment: ""
 
@@ -18,6 +31,20 @@ service:
   # Free-form Service annotations — cloud load-balancer settings etc., provided per-cluster
   # (kept generic so the chart isn't tied to any one cloud).
   annotations: {}
+
+# Restrict the pod's network reach (defense-in-depth for the pivot surface). Requires a
+# NetworkPolicy-enforcing CNI (Azure CNI with a policy engine, Calico, Cilium, ...);
+# no-op on CNIs that don't enforce it (e.g. kind's kindnet).
+networkPolicy:
+  enabled: false
+  # Egress CIDRs the bastion may reach (in addition to cluster DNS). Defaults to the
+  # private RFC1918 ranges — enough to port-forward to in-cluster / internal services —
+  # while excluding the public internet and the cloud metadata endpoint
+  # (169.254.169.254). Tighten to your pod/service CIDRs for a stricter policy.
+  allowedEgressCIDRs:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
 
 persistence:
   # StorageClass for the host-key PVC. Empty = use the cluster's default class. Set

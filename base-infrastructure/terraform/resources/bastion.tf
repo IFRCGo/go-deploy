@@ -49,6 +49,15 @@ resource "helm_release" "bastion" {
       # AKS built-in RWO managed-disk class.
       storageClass = "managed-csi"
     }
+    # Defense-in-depth for the pivot surface: allow the pod to reach only cluster-internal
+    # RFC1918 ranges (enough to port-forward to in-cluster services) — the public internet
+    # and the cloud metadata endpoint (169.254.169.254) are denied. Requires the AKS
+    # cluster to have a network-policy engine (azure/calico); it is a harmless no-op
+    # otherwise. The chart default egress CIDRs (10/8, 172.16/12, 192.168/16) cover the
+    # standard AKS pod/service ranges.
+    networkPolicy = {
+      enabled = true
+    }
     service = {
       # Reserved static IP so the bastion endpoint is stable across recreations.
       loadBalancerIP = azurerm_public_ip.bastion.ip_address

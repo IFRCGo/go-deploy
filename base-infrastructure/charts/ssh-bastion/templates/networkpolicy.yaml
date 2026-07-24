@@ -1,0 +1,38 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "ssh-bastion.name" . }}
+  labels:
+    {{- include "ssh-bastion.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: ssh-bastion
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # SSH in from anywhere (access is gated by public-key auth).
+    - ports:
+        - protocol: TCP
+          port: {{ .Values.service.port }}
+  egress:
+    # Cluster DNS.
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allowed forward/egress destinations. This is an allowlist, so anything not listed —
+    # the public internet and the cloud metadata endpoint (169.254.169.254) included — is
+    # denied by construction. If you broaden a CIDR to cover link-local, add an
+    # `except: [169.254.0.0/16]` to that ipBlock (it must be a subset of the cidr).
+    {{- with .Values.networkPolicy.allowedEgressCIDRs }}
+    - to:
+        {{- range . }}
+        - ipBlock:
+            cidr: {{ . | quote }}
+        {{- end }}
+    {{- end }}
+{{- end }}
