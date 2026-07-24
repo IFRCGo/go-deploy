@@ -20,6 +20,9 @@ spec:
         checksum/authorized-keys: {{ include (print $.Template.BasePath "/configmap-authorized-keys.yaml") . | sha256sum }}
         checksum/config: {{ include (print $.Template.BasePath "/configmap-config.yaml") . | sha256sum }}
     spec:
+      # The bastion never talks to the Kubernetes API — don't mount a cluster credential
+      # onto an internet-exposed jump host.
+      automountServiceAccountToken: false
       containers:
         - name: ssh-bastion
           image: {{ .Values.image | quote }}

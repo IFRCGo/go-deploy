@@ -9,7 +9,10 @@ user: user
 environment: ""
 
 service:
+  type: LoadBalancer
   port: 2222
+  # Only used when type is NodePort; null lets the cluster pick one.
+  nodePort: null
   # Reserved cloud LB IP (set per-cluster). Empty = let the cluster assign one.
   loadBalancerIP: ""
   # Free-form Service annotations — cloud load-balancer settings etc., provided per-cluster
@@ -26,10 +29,12 @@ persistence:
 resources:
   requests:
     cpu: "0.1"
-    memory: "0.05Gi"
+    # Integer byte quantities (0.05Gi / 0.2Gi render as fractional-byte "…m" values that
+    # Kubernetes warns about).
+    memory: "50Mi"
   limits:
     cpu: "1"
-    memory: "0.2Gi"
+    memory: "200Mi"
 
 # Authorized SSH *public* keys, one entry per key. Concatenated into a single, fully
 # declarative authorized_keys file — removing an entry revokes that key's access.

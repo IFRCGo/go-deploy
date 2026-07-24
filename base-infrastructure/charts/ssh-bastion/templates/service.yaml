@@ -9,17 +9,22 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.service.type }}
   # Open to the internet; access is gated by SSH public-key auth only (team members do not
   # have static source IPs, so no loadBalancerSourceRanges).
-  {{- with .Values.service.loadBalancerIP }}
-  loadBalancerIP: {{ . | quote }}
+  {{- if and (eq .Values.service.type "LoadBalancer") .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP | quote }}
   {{- end }}
+  {{- if ne .Values.service.type "ClusterIP" }}
   # Preserve the real client source IP (otherwise SNAT'd to a node IP) so the VERBOSE sshd
   # audit log records who connected.
   externalTrafficPolicy: Local
+  {{- end }}
   selector:
     app: ssh-bastion
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.port }}
+      {{- if and (eq .Values.service.type "NodePort") .Values.service.nodePort }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
