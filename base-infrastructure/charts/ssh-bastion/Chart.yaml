@@ -1,0 +1,5 @@
+apiVersion: v2
+name: ssh-bastion
+description: Cluster-wide SSH bastion / jump host (port-forwarding + ProxyJump), applied by Terraform.
+type: application
+version: 0.1.0

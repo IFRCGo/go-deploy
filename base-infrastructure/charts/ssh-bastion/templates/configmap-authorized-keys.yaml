@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ssh-bastion.name" . }}-authorized-keys
+  labels:
+    {{- include "ssh-bastion.labels" . | nindent 4 }}
+data:
+  # All public keys concatenated into one authoritative authorized_keys file.
+  authorized_keys: |
+    {{- range .Values.keys }}
+    {{ . }}
+    {{- end }}
