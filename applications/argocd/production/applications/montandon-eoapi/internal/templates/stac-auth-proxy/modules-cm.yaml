@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: stac-auth-proxy-filters
+  name: stac-auth-proxy-modules
   {{- with .Values.commonAnnotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -9,3 +9,5 @@ metadata:
 data:
   montandon_filters.py: |
 {{ .Files.Get "files/stac-auth-proxy/montandon_filters.py" | indent 4 }}
+  montandon_revocation.py: |
+{{ .Files.Get "files/stac-auth-proxy/montandon_revocation.py" | indent 4 }}
