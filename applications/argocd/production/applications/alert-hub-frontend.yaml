@@ -8,22 +8,21 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: ghcr.io/ifrcgo/alert-hub-web-app
-    chart: ifrcgo-web-app-nginx-serve
-    targetRevision: 0.0.1-develop.6a791e5
+    repoURL: ghcr.io/ifrcgo
+    chart: alert-hub-web-app-helm
+    targetRevision: 0.0.1-develop.c2098b00
     helm:
       parameters:
-        - name: ingress.host
+        - name: app.ingress.hostname
           value: "alerthub.ifrc.org"
-        - name: ingress.className
+        - name: app.ingress.ingressClassName
           value: nginx
-        - name: ingress.tls.secretName
+        - name: app.ingress.tls.secretName
           value: "alerthub-helm-secret-cert"
-        - name: env.APP_GRAPHQL_API_ENDPOINT
+        - name: app.env.APP_GRAPHQL_API_ENDPOINT
           value: https://alerthub-api.ifrc.org/graphql/
       valueFiles:
-        - values.yaml
-        - values-production.yaml
+        - values/production.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: alert-hub
