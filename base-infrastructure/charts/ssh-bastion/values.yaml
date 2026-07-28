@@ -1,0 +1,70 @@
+# renovate: datasource=docker depName=lscr.io/linuxserver/openssh-server versioning=regex:^version-(?<major>\d+)\.(?<minor>\d+)_p(?<patch>\d+)-r(?<build>\d+)$
+image: "lscr.io/linuxserver/openssh-server:version-10.3_p1-r0"
+
+# Login user: the image creates this account (USER_NAME) and sshd only permits it
+# (AllowUsers, in the drop-in). Both are driven from this single value.
+user: user
+
+# Forwarding-only jump host: no shell, no exec, no SFTP/SCP — only TCP forwarding
+# (ssh -N -L / -D and ProxyJump -J / -W). Strongly recommended: it stops a holder of a
+# valid key from reading anything on the box, including the sshd host private key (which
+# the image necessarily makes readable to the account sshd runs as). Interactive sessions
+# get a forced no-op command and exit.
+forwardingOnly: true
+
+sshd:
+  # Optional allowlist of forward destinations, each "host:port" (globs allowed, e.g.
+  # "10.0.0.5:5432"). Empty = unrestricted (any). Set this to constrain how far a key
+  # holder can pivot through the bastion.
+  permitOpen: []
+
+# Free-form environment label (set by Terraform, e.g. "staging" / "production").
+environment: ""
+
+service:
+  type: LoadBalancer
+  port: 2222
+  # Only used when type is NodePort; null lets the cluster pick one.
+  nodePort: null
+  # Reserved cloud LB IP (set per-cluster). Empty = let the cluster assign one.
+  loadBalancerIP: ""
+  # Free-form Service annotations — cloud load-balancer settings etc., provided per-cluster
+  # (kept generic so the chart isn't tied to any one cloud).
+  annotations: {}
+
+# Restrict the pod's network reach (defense-in-depth for the pivot surface). Requires a
+# NetworkPolicy-enforcing CNI (Azure CNI with a policy engine, Calico, Cilium, ...);
+# no-op on CNIs that don't enforce it (e.g. kind's kindnet).
+networkPolicy:
+  enabled: false
+  # Egress CIDRs the bastion may reach (in addition to cluster DNS). Defaults to the
+  # private RFC1918 ranges — enough to port-forward to in-cluster / internal services —
+  # while excluding the public internet and the cloud metadata endpoint
+  # (169.254.169.254). Tighten to your pod/service CIDRs for a stricter policy.
+  allowedEgressCIDRs:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+
+persistence:
+  # StorageClass for the host-key PVC. Empty = use the cluster's default class. Set
+  # per-cluster when a specific RWO class is required. Persisting the volume keeps sshd
+  # host keys stable across restarts (no host-key-changed warnings).
+  storageClass: ""
+  size: 100Mi
+
+resources:
+  requests:
+    cpu: "0.1"
+    # Integer byte quantities (0.05Gi / 0.2Gi render as fractional-byte "…m" values that
+    # Kubernetes warns about).
+    memory: "50Mi"
+  limits:
+    cpu: "1"
+    memory: "200Mi"
+
+# Authorized SSH *public* keys, one entry per key. Concatenated into a single, fully
+# declarative authorized_keys file — removing an entry revokes that key's access.
+# Provided by Terraform (see resources/bastion.tf); empty here so the chart never ships
+# keys of its own.
+keys: []
