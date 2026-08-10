@@ -24,8 +24,8 @@ env:
   SESSION_COOKIE_DOMAIN: ".ifrc.org"
   CSRF_COOKIE_DOMAIN: ".ifrc.org"
   # Reference from montandon-etl/staging file
-  EOAPI_STAC_API_INTERNAL: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local:8080/"
-  EOAPI_STAC_INTERNAL_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
+  EOAPI_STAC_INTERNAL_URL: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local:8080/"
+  EOAPI_STAC_EXTERNAL_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
 
 api:
   domain: goadmin-stage.ifrc.org
