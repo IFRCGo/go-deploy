@@ -32,6 +32,12 @@ resource "azurerm_postgresql_flexible_server" "alerthub" {
   depends_on = [
     azurerm_private_dns_zone_virtual_network_link.ifrcgo
   ]
+
+  lifecycle {
+    ignore_changes = [
+      version
+    ]
+  }
 }
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "alerthub_db_vnet_rule" {
