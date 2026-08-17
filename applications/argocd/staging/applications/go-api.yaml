@@ -1,0 +1,66 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: go-api
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/ifrcgo
+    chart: ifrcgo-dev-helm  # TODO: Change this to ifrcgo-dev-helm
+    targetRevision: 0.0.2-feature-banjo-stack.c85219fe
+    helm:
+      valueFiles:
+        - values/traefik.yaml
+        - values/operators/dragonfly.yaml
+        - values/operators/elasticsearch.yaml
+        - values/go-deploy/base.yaml
+        - values/go-deploy/staging.yaml
+      valuesObject:
+        app:
+          fullnameOverride: go-api
+          api:
+            ingress:
+              host: "go-api-stage.ifrc.org"
+              tls:
+                secretName: "go-api-helm-secret-cert"
+          env:
+            API_FQDN: "https://go-api-stage.ifrc.org"
+            FRONTEND_URL: "https://go-stage.ifrc.org"
+            SESSION_COOKIE_DOMAIN: ".ifrc.org"
+            CSRF_COOKIE_DOMAIN: ".ifrc.org"
+            # Azure
+            AZURE_TENANT_ID: a2b53be5-734e-4e6c-ab0d-d184f60fd917
+            AZURE_CLIENT_ID: "8876ce49-0952-4fc5-b648-b1695bd03ebd"
+            # Blob Storage Configs
+            AZURE_STORAGE_ENABLED: "true"
+            AZURE_STORAGE_MANAGED_IDENTITY: "false"
+            AZURE_STORAGE_ACCOUNT: dsgofilestorage
+            AZURE_STORAGE_MEDIA_CONTAINER: api
+            AZURE_STORAGE_STATIC_CONTAINER: static
+            # eoAPI
+            EOAPI_STAC_EXTERNAL_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
+            EOAPI_STAC_INTERNAL_URL: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local:8080/"
+          cronjobs:
+            enabled: true
+            # NOTE: Empty until the legacy ifrcgo-helm release in the `default` namespace is retired - it still runs the same schedule.
+            jobs: []
+          serviceAccount:
+            annotations:
+              azure.workload.identity/client-id: "8876ce49-0952-4fc5-b648-b1695bd03ebd"
+          secretsStoreCsiDriver:
+            parameters:
+              clientID: "8876ce49-0952-4fc5-b648-b1695bd03ebd"
+              keyvaultName: "go-api-staging-kv"
+              tenantId: a2b53be5-734e-4e6c-ab0d-d184f60fd917
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: go-api
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
