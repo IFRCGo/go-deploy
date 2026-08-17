@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-dev-helm  # TODO: Change this to ifrcgo-dev-helm
-    targetRevision: 0.0.2-feature-banjo-stack.c85219fe
+    targetRevision: 0.0.2-feature-banjo-stack.c85219fe  # TODO: switch to 0.0.2-dev*
     helm:
       valueFiles:
         - values/traefik.yaml
@@ -23,7 +23,7 @@ spec:
           fullnameOverride: go-api
           api:
             ingress:
-              host: "go-api-stage.ifrc.org"
+              host: "go-api-stage.ifrc.org"  # TODO: switch to goadmin-stage.ifrc.org
               tls:
                 secretName: "go-api-helm-secret-cert"
           env:
