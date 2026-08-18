@@ -4,6 +4,9 @@ global:
   security:
     allowInsecureImages: true
 
+# NOTE: Disabled here, and enabled in the argo app ./applications/argocd/staging/applications/go-api.yaml
+cronjobs: []
+
 env:
   API_FQDN: https://goadmin-stage.ifrc.org
   AUTO_TRANSLATION_TRANSLATOR: lang.translation.IfrcTranslator

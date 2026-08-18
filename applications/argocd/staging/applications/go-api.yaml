@@ -9,8 +9,10 @@ spec:
   project: default
   source:
     repoURL: ghcr.io/ifrcgo
-    chart: ifrcgo-dev-helm  # TODO: Change this to ifrcgo-dev-helm
-    targetRevision: 0.0.2-feature-banjo-stack.cdc317d6  # TODO: switch to 0.0.2-dev*
+    # TODO: Change this to ifrcgo-dev-helm
+    chart: ifrcgo-dev-helm
+    # TODO: switch to 0.0.2-dev*
+    targetRevision: 0.0.2-feature-banjo-stack.c79773be
     helm:
       valueFiles:
         - values/traefik.yaml
@@ -43,10 +45,6 @@ spec:
             # eoAPI
             EOAPI_STAC_EXTERNAL_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
             EOAPI_STAC_INTERNAL_URL: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local:8080/"
-          cronjobs:
-            enabled: true
-            # NOTE: Empty until the legacy ifrcgo-helm release in the `default` namespace is retired - it still runs the same schedule.
-            jobs: []
           serviceAccount:
             annotations:
               azure.workload.identity/client-id: "8876ce49-0952-4fc5-b648-b1695bd03ebd"
