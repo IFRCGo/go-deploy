@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-dev-helm  # TODO: Change this to ifrcgo-dev-helm
-    targetRevision: 0.0.2-feature-banjo-stack.c85219fe  # TODO: switch to 0.0.2-dev*
+    targetRevision: 0.0.2-feature-banjo-stack.cdc317d6  # TODO: switch to 0.0.2-dev*
     helm:
       valueFiles:
         - values/traefik.yaml
