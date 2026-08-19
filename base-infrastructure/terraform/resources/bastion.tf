@@ -33,7 +33,7 @@ resource "helm_release" "bastion" {
       # Zoltan
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPGAnkQdf5CIpVoqNVJ17AAzUb02gpTltJI5q5SRKxl8 zol@hp",
       # Daniel
-      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDU1XLLPq1J4kFvNyg5eUK8uuW8dtW1f3ALVnYr0nVhldxF0J59XtZbNFBLCVHYZL3NQxYQrucll6LbGaMGKbGsTwtqcxqd2fWlhg7nBnvhOzULYbAru3YfpkgnawGin6Y7qW/MQ3fYmqqm8MB7p5+G4sIL76S2yWbi7lcKWnd87yDTGEEoc8H6i6IwNNVHudvuMA4MzGkSgql7gIC2KuU+s2u9Y6fmE92G39BO454SUgAcCJfhuXukZhU4UN3RVYy+F0MxVeLc0hEJi4sCYcoPKREc0//srNyni7b8G8C+z6t02xrzhWwIORlb8Jr2kmbblp7PFMz4r2qRd8MvXAa5ta6kUvMDg0t52JaDMAGy0IjGZh9PznXbp1LYn7uS5NQh4C/t6Q3TXyJbEiaQaObcmjn6w/DWH6gI7ZRYkPGdlctlNm5MWnhjG9Q/FzRIxvaauSFqgs6bfIUGGaY9i1eNiowVSzDPlP7nH0gJpq+uS5Qdyg69m/XH1DqywPoZY7U= ifrcds\\daniel.tovari@5CG41911RW",
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIqbyuLk5llGZEh844G0zOU3Yne5o2l4cXgD+PEbeOBc daniel.tovari@ifrc.org",
       # Arun
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKBaIcVRiTtsc2WUWIq8akcd2owJo75+GbvcOnTf38KP ifrcds\\arun.gandhi@5CG41911S3",
       # Navin
