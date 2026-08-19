@@ -37,10 +37,6 @@ resource "helm_release" "traefik" {
     }
 
     providers = {
-      # NOTE: Uses the same ingressClass as nginx for now, until nginx is fully removed
-      kubernetesIngress = {
-        ingressClass = "nginx"
-      }
       kubernetesIngressNGINX = {
         enabled = true
       }

@@ -261,3 +261,41 @@ module "cacheppuccino_resources" {
     local.user_principal_ids.tc_sushil,
   ]
 }
+
+module "go_api_resources" {
+  source = "./app_resources"
+
+  app_name            = "go-api"
+  environment         = var.environment
+  resource_group_name = module.resources.resource_group
+
+  # NOTE: service_account_name matches serviceAccountName in the chart's
+  # values/go-deploy/base.yaml
+  # https://github.com/IFRCGo/go-api/blob/develop/deploy/helm/values/go-deploy/base.yaml
+  aks_config = {
+    cluster_namespace       = "go-api"
+    cluster_oidc_issuer_url = module.resources.cluster_oidc_issuer_url
+    service_account_name    = "service-token-reader"
+  }
+
+  # NOTE: vault is created but maintained by dev
+  vault_admin_ids = [
+    local.user_principal_ids.tc_navin,
+    local.user_principal_ids.tc_sushil,
+  ]
+
+  # NOTE: Not maintaned from here
+  # - database_config:
+  #   - staging: ifrctgokdb002 (SG: ifrcpgo002rg)
+  #   - prod: ifrcpgokdb001 (SG: ifrcpgo002rg)
+  #
+  # - azure blob:
+  #   - staging: dsgofilestorage (SG: GOLAB)
+  #       - containers
+  #          - api
+  #          - static
+  #   - prod: prddsgofilestorage (SG: IFRCGO-Trial1)
+  #       - containers
+  #          - api
+  #          - static
+}

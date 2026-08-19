@@ -4,6 +4,9 @@ global:
   security:
     allowInsecureImages: true
 
+# NOTE: Disabled here, and enabled in the argo app ./applications/argocd/staging/applications/go-api.yaml
+cronjobs: []
+
 env:
   API_FQDN: https://goadmin-stage.ifrc.org
   AUTO_TRANSLATION_TRANSLATOR: lang.translation.IfrcTranslator
@@ -23,6 +26,9 @@ env:
   SENTRY_SAMPLE_RATE: "0.3"
   SESSION_COOKIE_DOMAIN: ".ifrc.org"
   CSRF_COOKIE_DOMAIN: ".ifrc.org"
+  # Reference from montandon-etl/staging file
+  EOAPI_STAC_INTERNAL_URL: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local:8080/"
+  EOAPI_STAC_EXTERNAL_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
 
 api:
   domain: goadmin-stage.ifrc.org
