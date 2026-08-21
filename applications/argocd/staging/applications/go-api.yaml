@@ -29,7 +29,7 @@ spec:
               tls:
                 secretName: "go-api-helm-secret-cert"
           env:
-            API_FQDN: "https://go-api-stage.ifrc.org"
+            API_FQDN: "https://goadmin-stage.ifrc.org"
             FRONTEND_URL: "https://go-stage.ifrc.org"
             SESSION_COOKIE_DOMAIN: ".ifrc.org"
             CSRF_COOKIE_DOMAIN: ".ifrc.org"
