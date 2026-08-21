@@ -47,7 +47,7 @@ spec:
             queues:
               # NOTE: Make sure keys are lowercase
               extraction:
-                replicaCount: 5
+                replicaCount: 3
                 celeryArgs: ["-Q", "extraction", "--concurrency", "5", "--max-tasks-per-child", "100"]
                 resources:
                   requests:

@@ -42,6 +42,25 @@ spec:
               clientID: "4de225d2-e993-4b72-b4d1-e4e9372a4c5a"
               keyvaultName: "montandon-etl-production"
               tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+          worker:
+            queues:
+              # NOTE: Make sure keys are lowercase
+              extraction:
+                replicaCount: 3
+                celeryArgs: ["-Q", "extraction", "--concurrency", "5", "--max-tasks-per-child", "100"]
+                resources:
+                  requests:
+                    memory: 1.5Gi
+                  limits:
+                    memory: 2Gi
+              transform:
+                replicaCount: 3
+                celeryArgs: ["-Q", "transform", "--concurrency", "5", "--max-tasks-per-child", "100"]
+                resources:
+                  requests:
+                    memory: 1.5Gi
+                  limits:
+                    memory: 2Gi
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-etl
