@@ -31,6 +31,8 @@ env:
   EOAPI_STAC_EXTERNAL_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
 
 api:
+  # NOTE: Disabled here, and enabled in the argo app ./applications/argocd/staging/applications/go-api.yaml
+  enabled: false
   domain: goadmin-stage.ifrc.org
   additionalDomain: ""
   replicaCount: 1
