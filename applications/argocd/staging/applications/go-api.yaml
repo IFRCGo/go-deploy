@@ -25,7 +25,7 @@ spec:
           fullnameOverride: go-api
           api:
             ingress:
-              host: "go-api-stage.ifrc.org"  # TODO: switch to goadmin-stage.ifrc.org
+              host: "goadmin-stage.ifrc.org"
               tls:
                 secretName: "go-api-helm-secret-cert"
           env:
