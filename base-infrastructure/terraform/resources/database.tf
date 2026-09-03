@@ -195,7 +195,7 @@ resource "azurerm_postgresql_flexible_server" "montandon_eoapi" {
   administrator_password        = random_password.montandon_eoapi_db_user.result
   backup_retention_days         = 35
   auto_grow_enabled             = true
-  sku_name                      = "GP_Standard_D2ds_v5"
+  sku_name                      = "GP_Standard_D4ds_v5"
   delegated_subnet_id           = azurerm_subnet.postgres.id
   private_dns_zone_id           = azurerm_private_dns_zone.ifrcgo.id
   public_network_access_enabled = false
@@ -224,6 +224,17 @@ resource "azurerm_postgresql_flexible_server_configuration" "montandon_eoapi_db_
   name      = "azure.extensions"
   server_id = azurerm_postgresql_flexible_server.montandon_eoapi.id
   value     = "POSTGIS"
+}
+
+resource "azurerm_postgresql_flexible_server_configuration" "montandon_eoapi_postgres_config" {
+  for_each = {
+    work_mem       = "65536"   # 64MB
+    shared_buffers = "4194304" # 4GB
+  }
+
+  name      = each.key
+  server_id = azurerm_postgresql_flexible_server.montandon_eoapi.id
+  value     = each.value
 }
 
 
