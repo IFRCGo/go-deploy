@@ -12,7 +12,7 @@ spec:
     # TODO: Change this to ifrcgo-dev-helm
     chart: ifrcgo-dev-helm
     # TODO: switch to 0.0.2-dev*
-    targetRevision: 0.0.2-feature-banjo-stack.c59743d8
+    targetRevision: 0.0.2-feature-banjo-stack.c215c8fb
     helm:
       valueFiles:
         - values/traefik.yaml
