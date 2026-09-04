@@ -25,6 +25,7 @@ Design notes / decisions (see go-api issue #2794):
   crashes on boot rather than silently serving traffic with revocation disabled.
 """
 
+import heapq
 import inspect
 import logging
 import os
@@ -66,7 +67,8 @@ def _num_env(name: str, default: float, *, minimum: float = 0.0) -> float:
         ) from None
     if value < minimum:
         raise RuntimeError(
-            "montandon_revocation: %s must be >= %s, got %s." % (name, minimum, value)
+            "montandon_revocation: %s must be >= %s, got %s."
+            % (name, minimum, value)
         )
     return value
 
@@ -86,7 +88,14 @@ def _verify_url_from_oidc() -> str:
             "or invalid (%r)." % (oidc,)
         )
     return urlunparse(
-        (parts.scheme, parts.netloc, "/api/v2/external-token/verify/", "", "", "")
+        (
+            parts.scheme,
+            parts.netloc,
+            "/api/v2/external-token/verify/",
+            "",
+            "",
+            "",
+        )
     )
 
 
@@ -106,7 +115,9 @@ VERIFY_TIMEOUT: float = _num_env("GOAPI_TOKEN_VERIFY_TIMEOUT", 3, minimum=0.001)
 # Upper bound on cached jti decisions; keeps memory bounded on a long-lived pod that sees
 # many distinct (leaked/rotated/one-off) jtis. On overflow we drop expired entries first,
 # then the soonest-to-expire.
-CACHE_MAX_ENTRIES: int = int(_num_env("GOAPI_TOKEN_VERIFY_CACHE_MAX", 50000, minimum=1))
+CACHE_MAX_ENTRIES: int = int(
+    _num_env("GOAPI_TOKEN_VERIFY_CACHE_MAX", 50000, minimum=1)
+)
 FAIL_OPEN: bool = _bool_env("GOAPI_TOKEN_VERIFY_FAIL_OPEN", False)
 STATIC_BLACKLIST: frozenset[str] = frozenset(
     jti.strip()
@@ -144,7 +155,7 @@ def _evict_locked(now: float) -> None:
         _cache.pop(k, None)
     overflow = len(_cache) - CACHE_MAX_ENTRIES
     if overflow > 0:
-        for k in sorted(_cache, key=lambda k: _cache[k][1])[:overflow]:
+        for k in heapq.nsmallest(overflow, _cache, key=lambda k: _cache[k][1]):
             _cache.pop(k, None)
 
 
@@ -209,14 +220,18 @@ def _verify(jti: str) -> tuple[bool, float]:
             return False, 0
         # Any other status (incl. 404 before the endpoint is live) -> outage.
         logger.warning(
-            "go-api verify returned %s; fail_open=%s", resp.status_code, FAIL_OPEN
+            "go-api verify returned %s; fail_open=%s",
+            resp.status_code,
+            FAIL_OPEN,
         )
         return _fail_policy()
     except Exception as exc:
         # Network error, non-JSON body, or anything unexpected -> honour the fail policy
         # rather than letting it become a 500.
         logger.warning(
-            "go-api verify call failed (%s); fail_open=%s", type(exc).__name__, FAIL_OPEN
+            "go-api verify call failed (%s); fail_open=%s",
+            type(exc).__name__,
+            FAIL_OPEN,
         )
         return _fail_policy()
 
