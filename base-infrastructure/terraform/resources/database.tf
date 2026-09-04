@@ -229,7 +229,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "montandon_eoapi_db_
 resource "azurerm_postgresql_flexible_server_configuration" "montandon_eoapi_postgres_config" {
   for_each = {
     work_mem       = "65536"   # 64MB
-    shared_buffers = "4194304" # 4GB
+    shared_buffers = "524288" # 4GB (unit: 8kB blocks, not kB -- shared_buffers is GUC_UNIT_BLOCKS; 524288 * 8kB = 4GB)
   }
 
   name      = each.key
