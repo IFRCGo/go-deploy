@@ -4,11 +4,15 @@ global:
   security:
     allowInsecureImages: true
 
+# TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
+# cronjobs: []
+
 env:
-  API_FQDN: goadmin.ifrc.org
+  API_FQDN: https://goadmin.ifrc.org
   AUTO_TRANSLATION_TRANSLATOR: lang.translation.IfrcTranslator
   CACHE_MIDDLEWARE_SECONDS: "0"
   CELERY_REDIS_URL: redis://ifrcgo-helm-redis:6379/1
+  CACHE_REDIS_URL: redis://ifrcgo-helm-redis:6379/1
   DEBUG_EMAIL: ""
   DJANGO_DB_NAME: postgres
   DJANGO_DEBUG: ""
@@ -16,17 +20,24 @@ env:
   DJANGO_READ_ONLY: "false"
   DJANGO_ADDITIONAL_ALLOWED_HOSTS: ""
   ELASTIC_SEARCH_HOST: elasticsearch://ifrcgo-helm-elasticsearch:9200
-  FRONTEND_URL: go.ifrc.org
+  FRONTEND_URL: https://go.ifrc.org
   GO_ENVIRONMENT: production
   IFRC_TRANSLATION_DOMAIN: https://ifrc-translationapi.azurewebsites.net
   SENTRY_DSN: https://342632f67ea942c9bde214c0bb7e91be@sentry.northeurope.cloudapp.azure.com/2
   SENTRY_SAMPLE_RATE: "0.2"
   SESSION_COOKIE_DOMAIN: ".ifrc.org"
   CSRF_COOKIE_DOMAIN: ".ifrc.org"
+  # Reference from montandon-etl/staging file
+  EOAPI_STAC_INTERNAL_URL: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local:8080/"
+  EOAPI_STAC_EXTERNAL_URL: "https://montandon-eoapi.ifrc.org/stac"
+  # XXX: Temporary values to fix rendering issue
+  PLAYWRIGHT_SERVER_URL: ws://ifrcgo-helm-playwright:3000/
 
 api:
+  # TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
+  enabled: true
   domain: goadmin.ifrc.org
-  additionalDomain: api.go.ifrc.org
+  additionalDomain: ""
   replicaCount: 2
   resources:
     requests:
@@ -37,6 +48,8 @@ api:
       memory: 4Gi
 
 redis:
+  # TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
+  enabled: true
   image:
     repository: bitnamilegacy/redis
   resources:
@@ -47,7 +60,13 @@ redis:
       cpu: "1"
       memory: 2Gi
 
+playwright:
+  # TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
+  enabled: true
+
 celery:
+  # TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
+  enabled: true
   replicaCount: 2
   resources:
     requests:
@@ -58,6 +77,8 @@ celery:
       memory: 4Gi
 
 elasticsearch:
+  # TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
+  enabled: true
   disk:
     uri: /subscriptions/39308fb0-9929-4b29-aafa-b3c78a8b0658/resourceGroups/ifrcpgo002rg/providers/Microsoft.Compute/disks/ifrcpgo-disk001
   resources:
