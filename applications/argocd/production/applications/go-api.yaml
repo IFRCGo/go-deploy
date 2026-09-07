@@ -24,6 +24,7 @@ spec:
           fullnameOverride: go-api
           api:
             enabled: true
+            replicaCount: 2
             ingress:
               # TODO: move to goadmin.ifrc.org
               host: "go-new-api.ifrc.org"
