@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/montandon-etl
     chart: montandon-etl-helm
-    targetRevision: 0.1.1-develop.c3ab8d96
+    targetRevision: 0.1.1-develop.c3dfe314
     helm:
       valueFiles:
         - values/operators.yaml
@@ -47,7 +47,7 @@ spec:
             queues:
               # NOTE: Make sure keys are lowercase
               extraction:
-                replicaCount: 5
+                replicaCount: 3
                 celeryArgs: ["-Q", "extraction", "--concurrency", "5", "--max-tasks-per-child", "100"]
                 resources:
                   requests:

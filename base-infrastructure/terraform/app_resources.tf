@@ -3,6 +3,7 @@ locals {
     tc_navin  = "c31baae7-afbf-4ad3-8e01-5abbd68adb16"
     tc_ranjan = "fc0ebb01-c8f1-456b-a7a5-0a2d6c79e6d9"
     tc_sushil = "fd7b3704-8168-4b27-901c-f984b6b82c9a"
+    rc_zoltan = "2d167081-8d84-466f-a035-026394433318"
 
     # TODO: remove this
     dfs_moses = "32053268-3970-48f3-9b09-c4280cd0b67d"
@@ -259,6 +260,7 @@ module "cacheppuccino_resources" {
   vault_admin_ids = [
     local.user_principal_ids.tc_navin,
     local.user_principal_ids.tc_sushil,
+    local.user_principal_ids.rc_zoltan,
   ]
 }
 
@@ -282,6 +284,7 @@ module "go_api_resources" {
   vault_admin_ids = [
     local.user_principal_ids.tc_navin,
     local.user_principal_ids.tc_sushil,
+    local.user_principal_ids.rc_zoltan,
   ]
 
   # NOTE: Not maintaned from here
