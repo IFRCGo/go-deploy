@@ -9,10 +9,8 @@ spec:
   project: default
   source:
     repoURL: ghcr.io/ifrcgo
-    # TODO: Change this to ifrcgo-dev-helm
-    chart: ifrcgo-dev-helm
-    # TODO: switch to 0.0.2-dev*
-    targetRevision: 0.0.2-feature-banjo-stack.cc59188f
+    chart: ifrcgo-helm
+    targetRevision: 0.0.2-develop.c20485c8
     helm:
       valueFiles:
         - values/traefik.yaml
