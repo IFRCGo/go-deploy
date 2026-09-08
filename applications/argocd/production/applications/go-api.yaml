@@ -31,8 +31,12 @@ spec:
               tls:
                 secretName: "go-api-helm-secret-cert"
           cronjobs:
-            # TODO: enable the jobs once the api is serving traffic
-            jobs: []
+            jobs:
+              # NOTE: Disabling this for production only
+              poll_gdacs_cyclone:   { enabled: false }
+              poll_gdacs_flood:     { enabled: false }
+              poll_usgs_earthquake: { enabled: false }
+              alert_notification:   { enabled: false }
           env:
             # TODO: move to https://goadmin.ifrc.org
             API_FQDN: "https://go-new-api.ifrc.org"
