@@ -4,8 +4,8 @@ global:
   security:
     allowInsecureImages: true
 
-# TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
-# cronjobs: []
+# NOTE: Disabled here, and enabled in the argo app ./applications/argocd/production/applications/go-api.yaml
+cronjobs: []
 
 env:
   API_FQDN: https://goadmin.ifrc.org

@@ -10,6 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-helm
+    # TODO: do we need to switch to a master-built chart tag?
     targetRevision: 0.0.2-develop.c676a57d
     helm:
       valueFiles:
@@ -17,39 +18,50 @@ spec:
         - values/operators/dragonfly.yaml
         - values/operators/elasticsearch.yaml
         - values/go-deploy/base.yaml
-        - values/go-deploy/staging.yaml
+        - values/go-deploy/production.yaml
       valuesObject:
         app:
           fullnameOverride: go-api
           api:
+            enabled: true
+            replicaCount: 2
             ingress:
-              host: "goadmin-stage.ifrc.org"
+              # TODO: move to goadmin.ifrc.org
+              host: "go-new-api.ifrc.org"
               tls:
                 secretName: "go-api-helm-secret-cert"
+          cronjobs:
+            jobs:
+              # NOTE: Disabling this for production only
+              poll_gdacs_cyclone:   { enabled: false }
+              poll_gdacs_flood:     { enabled: false }
+              poll_usgs_earthquake: { enabled: false }
+              alert_notification:   { enabled: false }
           env:
-            API_FQDN: "https://goadmin-stage.ifrc.org"
-            FRONTEND_URL: "https://go-stage.ifrc.org"
+            # TODO: move to https://goadmin.ifrc.org
+            API_FQDN: "https://go-new-api.ifrc.org"
+            FRONTEND_URL: "https://go.ifrc.org"
             SESSION_COOKIE_DOMAIN: ".ifrc.org"
             CSRF_COOKIE_DOMAIN: ".ifrc.org"
             # Azure
             AZURE_TENANT_ID: a2b53be5-734e-4e6c-ab0d-d184f60fd917
-            AZURE_CLIENT_ID: "8876ce49-0952-4fc5-b648-b1695bd03ebd"
+            AZURE_CLIENT_ID: f1d59a17-c79e-4f18-b444-5eb95730868f
             # Blob Storage Configs
             AZURE_STORAGE_ENABLED: "true"
             AZURE_STORAGE_MANAGED_IDENTITY: "false"
-            AZURE_STORAGE_ACCOUNT: dsgofilestorage
+            AZURE_STORAGE_ACCOUNT: prddsgofilestorage
             AZURE_STORAGE_MEDIA_CONTAINER: api
             AZURE_STORAGE_STATIC_CONTAINER: static
             # eoAPI
-            EOAPI_STAC_EXTERNAL_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
+            EOAPI_STAC_EXTERNAL_URL: "https://montandon-eoapi.ifrc.org/stac"
             EOAPI_STAC_INTERNAL_URL: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local:8080/"
           serviceAccount:
             annotations:
-              azure.workload.identity/client-id: "8876ce49-0952-4fc5-b648-b1695bd03ebd"
+              azure.workload.identity/client-id: f1d59a17-c79e-4f18-b444-5eb95730868f
           secretsStoreCsiDriver:
             parameters:
-              clientID: "8876ce49-0952-4fc5-b648-b1695bd03ebd"
-              keyvaultName: "go-api-staging-kv"
+              clientID: f1d59a17-c79e-4f18-b444-5eb95730868f
+              keyvaultName: "go-api-production-kv"
               tenantId: a2b53be5-734e-4e6c-ab0d-d184f60fd917
   destination:
     server: https://kubernetes.default.svc
