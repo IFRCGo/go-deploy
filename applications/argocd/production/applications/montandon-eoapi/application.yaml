@@ -118,7 +118,7 @@ spec:
               context: "off"
             queryables:
               - name: "stac_queryables.json"
-                indexFields: ["monty:hazard_codes","monty:country_codes","roles"]
+                indexFields: ["monty:hazard_codes","monty:country_codes","monty:corr_id","roles"]
                 deleteMissing: true
                 configMapRef:
                   name: montandon-eoapi-stac-queryables
