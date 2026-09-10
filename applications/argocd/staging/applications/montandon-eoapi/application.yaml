@@ -11,7 +11,7 @@ spec:
 
   - repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.11.2
+    targetRevision: 0.16.2
     helm:
       valueFiles:
         - values/argocd.yaml
@@ -124,6 +124,75 @@ spec:
                   name: montandon-eoapi-stac-queryables
                   key: stac_queryables.json
 
+        stac-auth-proxy:
+          enabled: true
+          startupProbe:
+            httpGet:
+              path: /stac/healthz
+          livenessProbe:
+            httpGet:
+              path: /stac/healthz
+          readinessProbe:
+            httpGet:
+              path: /stac/healthz
+          env:
+            UPSTREAM_URL: "http://montandon-eoapi-stac:8080"
+            # UPSTREAM_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
+            UPSTREAM_TIMEOUT: "30"
+            OIDC_DISCOVERY_URL: "https://goadmin.ifrc.org/o/.well-known/openid-configuration"
+            OIDC_DISCOVERY_INTERNAL_URL: "https://goadmin.ifrc.org/o/.well-known/openid-configuration"
+            OVERRIDE_HOST: "0"
+            ROOT_PATH: "/stac"
+            COLLECTIONS_FILTER_CLS: stac_auth_proxy.montandon_filters:CollectionsFilter
+            ITEMS_FILTER_CLS: stac_auth_proxy.montandon_filters:ItemsFilter
+            # External-token revocation (go-api issue #2794), injected via montandon_revocation.py.
+            GOAPI_TOKEN_VERIFY_TTL: "300"
+            # Short TTL for a fail-open allow served during a go-api outage, so revocation
+            # resumes within seconds of recovery instead of being masked for a full TTL.
+            GOAPI_TOKEN_VERIFY_OUTAGE_TTL: "30"
+            # TTL for a definitive deny (go-api reported the jti inactive/unknown): 24h, so a
+            # known-revoked token is not re-checked against go-api on every request.
+            GOAPI_TOKEN_VERIFY_DENY_TTL: "86400"
+            # Upper bound on cached jti decisions (memory guard on a long-lived pod).
+            GOAPI_TOKEN_VERIFY_CACHE_MAX: "50000"
+            GOAPI_TOKEN_VERIFY_TIMEOUT: "3"
+            GOAPI_TOKEN_VERIFY_FAIL_OPEN: "true"
+            GOAPI_TOKEN_STATIC_BLACKLIST: "fec23689-bf00-401e-9f9c-a65684f44b5f"  # NOTE: Token ID used in hackathon
+          ingress:
+            # The eoapi-k8s chart default is `false` (main eoapi ingress handles routing);
+            # montandon disables the main ingress and routes through stac-auth-proxy directly.
+            enabled: true
+            host: "montandon-eoapi-stage.ifrc.org"
+            className: "nginx"
+            tls:
+              enabled: true
+              secretName: "montandon-eoapi-helm-secret-cert"
+          autoscaling:
+            enabled: true
+            minReplicas: 1
+            maxReplicas: 3
+            targetCPUUtilizationPercentage: 75
+          resources:
+            limits:
+              cpu: 500m
+              memory: "2048Mi"
+            requests:
+              cpu: 200m
+              memory: "1024Mi"
+          extraVolumes:
+            - name: custom-modules
+              configMap:
+                name: stac-auth-proxy-modules
+          extraVolumeMounts:
+            - name: custom-modules
+              mountPath: /app/src/stac_auth_proxy/montandon_filters.py
+              subPath: montandon_filters.py
+              readOnly: true
+            - name: custom-modules
+              mountPath: /app/src/stac_auth_proxy/montandon_revocation.py
+              subPath: montandon_revocation.py
+              readOnly: true
+
   - path: applications/argocd/staging/applications/montandon-eoapi/internal/
     targetRevision: develop
     repoURL: https://github.com/IFRCGo/go-deploy.git
@@ -135,78 +204,6 @@ spec:
             enabled: true
             keyvaultName: montandon-eoapi-staging
 
-  - repoURL: https://github.com/developmentseed/stac-auth-proxy.git
-    targetRevision: v1.2.0
-    path: helm/
-    helm:
-      valuesObject:
-        image:
-          tag: "v1.2.0"
-        # HealthCheck endpoints - https://github.com/developmentseed/stac-auth-proxy/pull/143
-        startupProbe:
-          httpGet:
-            path: /stac/healthz
-        livenessProbe:
-          httpGet:
-            path: /stac/healthz
-        readinessProbe:
-          httpGet:
-            path: /stac/healthz
-        env:
-          UPSTREAM_URL: "http://montandon-eoapi-stac:8080"
-          # UPSTREAM_URL: "https://montandon-eoapi-stage.ifrc.org/stac"
-          OIDC_DISCOVERY_URL: "https://goadmin.ifrc.org/o/.well-known/openid-configuration"
-          OIDC_DISCOVERY_INTERNAL_URL: "https://goadmin.ifrc.org/o/.well-known/openid-configuration"
-          OVERRIDE_HOST: "0"
-          ROOT_PATH: "/stac"
-          COLLECTIONS_FILTER_CLS: stac_auth_proxy.montandon_filters:CollectionsFilter
-          ITEMS_FILTER_CLS: stac_auth_proxy.montandon_filters:ItemsFilter
-          # External-token revocation (go-api issue #2794), injected via montandon_revocation.py.
-          GOAPI_TOKEN_VERIFY_TTL: "300"
-          # Short TTL for a fail-open allow served during a go-api outage, so revocation
-          # resumes within seconds of recovery instead of being masked for a full TTL.
-          GOAPI_TOKEN_VERIFY_OUTAGE_TTL: "30"
-          # TTL for a definitive deny (go-api reported the jti inactive/unknown): 24h, so a
-          # known-revoked token is not re-checked against go-api on every request.
-          GOAPI_TOKEN_VERIFY_DENY_TTL: "86400"
-          # Upper bound on cached jti decisions (memory guard on a long-lived pod).
-          GOAPI_TOKEN_VERIFY_CACHE_MAX: "50000"
-          GOAPI_TOKEN_VERIFY_TIMEOUT: "3"
-          GOAPI_TOKEN_VERIFY_FAIL_OPEN: "true"
-          UPSTREAM_TIMEOUT: "30"
-          GOAPI_TOKEN_STATIC_BLACKLIST: "fec23689-bf00-401e-9f9c-a65684f44b5f"  # NOTE: Token ID used in hackathon
-        ingress:
-          enabled: true
-          host: "montandon-eoapi-stage.ifrc.org"
-          className: "nginx"
-          tls:
-            enabled: true
-            secretName: "montandon-eoapi-helm-secret-cert"
-        autoscaling:
-          enabled: true
-          minReplicas: 1
-          maxReplicas: 3
-          targetCPUUtilizationPercentage: 75
-        resources:
-          limits:
-            cpu: 500m
-            memory: "2048Mi"
-          requests:
-            cpu: 200m
-            memory: "1024Mi"
-        extraVolumes:
-          - name: custom-modules
-            configMap:
-              name: stac-auth-proxy-modules
-        extraVolumeMounts:
-          - name: custom-modules
-            mountPath: /app/src/stac_auth_proxy/montandon_filters.py
-            subPath: montandon_filters.py
-            readOnly: true
-          - name: custom-modules
-            mountPath: /app/src/stac_auth_proxy/montandon_revocation.py
-            subPath: montandon_revocation.py
-            readOnly: true
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-eoapi
