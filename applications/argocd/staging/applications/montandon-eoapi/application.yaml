@@ -140,6 +140,8 @@ spec:
     path: helm/
     helm:
       valuesObject:
+        image:
+          tag: "v1.2.0"
         # HealthCheck endpoints - https://github.com/developmentseed/stac-auth-proxy/pull/143
         startupProbe:
           httpGet:
