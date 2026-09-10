@@ -4,7 +4,7 @@ resource "helm_release" "rabbitmq-cluster-operator" {
   max_history = 10
 
   chart   = "oci://ghcr.io/toggle-corp/helm-charts/rabbitmq-cluster-operator"
-  version = "v2.17.0"
+  version = "v2.17.2"
 
   depends_on = [
     azurerm_kubernetes_cluster.ifrcgo
