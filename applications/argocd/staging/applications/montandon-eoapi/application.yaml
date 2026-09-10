@@ -140,6 +140,7 @@ spec:
             OIDC_DISCOVERY_INTERNAL_URL: "https://goadmin.ifrc.org/o/.well-known/openid-configuration"
             OVERRIDE_HOST: "0"
             ROOT_PATH: "/stac"
+            DEFAULT_PUBLIC: "false"
             COLLECTIONS_FILTER_CLS: stac_auth_proxy.montandon_filters:CollectionsFilter
             ITEMS_FILTER_CLS: stac_auth_proxy.montandon_filters:ItemsFilter
             # External-token revocation (go-api issue #2794), injected via montandon_revocation.py.
