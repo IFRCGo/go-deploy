@@ -10,9 +10,10 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-risk-module-helm
-    targetRevision: 0.0.1-develop.c35bbf8e
+    targetRevision: 0.0.1-develop.c9cc4e94
     helm:
       valueFiles:
+        - values/traefik.yaml
         - values/operators.yaml
         - values/go-deploy.yaml
         - values/production.yaml
