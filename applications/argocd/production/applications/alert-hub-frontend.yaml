@@ -16,7 +16,7 @@ spec:
         - name: app.ingress.hostname
           value: "alerthub.ifrc.org"
         - name: app.ingress.ingressClassName
-          value: nginx
+          value: traefik
         - name: app.ingress.tls.secretName
           value: "alerthub-helm-secret-cert"
         - name: app.env.APP_GRAPHQL_API_ENDPOINT
