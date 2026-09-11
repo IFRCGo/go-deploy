@@ -24,7 +24,7 @@ spec:
         ingress:
           enabled: true
           host: surveydesigner-stage-api.ifrc.org
-          className: nginx
+          className: traefik
           tls:
             enabled: true
             secretName: sdt-helm-secret-cert
