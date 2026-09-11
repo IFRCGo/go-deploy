@@ -161,7 +161,7 @@ spec:
             # montandon disables the main ingress and routes through stac-auth-proxy directly.
             enabled: true
             host: "montandon-eoapi-stage.ifrc.org"
-            className: "nginx"
+            className: "traefik"
             tls:
               enabled: true
               secretName: "montandon-eoapi-helm-secret-cert"
