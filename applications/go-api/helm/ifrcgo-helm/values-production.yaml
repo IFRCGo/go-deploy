@@ -34,8 +34,10 @@ env:
   PLAYWRIGHT_SERVER_URL: ws://ifrcgo-helm-playwright:3000/
 
 api:
-  # TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
-  enabled: true
+  # NOTE: Disabled here, and enabled in the argo app ./applications/argocd/production/applications/go-api.yaml
+  enabled: false
+  tls:
+    enabled: false
   domain: goadmin.ifrc.org
   additionalDomain: ""
   replicaCount: 2
@@ -48,8 +50,8 @@ api:
       memory: 4Gi
 
 redis:
-  # TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
-  enabled: true
+  # NOTE: Disabled here, and enabled in the argo app ./applications/argocd/production/applications/go-api.yaml
+  enabled: false
   image:
     repository: bitnamilegacy/redis
   resources:
@@ -61,12 +63,12 @@ redis:
       memory: 2Gi
 
 playwright:
-  # TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
-  enabled: true
+  # NOTE: Disabled here, and enabled in the argo app ./applications/argocd/production/applications/go-api.yaml
+  enabled: false
 
 celery:
-  # TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
-  enabled: true
+  # NOTE: Disabled here, and enabled in the argo app ./applications/argocd/production/applications/go-api.yaml
+  enabled: false
   replicaCount: 2
   resources:
     requests:
@@ -77,8 +79,8 @@ celery:
       memory: 4Gi
 
 elasticsearch:
-  # TODO: Disable here, and enable in the argo app ./applications/argocd/production/applications/go-api.yaml
-  enabled: true
+  # NOTE: Disabled here, and enabled in the argo app ./applications/argocd/production/applications/go-api.yaml
+  enabled: false
   disk:
     uri: /subscriptions/39308fb0-9929-4b29-aafa-b3c78a8b0658/resourceGroups/ifrcpgo002rg/providers/Microsoft.Compute/disks/ifrcpgo-disk001
   resources:

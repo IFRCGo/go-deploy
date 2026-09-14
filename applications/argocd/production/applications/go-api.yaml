@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-helm
-    # TODO: do we need to switch to a master-built chart tag?
+    # TODO: do we need to switch to a master-build chart tag
     targetRevision: 0.0.2-develop.c676a57d
     helm:
       valueFiles:
@@ -26,10 +26,13 @@ spec:
             enabled: true
             replicaCount: 2
             ingress:
-              # TODO: move to goadmin.ifrc.org
-              host: "go-new-api.ifrc.org"
+              host: "goadmin.ifrc.org"
               tls:
                 secretName: "go-api-helm-secret-cert"
+          worker:
+            queues:
+              default:
+                replicaCount: 2
           cronjobs:
             jobs:
               # NOTE: Disabling this for production only
@@ -38,8 +41,7 @@ spec:
               poll_usgs_earthquake: { enabled: false }
               alert_notification:   { enabled: false }
           env:
-            # TODO: move to https://goadmin.ifrc.org
-            API_FQDN: "https://go-new-api.ifrc.org"
+            API_FQDN: "https://goadmin.ifrc.org"
             FRONTEND_URL: "https://go.ifrc.org"
             SESSION_COOKIE_DOMAIN: ".ifrc.org"
             CSRF_COOKIE_DOMAIN: ".ifrc.org"
