@@ -178,7 +178,7 @@ spec:
         ingress:
           enabled: true
           host: "montandon-eoapi.ifrc.org"
-          className: "nginx"
+          className: "traefik"
           tls:
             enabled: true
             secretName: "montandon-eoapi-helm-secret-cert"
