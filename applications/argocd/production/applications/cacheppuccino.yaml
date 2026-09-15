@@ -19,7 +19,6 @@ spec:
       valuesObject:
         fullnameOverride: ifrcgo-cacheppuccino
         ingress:
-          className: nginx
           host: cacheppuccino.ifrc.org
           tls:
             secretName: cacheppuccino-helm-secret-cert
