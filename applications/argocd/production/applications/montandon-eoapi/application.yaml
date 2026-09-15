@@ -118,7 +118,7 @@ spec:
               context: "off"
             queryables:
               - name: "stac_queryables.json"
-                indexFields: ["monty:hazard_codes","monty:country_codes","roles"]
+                indexFields: ["monty:hazard_codes","monty:country_codes","monty:corr_id","roles"]
                 deleteMissing: true
                 configMapRef:
                   name: montandon-eoapi-stac-queryables
@@ -140,6 +140,8 @@ spec:
     path: helm/
     helm:
       valuesObject:
+        image:
+          tag: "v1.2.0"
         # HealthCheck endpoints - https://github.com/developmentseed/stac-auth-proxy/pull/143
         startupProbe:
           httpGet:
@@ -176,7 +178,7 @@ spec:
         ingress:
           enabled: true
           host: "montandon-eoapi.ifrc.org"
-          className: "nginx"
+          className: "traefik"
           tls:
             enabled: true
             secretName: "montandon-eoapi-helm-secret-cert"
