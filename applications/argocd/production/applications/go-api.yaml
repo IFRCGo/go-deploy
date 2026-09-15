@@ -11,7 +11,7 @@ spec:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-helm
     # TODO: do we need to switch to a master-build chart tag
-    targetRevision: 0.0.2-develop.c676a57d
+    targetRevision: 0.0.2-develop.c054f0b4
     helm:
       valueFiles:
         - values/traefik.yaml
