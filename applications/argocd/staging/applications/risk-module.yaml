@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-risk-module-helm
-    targetRevision: 0.0.1-develop.c9cc4e94
+    targetRevision: 0.0.1-develop.c9561fd1
     helm:
       valueFiles:
         - values/traefik.yaml
@@ -34,6 +34,7 @@ spec:
             AZURE_STORAGE_CONTAINER: "risk-module-staging-storage-container"
             AZURE_STORAGE_ACCOUNT_NAME: "riskmodulestaging4254"
             AZURE_STORAGE_MANAGED_IDENTITY: "true"
+            HEALTH_CHECK_DISK_USAGE_MAX: None
           serviceAccount:
             annotations:
               azure.workload.identity/client-id: "1a891bd5-87e2-4489-8050-84f26c3f99ce"
