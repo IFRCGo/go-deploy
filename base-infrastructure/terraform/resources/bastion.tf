@@ -5,11 +5,6 @@
 # applied via this helm_release (matching how the other cluster components — traefik,
 # argocd, cert-manager, etc. — are deployed).
 #
-# TODO: An older copy of this bastion is still shipped by the go-api Helm chart
-# (deploy/helm/ifrcgo-helm/templates/bastion.yaml) and runs in the `default` namespace.
-# Both run in parallel for now; users should migrate to the new IP exposed by this
-# resource. The go-api copy will be removed in the upcoming go-api updates.
-#
 # NOTE: after editing anything under charts/ssh-bastion, bump the chart `version` in
 # Chart.yaml so the helm provider detects the change and redeploys.
 
