@@ -47,8 +47,8 @@ resource "helm_release" "bastion" {
       # Sushil
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJbRraaLnjdExOtObCgY5RmOALKYzlXAH9GAMxbm9wtX susilnem@sushil-machine",
     ]
-    # Idle jump host — kept small. Staging gets a slightly higher CPU request (matches the
-    # sizing the go-api chart overrides used previously); the rest comes from values.yaml.
+    # Idle jump host, kept small. Staging gets a slightly higher CPU request; the rest
+    # comes from values.yaml.
     resources = {
       requests = {
         cpu = var.environment == "staging" ? "0.2" : "0.1"
