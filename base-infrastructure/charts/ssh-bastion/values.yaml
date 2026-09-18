@@ -1,5 +1,5 @@
 # renovate: datasource=docker depName=lscr.io/linuxserver/openssh-server versioning=regex:^version-(?<major>\d+)\.(?<minor>\d+)_p(?<patch>\d+)-r(?<build>\d+)$
-image: "lscr.io/linuxserver/openssh-server:version-10.3_p1-r0"
+image: "lscr.io/linuxserver/openssh-server:version-10.3_p1-r1"
 
 # Login user: the image creates this account (USER_NAME) and sshd only permits it
 # (AllowUsers, in the drop-in). Both are driven from this single value.
