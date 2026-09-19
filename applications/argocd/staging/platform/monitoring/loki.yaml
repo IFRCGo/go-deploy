@@ -40,9 +40,11 @@ spec:
               replication_factor: 1
             schemaConfig:
               configs:
+                # object_store names the thanos backend, so it matches
+                # storage.object_store.type rather than a cloud vendor
                 - from: "2024-04-01"
                   store: tsdb
-                  object_store: s3
+                  object_store: azure
                   schema: v13
                   index:
                     prefix: loki_index_
@@ -52,21 +54,53 @@ spec:
             limits_config:
               allow_structured_metadata: true
               volume_enabled: true
-              max_query_lookback: 2160h # ~3 months (TODO: Is this enough or to much?)
-              retention_period: 2160h   # ~3 months (TODO: Is this enough or to much?)
+              max_query_lookback: 4380h # ~6 months
+              retention_period: 4380h   # ~6 months
             # XXX: We need this disabled during loki init https://github.com/grafana/loki/issues/9634#issuecomment-2188215203
             #   Also, comment out the limits_config max_query_lookback and retention_period
             compactor:
               working_directory: /var/loki/data/retention
-              delete_request_store: s3
+              delete_request_store: azure
               retention_enabled: true
             ruler:
               enable_api: true
+
+            # Chunks and the tsdb index live in azure blob storage, so the only
+            # disk the statefulset needs is for the WAL and the compactor's
+            # working directory. Retention costs blob storage, not PVC size.
+            #
+            # `use_thanos_objstore` selects loki's thanos object store client,
+            # which the chart says will become the default. It reaches azure
+            # through DefaultAzureCredential, so with no account_key set it uses
+            # the workload identity token projected into the pod.
+            storage:
+              use_thanos_objstore: true
+              bucketNames:
+                chunks: loki-chunks
+                ruler: loki-ruler
+              object_store:
+                type: azure
+                azure:
+                  # terraform: module.resources.monitoring_storage_account_name
+                  account_name: ifrctgoaksmonitoring
 
           deploymentMode: SingleBinary
 
           singleBinary:
             replicas: 1
+            podLabels:
+              # Opts the pod in to the azure workload identity webhook, which
+              # injects the token DefaultAzureCredential reads
+              azure.workload.identity/use: "true"
+
+          serviceAccount:
+            # Pinned because the federated identity credential's subject in
+            # resources/monitoring.tf names it. The chart's generated default
+            # changed between 6.28 and 6.55, and a rename breaks blob auth.
+            name: monitoring-loki
+            annotations:
+              # terraform: module.resources.loki_workload_identity_client_id
+              azure.workload.identity/client-id: "aa46d00e-74c4-4c89-9ab3-8061cc8ee138"
 
           # XXX: Loki startup slow - https://github.com/grafana/loki/issues/7907#issuecomment-1445336799
           memberlist:
@@ -80,12 +114,8 @@ spec:
                 cpu: "0.1"
                 memory: 512Mi
 
-          # FIXME: Replace this with azure blob storage
           minio:
-            enabled: true
-            persistence:
-              enabled: true
-              size: 32Gi  # Cost is defined at tier level
+            enabled: false
 
           # Zero out replica counts of other deployment modes
           backend:
@@ -306,7 +336,10 @@ spec:
                 // publish data to loki
                 loki.write "default" {
                   endpoint {
-                    url       = "http://monitoring-loki-gateway/loki/api/v1/push"
+                    url = "http://monitoring-loki-gateway/loki/api/v1/push"
+                    // Ignored while loki runs with auth_enabled: false, which
+                    // files everything under the tenant `fake`. The blob lifecycle
+                    // rule in resources/monitoring.tf matches on that prefix.
                     tenant_id = "1"
                   }
                 }
