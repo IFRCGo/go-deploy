@@ -21,6 +21,56 @@ The monitoring stack is deployed using ArgoCD, with the configuration located at
 > [!Important]
 > All components are deployed to the `monitoring` namespace.
 
+## Loki storage
+
+> [!Note]
+> Staging only. Production Loki still runs on the in-cluster MinIO backend.
+
+On staging, Loki keeps its chunks and tsdb index in Azure Blob Storage rather than on
+a cluster PVC, so the retention period costs blob storage instead of disk. The
+statefulset keeps one small volume for the write-ahead log and the compactor's working
+directory. Retention is 4380h, about six months.
+
+The backend is Loki's [thanos object store client](https://grafana.com/docs/loki/latest/configure/)
+(`loki.storage.use_thanos_objstore`). It authenticates through
+`DefaultAzureCredential`, which picks up the workload identity token projected into
+the pod, so no storage account key is stored anywhere.
+
+Terraform owns the storage account, the two containers and the identity, in
+[`base-infrastructure/terraform/resources/monitoring.tf`](https://github.com/IFRCGo/go-deploy/blob/develop/base-infrastructure/terraform/resources/monitoring.tf).
+A blob lifecycle rule tiers chunks Hot to Cool at 30 days and Cool to Cold at 90. Both
+tiers stay online, so queries over old logs need no rehydration, but they do carry a
+per-GB retrieval charge that Hot does not. `max_query_lookback` spans the full
+retention period, so a careless dashboard range can reach into Cold.
+
+The thresholds are coupled to the retention period, and the terraform comment explains
+the arithmetic. Changing one without the other buys early-deletion penalties.
+
+### Cutting a cluster over
+
+The storage account name and the identity's client id are both hardcoded in the ArgoCD
+application, so `terraform apply` has to land first. Read the values back with:
+
+```bash
+cd base-infrastructure/terraform
+sed -i "s/ENVIRONMENT_TO_REPLACE/$TF_VAR_environment/g" main.tf   # as apply-infra.sh does
+terraform init
+terraform output -json resources \
+  | jq -r '{account: .monitoring_storage_account_name, clientId: .loki_workload_identity_client_id}'
+```
+
+Then set `loki.storage.object_store.azure.account_name` and
+`serviceAccount.annotations."azure.workload.identity/client-id"` in
+`monitoring/loki.yaml`, and only then let ArgoCD sync. Syncing with the placeholder
+still in place leaves Loki authenticating as nothing and dropping every write.
+
+Two things the cutover does not clean up:
+
+- Logs written before the switch stay in MinIO and become unqueryable.
+- The MinIO PVCs (`export-0` and `export-1`, 32Gi each) come from a statefulset
+  `volumeClaimTemplate`, so ArgoCD does not prune them. Delete them by hand or they
+  keep billing.
+
 ## Usage
 
 ### Retrieve Grafana Credentials
