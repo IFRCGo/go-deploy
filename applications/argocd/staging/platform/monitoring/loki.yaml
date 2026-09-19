@@ -114,20 +114,205 @@ spec:
           bloomGateway:
             replicas: 0
 
-    - chart: promtail
+    - chart: alloy
       repoURL: https://grafana.github.io/helm-charts
-      targetRevision: 6.16.6  # https://github.com/grafana/helm-charts/blob/main/charts/promtail/Chart.yaml
+      targetRevision: 1.12.1  # https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/Chart.yaml
       helm:
         valuesObject:
-          # https://github.com/grafana/helm-charts/blob/main/charts/promtail/values.yaml
+          # https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/values.yaml
+          # Collects pod logs from /var/log/pods and pushes them to Loki.
+          # The relabel rules match promtail's `kubernetes-pods` scrape job, so log streams
+          # carry the labels Loki queries and dashboards use: app, instance, component,
+          # node_name, namespace, job, pod and container.
 
-          config:
-            # publish data to loki
-            clients:
-              - url: http://monitoring-loki-gateway/loki/api/v1/push
-                tenant_id: 1
+          # The only CRD this chart ships is PodLogs, which this config does not use
+          crds:
+            create: false
 
-          daemonset:
+          controller:
+            type: daemonset
+            volumes:
+              extra:
+                - name: storage
+                  hostPath:
+                    path: /run/alloy
+                    type: DirectoryOrCreate
+
+          # Trimmed to what this config needs: `discovery.kubernetes` with role=pod. The chart
+          # default also grants cluster-wide configmap/secret reads for unused components.
+          # NOTE: Both lists must stay non-empty, the chart renders `[]` into the rule list.
+          rbac:
+            rules:
+              - apiGroups: [""]
+                resources: ["pods"]
+                verbs: ["get", "list", "watch"]
+            clusterRules:
+              - apiGroups: [""]
+                resources: ["nodes"]
+                verbs: ["get", "list", "watch"]
+
+          alloy:
+            # No anonymous usage stats to Grafana Labs
+            enableReporting: false
+
+            # Read positions are kept on the host so a restarted pod resumes instead of
+            # re-sending every log file it tails
+            storagePath: /run/alloy
+
+            mounts:
+              # Pod log files live under /var/log/pods
+              varlog: true
+              extra:
+                - name: storage
+                  mountPath: /run/alloy
+
+            configMap:
+              content: |-
+                logging {
+                  level  = "info"
+                  format = "logfmt"
+                }
+
+                // HOSTNAME is the node name, so each daemonset pod only watches its own node
+                discovery.kubernetes "pods" {
+                  role = "pod"
+
+                  selectors {
+                    role  = "pod"
+                    field = "spec.nodeName=" + sys.env("HOSTNAME")
+                  }
+                }
+
+                discovery.relabel "pod_logs" {
+                  targets = discovery.kubernetes.pods.targets
+
+                  rule {
+                    action        = "replace"
+                    source_labels = ["__meta_kubernetes_pod_controller_name"]
+                    regex         = "([0-9a-z-.]+?)(-[0-9a-f]{8,10})?"
+                    target_label  = "__tmp_controller_name"
+                  }
+
+                  rule {
+                    action        = "replace"
+                    source_labels = [
+                      "__meta_kubernetes_pod_label_app_kubernetes_io_name",
+                      "__meta_kubernetes_pod_label_app",
+                      "__tmp_controller_name",
+                      "__meta_kubernetes_pod_name",
+                    ]
+                    regex        = "^;*([^;]+)(;.*)?$"
+                    target_label = "app"
+                  }
+
+                  rule {
+                    action        = "replace"
+                    source_labels = [
+                      "__meta_kubernetes_pod_label_app_kubernetes_io_instance",
+                      "__meta_kubernetes_pod_label_instance",
+                    ]
+                    regex        = "^;*([^;]+)(;.*)?$"
+                    target_label = "instance"
+                  }
+
+                  rule {
+                    action        = "replace"
+                    source_labels = [
+                      "__meta_kubernetes_pod_label_app_kubernetes_io_component",
+                      "__meta_kubernetes_pod_label_component",
+                    ]
+                    regex        = "^;*([^;]+)(;.*)?$"
+                    target_label = "component"
+                  }
+
+                  rule {
+                    action        = "replace"
+                    source_labels = ["__meta_kubernetes_pod_node_name"]
+                    target_label  = "node_name"
+                  }
+
+                  rule {
+                    action        = "replace"
+                    source_labels = ["__meta_kubernetes_namespace"]
+                    target_label  = "namespace"
+                  }
+
+                  rule {
+                    action        = "replace"
+                    source_labels = ["namespace", "app"]
+                    separator     = "/"
+                    replacement   = "$1"
+                    target_label  = "job"
+                  }
+
+                  rule {
+                    action        = "replace"
+                    source_labels = ["__meta_kubernetes_pod_name"]
+                    target_label  = "pod"
+                  }
+
+                  rule {
+                    action        = "replace"
+                    source_labels = ["__meta_kubernetes_pod_container_name"]
+                    target_label  = "container"
+                  }
+
+                  rule {
+                    action        = "replace"
+                    source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+                    separator     = "/"
+                    replacement   = "/var/log/pods/*$1/*.log"
+                    target_label  = "__path__"
+                  }
+
+                  // Static pods (control plane) are keyed by config hash instead of uid
+                  rule {
+                    action        = "replace"
+                    source_labels = [
+                      "__meta_kubernetes_pod_annotationpresent_kubernetes_io_config_hash",
+                      "__meta_kubernetes_pod_annotation_kubernetes_io_config_hash",
+                      "__meta_kubernetes_pod_container_name",
+                    ]
+                    regex        = "true/(.*)"
+                    separator    = "/"
+                    replacement  = "/var/log/pods/*$1/*.log"
+                    target_label = "__path__"
+                  }
+                }
+
+                local.file_match "pod_logs" {
+                  path_targets = discovery.relabel.pod_logs.output
+                }
+
+                loki.source.file "pod_logs" {
+                  targets    = local.file_match.pod_logs.targets
+                  forward_to = [loki.process.pod_logs.receiver]
+                }
+
+                loki.process "pod_logs" {
+                  stage.cri {}
+
+                  // Loki's ingester refuses entries older than max_chunk_age/2 (1h), so shipping
+                  // them only burns the ingestion rate limit. Happens whenever read positions are
+                  // gone (fresh install, node reboot clearing /run) and every file is read in full.
+                  stage.drop {
+                    older_than          = "1h"
+                    drop_counter_reason = "older_than_loki_accepts"
+                  }
+
+                  forward_to = [loki.write.default.receiver]
+                }
+
+                // publish data to loki
+                loki.write "default" {
+                  endpoint {
+                    url       = "http://monitoring-loki-gateway/loki/api/v1/push"
+                    tenant_id = "1"
+                  }
+                }
+
+          serviceMonitor:
             enabled: true
-          deployment:
-            enabled: false
+            # Prometheus only selects ServiceMonitors carrying the kube-prometheus-stack release label
+            additionalLabels:
+              release: monitoring-kube-prometheus-stack
