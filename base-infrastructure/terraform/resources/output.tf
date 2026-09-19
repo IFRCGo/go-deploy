@@ -151,6 +151,13 @@ output "monitoring_storage_account_name" {
   value = azurerm_storage_account.monitoring.name
 }
 
+output "loki_storage_containers" {
+  value = [
+    azurerm_storage_container.loki_chunks.name,
+    azurerm_storage_container.loki_ruler.name,
+  ]
+}
+
 # Hardcoded into the loki argocd application as azure.workload.identity/client-id
 output "loki_workload_identity_client_id" {
   value = azurerm_user_assigned_identity.loki.client_id
