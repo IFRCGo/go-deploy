@@ -145,3 +145,13 @@ output "risk_module_storage_account_id" {
 output "risk_module_storage_account_name" {
   value = azurerm_storage_account.risk_module.name
 }
+
+# Monitoring ----------------------------------------
+output "monitoring_storage_account_name" {
+  value = azurerm_storage_account.monitoring.name
+}
+
+# Hardcoded into the loki argocd application as azure.workload.identity/client-id
+output "loki_workload_identity_client_id" {
+  value = azurerm_user_assigned_identity.loki.client_id
+}
