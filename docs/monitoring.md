@@ -8,8 +8,9 @@
     - [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/)
 - [**loki**](https://github.com/grafana/loki/blob/main/production/helm/loki/Chart.yaml):
     - [Loki](https://grafana.com/oss/loki/)
-- [**promtail**](https://github.com/grafana/helm-charts/blob/main/charts/promtail/Chart.yaml):
-    - [Promtail](https://grafana.com/docs/loki/latest/send-data/promtail/)
+- [**alloy**](https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/Chart.yaml):
+    - [Grafana Alloy](https://grafana.com/docs/alloy/latest/) - runs as a DaemonSet, tails pod logs from
+      `/var/log/pods` and pushes them to Loki
 
 ## Deployment
 The monitoring stack is deployed using ArgoCD, with the configuration located at:
