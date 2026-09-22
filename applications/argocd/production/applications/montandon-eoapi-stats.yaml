@@ -15,7 +15,7 @@ spec:
       valuesObject:
         ingress:
           enabled: true
-          host: montandon-eoapi-stage.ifrc.org
+          host: montandon-eoapi.ifrc.org
           path: /stats
   destination:
     server: https://kubernetes.default.svc
