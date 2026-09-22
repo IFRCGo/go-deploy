@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/montandon-eoapi-stats
     chart: montandon-eoapi-stats-helm
-    targetRevision: 0.2.3
+    targetRevision: 0.2.4
     helm:
       valuesObject:
         ingress:
