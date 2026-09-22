@@ -10,12 +10,13 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/montandon-eoapi-stats
     chart: montandon-eoapi-stats-helm
-    targetRevision: 0.2.2
+    targetRevision: 0.2.3
     helm:
       valuesObject:
         ingress:
           enabled: true
-          host: montandon-eoapi-stats-stage.ifrc.org
+          host: montandon-eoapi-stage.ifrc.org
+          path: /stats
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-eoapi
