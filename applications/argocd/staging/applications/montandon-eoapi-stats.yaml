@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo/montandon-eoapi-stats
     chart: montandon-eoapi-stats-helm
-    targetRevision: 0.2.0
+    targetRevision: 0.2.1
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-eoapi
