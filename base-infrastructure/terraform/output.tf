@@ -56,3 +56,11 @@ output "go_api_app_resource_details" {
     workload_id    = module.go_api_resources.workload_client_id
   }
 }
+
+output "monitoring_resource_details" {
+  value = {
+    storage_account_name = module.resources.monitoring_storage_account_name
+    storage_containers   = module.resources.loki_storage_containers
+    workload_id          = module.resources.loki_workload_identity_client_id
+  }
+}
