@@ -20,7 +20,7 @@ spec:
   sources:
     - chart: loki
       repoURL: https://grafana.github.io/helm-charts
-      targetRevision: 6.28.0  # https://github.com/grafana/loki/blob/main/production/helm/loki/Chart.yaml
+      targetRevision: 6.55.0  # https://github.com/grafana/loki/blob/main/production/helm/loki/Chart.yaml
       helm:
         valuesObject:
           # Copied from https://grafana.com/docs/loki/latest/setup/install/helm/install-monolithic/ - Single Replica
