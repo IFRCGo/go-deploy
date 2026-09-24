@@ -18,6 +18,11 @@ output "cluster_kubelet_identity" {
   value = azurerm_kubernetes_cluster.ifrcgo.kubelet_identity[0].object_id
 }
 
+# Cluster outbound (egress) IP, the source address external services see (see ip.tf)
+output "egress_public_ip" {
+  value = azurerm_public_ip.egress.ip_address
+}
+
 output "resource_group" {
   value = data.azurerm_resource_group.ifrcgo.name
 }

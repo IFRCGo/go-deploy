@@ -28,6 +28,21 @@ resource "azurerm_public_ip" "traefik" {
   }
 }
 
+# Cluster egress Public IP (see aks.tf network_profile). Every node SNATs outbound traffic
+# through it. Owned here instead of AKS's node resource group so it survives a cluster
+# recreation and can be handed out for allowlisting.
+resource "azurerm_public_ip" "egress" {
+  name                = "${local.prefix}EgressPublicIP"
+  resource_group_name = data.azurerm_resource_group.ifrcgo.name
+  location            = data.azurerm_resource_group.ifrcgo.location
+  allocation_method   = "Static"
+  sku                 = "Standard"
+
+  tags = {
+    Environment = var.environment
+  }
+}
+
 # SSH bastion Public IP (see bastion.tf) — reserved so the bastion endpoint is
 # stable across recreations (fixed IP / DNS can be put in front later).
 resource "azurerm_public_ip" "bastion" {

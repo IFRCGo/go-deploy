@@ -23,6 +23,11 @@ terraform {
   }
 }
 
+# Surfaced on its own since `resources` is sensitive and hidden in plan/apply output
+output "egress_public_ip" {
+  value = module.resources.egress_public_ip
+}
+
 output "resources" {
   value     = module.resources
   sensitive = true
