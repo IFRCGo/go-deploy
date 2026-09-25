@@ -37,6 +37,18 @@ resource "azurerm_kubernetes_cluster" "ifrcgo" {
     ManagedBy   = "IFRCGo"
   }
 
+  # Mirrors the live cluster (kubenet, no network policy) so only the outbound IP changes;
+  # a plugin mismatch here would replace the cluster.
+  network_profile {
+    network_plugin    = "kubenet"
+    load_balancer_sku = "standard"
+    outbound_type     = "loadBalancer"
+
+    load_balancer_profile {
+      outbound_ip_address_ids = [azurerm_public_ip.egress.id]
+    }
+  }
+
   key_vault_secrets_provider {
     secret_rotation_enabled  = true
     secret_rotation_interval = var.secret_rotation_interval
