@@ -10,8 +10,10 @@ resource "helm_release" "ifrcgo-cert-manager" {
   namespace        = "cert-manager"
   create_namespace = true
 
-  set {
-    name  = "installCRDs"
-    value = true
-  }
+  set = [
+    {
+      name  = "installCRDs"
+      value = true
+    },
+  ]
 }
