@@ -9,7 +9,7 @@ resource "helm_release" "argo-cd" {
 
   repository = "https://argoproj.github.io/argo-helm"
   namespace  = "argocd"
-  version    = "9.5.11"
+  version    = "10.9.2"
 
   values = [
     yamlencode({
