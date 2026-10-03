@@ -13,4 +13,5 @@ sed -i "s/ENVIRONMENT_TO_REPLACE/$TF_VAR_environment/g" main.tf
 
 terraform init
 
-terraform plan
+# PR plans are read-only, so they skip the state lock to avoid failing on concurrent runs
+terraform plan -lock=false
