@@ -27,6 +27,13 @@
       versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
     },
   ],
+  packageRules: [
+    {
+      // Replaced by traefik
+      matchPackageNames: ["ingress-nginx"],
+      enabled: false,
+    },
+  ],
   "argocd": {
     "managerFilePatterns": [
       "^applications/argocd/.+\\.yaml$"
