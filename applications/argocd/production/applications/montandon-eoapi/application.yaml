@@ -111,6 +111,9 @@ spec:
           enabled: true
           settings:
             loadSamples: false
+            # The DB has statement_timeout=60s (ALTER DATABASE); a single DB-wide ANALYZE
+            # exceeds it. pgstac migrations already ANALYZE every partition.
+            analyzeAfterBootstrap: false
             pgstacSettings:
               context: "off"
             queryables:
