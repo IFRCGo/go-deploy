@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: montandon-etl-helm
-    targetRevision: 0.1.1-develop.cea61eeb
+    targetRevision: 0.1.1-develop.cf451f80
     helm:
       valueFiles:
         - values/operators.yaml
