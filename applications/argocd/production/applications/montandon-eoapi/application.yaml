@@ -11,7 +11,7 @@ spec:
 
   - repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.16.4
+    targetRevision: 0.17.1
     helm:
       valueFiles:
         - values/argocd.yaml
@@ -111,11 +111,21 @@ spec:
           enabled: true
           settings:
             loadSamples: false
-            # The DB has statement_timeout=60s (ALTER DATABASE); a single DB-wide ANALYZE
-            # exceeds it. pgstac migrations already ANALYZE every partition.
-            analyzeAfterBootstrap: false
+            # ANALYZE after each sync and nightly in the maintenance CronJob.
+            analyze: "both"
+            # The DB has statement_timeout=60s (ALTER DATABASE) to protect the API.
+            # Lift it for the pgstac Jobs/CronJobs only (migrate, ANALYZE, extents).
+            extraEnv:
+              - name: PGOPTIONS
+                value: "-c statement_timeout=0"
+            maintenance:
+              schedule: "0 2 * * *"
+              activeDeadlineSeconds: 3600
             pgstacSettings:
               context: "off"
+              # Recomputing extents on every item write scans the whole partition
+              # (several GB), so refresh them nightly in the maintenance CronJob instead.
+              update_collection_extent: "scheduled"
             queryables:
               - name: "stac_queryables.json"
                 indexFields: ["monty:corr_id"]
