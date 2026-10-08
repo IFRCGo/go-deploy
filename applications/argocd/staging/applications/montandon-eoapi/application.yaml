@@ -11,7 +11,7 @@ spec:
 
   - repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.17.1
+    targetRevision: 0.17.2
     helm:
       valueFiles:
         - values/argocd.yaml
@@ -115,11 +115,9 @@ spec:
             analyze: "both"
             # The DB has statement_timeout=60s (ALTER DATABASE) to protect the API.
             # Lift it for the pgstac Jobs/CronJobs only (migrate, ANALYZE, extents).
-            # search_path: the chart calls pgstac functions unqualified and our DB user
-            # (postgres) has no pgstac search_path.
             extraEnv:
               - name: PGOPTIONS
-                value: "-c statement_timeout=0 -c search_path=pgstac,public"
+                value: "-c statement_timeout=0"
             maintenance:
               schedule: "0 2 * * *"
               activeDeadlineSeconds: 3600
