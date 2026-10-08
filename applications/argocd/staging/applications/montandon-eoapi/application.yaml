@@ -11,7 +11,7 @@ spec:
 
   - repoURL: https://devseed.com/eoapi-k8s/
     chart: eoapi
-    targetRevision: 0.17.0
+    targetRevision: 0.17.1
     helm:
       valueFiles:
         - values/argocd.yaml
