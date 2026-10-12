@@ -1,17 +1,17 @@
 resource "azurerm_kubernetes_cluster" "ifrcgo" {
-  #  lifecycle {
-  #    ignore_changes = all
-  #  }
+  lifecycle {
+    # Kubernetes version is upgraded manually through Azure
+    ignore_changes = [kubernetes_version]
+  }
 
   name                = "${local.prefix}-cluster"
   location            = data.azurerm_resource_group.ifrcgo.location
   resource_group_name = data.azurerm_resource_group.ifrcgo.name
   dns_prefix          = "${local.prefix}-cluster"
 
-  # XXX: Make sure to user azure supported versions
+  # Only used on cluster creation, see lifecycle.ignore_changes
   # https://releases.aks.azure.com/
   # https://endoflife.date/azure-kubernetes-service
-  # renovate: datasource=github-tags depName=kubernetes/kubernetes
   kubernetes_version = "1.35.3"
 
   default_node_pool {
