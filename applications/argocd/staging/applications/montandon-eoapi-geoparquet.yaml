@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: montandon-eoapi-geoparquet
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/developmentseed/pgstac-geoparquet-exporter.git
+    path: charts/pgstac-geoparquet-exporter
+    targetRevision: v0.3.0
+    helm:
+      valuesObject:
+        image:
+          tag: "0.3.0"
+        stacApiUrl: https://montandon-eoapi-stage.ifrc.org/stac
+        # Created by the montandon-eoapi chart, annotated with its workload identity
+        serviceAccountName: montandon-eoapi
+        podLabels:
+          azure.workload.identity/use: "true"
+        database:
+          # Synced from Key Vault by montandon-eoapi's SecretProviderClass
+          existingSecret: pgstac-secrets-montandon-eoapi
+          secretKeys:
+            host: DB_HOST
+            port: DB_PORT
+            database: DB_NAME
+            user: DB_USER
+            password: DB_PASSWORD
+        storage:
+          outputPath: abfs://montandon-eoapi-staging-geoparquet-container@montystaging6757.dfs.core.windows.net
+        exportConfig:
+          exportAll: true
+        extraEnv:
+          # The DB enforces statement_timeout=60s; lift it for the export jobs
+          - name: PGOPTIONS
+            value: "-c statement_timeout=0"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: montandon-eoapi
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
