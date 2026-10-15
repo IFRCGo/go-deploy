@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: ifrcgo-helm
-    targetRevision: 0.0.2-develop.c92243fb
+    targetRevision: 0.0.2-develop.cf8ed63a
     helm:
       valueFiles:
         - values/traefik.yaml
