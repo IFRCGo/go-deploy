@@ -237,6 +237,20 @@ module "montandon_eoapi_resources" {
     DB_HOST     = module.resources.montandon_eoapi_db_host
   }
 
+  # Private container for the GeoParquet export (staging only for now)
+  storage_config = {
+    container_refs = [
+      {
+        container_ref = "geoparquet"
+        access_type   = "private"
+      }
+    ]
+
+    enabled              = var.environment == "staging"
+    storage_account_id   = module.resources.montandon_storage_account_id
+    storage_account_name = module.resources.montandon_storage_account_name
+  }
+
   vault_admin_ids = [
     local.user_principal_ids.tc_navin,
     local.user_principal_ids.dfs_moses,
