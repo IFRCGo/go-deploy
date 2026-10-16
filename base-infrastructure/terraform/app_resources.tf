@@ -192,7 +192,7 @@ module "montandon_etl_resources" {
     container_refs = [
       {
         container_ref = "media"
-        access_type   = "private"
+        access_type   = "blob"
       },
       {
         container_ref = "static"
@@ -235,6 +235,20 @@ module "montandon_eoapi_resources" {
     DB_PASSWORD = module.resources.montandon_eoapi_db_user_password
     DB_NAME     = local.montandon_eoapi_db_name
     DB_HOST     = module.resources.montandon_eoapi_db_host
+  }
+
+  # Private container for the GeoParquet export (staging only for now)
+  storage_config = {
+    container_refs = [
+      {
+        container_ref = "geoparquet"
+        access_type   = "private"
+      }
+    ]
+
+    enabled              = var.environment == "staging"
+    storage_account_id   = module.resources.montandon_storage_account_id
+    storage_account_name = module.resources.montandon_storage_account_name
   }
 
   vault_admin_ids = [

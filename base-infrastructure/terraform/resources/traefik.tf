@@ -1,5 +1,3 @@
-# Reference from: "./helm-ingress-nginx.tf" file.
-
 resource "helm_release" "traefik" {
   name             = "traefik"
   repository       = "https://traefik.github.io/charts"
@@ -31,18 +29,10 @@ resource "helm_release" "traefik" {
     }
 
     ingressClass = {
-      enabled = true
-      # NOTE: Keep false until nginx is fully removed
-      isDefaultClass = false
+      enabled        = true
+      isDefaultClass = true
     }
 
-    providers = {
-      kubernetesIngressNGINX = {
-        enabled = true
-      }
-    }
-
-    # Replaces nginx: use-forwarded-headers, real-ip-header, set-real-ip-from
     # Trust X-Forwarded-For only from the AKS subnet (10.1.0.0/16)
     ports = {
       web = {

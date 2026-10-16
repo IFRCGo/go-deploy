@@ -8,59 +8,40 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: ghcr.io/ifrcgo/montandon-etl
+    repoURL: ghcr.io/ifrcgo
     chart: montandon-etl-helm
-    targetRevision: 0.1.1-develop.c828ca46
+    targetRevision: 0.1.1-develop.c855cc9f
     helm:
       valueFiles:
         - values/operators.yaml
         - values/go-deploy.yaml
         - values/prod.yaml
+        - values/traefik.yaml
       valuesObject:
         app:
-          ingress:
-            host: montandon-etl.ifrc.org
-            tls:
-              secretName: montandon-helm-secret-cert
+          api:
+            ingress:
+              host: montandon-etl.ifrc.org
+              tls:
+                secretName: montandon-helm-secret-cert
           env:
             # Azure configs
-            AZURE_STORAGE_ENABLE: "true"
             AZURE_CLIENT_ID: 4de225d2-e993-4b72-b4d1-e4e9372a4c5a
             AZURE_TENANT_ID: a2b53be5-734e-4e6c-ab0d-d184f60fd917
             AZURE_STORAGE_MEDIA_CONTAINER: montandon-etl-production-media-container
             AZURE_STORAGE_STATIC_CONTAINER: montandon-etl-production-static-container
             AZURE_STORAGE_ACCOUNT_NAME: montyproduction9012
-            AZURE_STORAGE_MANAGED_IDENTITY: "true"
             # ETL Load config
             EOAPI_STAC_API_INTERNAL: "http://montandon-eoapi-stac.montandon-eoapi.svc.cluster.local:8080/"
             EOAPI_STAC_API_PUBLIC: "https://montandon-eoapi.ifrc.org/stac"
           serviceAccount:
             annotations:
-              azure.workload.identity/client-id : "4de225d2-e993-4b72-b4d1-e4e9372a4c5a"
+              azure.workload.identity/client-id: "4de225d2-e993-4b72-b4d1-e4e9372a4c5a"
           secretsStoreCsiDriver:
             parameters:
               clientID: "4de225d2-e993-4b72-b4d1-e4e9372a4c5a"
               keyvaultName: "montandon-etl-production"
               tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
-          worker:
-            queues:
-              # NOTE: Make sure keys are lowercase
-              extraction:
-                replicaCount: 2
-                celeryArgs: ["-Q", "extraction", "--concurrency", "5", "--max-tasks-per-child", "100"]
-                resources:
-                  requests:
-                    memory: 1.5Gi
-                  limits:
-                    memory: 2Gi
-              transform:
-                replicaCount: 2
-                celeryArgs: ["-Q", "transform", "--concurrency", "5", "--max-tasks-per-child", "100"]
-                resources:
-                  requests:
-                    memory: 1.5Gi
-                  limits:
-                    memory: 2Gi
   destination:
     server: https://kubernetes.default.svc
     namespace: montandon-etl
