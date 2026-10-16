@@ -192,7 +192,7 @@ module "montandon_etl_resources" {
     container_refs = [
       {
         container_ref = "media"
-        access_type   = "private"
+        access_type   = "blob"
       },
       {
         container_ref = "static"
