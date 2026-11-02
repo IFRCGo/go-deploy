@@ -5,6 +5,15 @@ locals {
   # default name changed between 6.28 and 6.55, so the subject below sets it
   # explicitly rather than tracking whatever the chart happens to generate.
   loki_service_account = "monitoring-loki"
+
+  # Pinned in the kube-prometheus-stack and thanos argocd applications. The sidecar
+  # runs inside the Prometheus pod, so it uses the Prometheus service account.
+  # Thanos query reads from the other components and never touches blob.
+  thanos_service_accounts = {
+    sidecar   = "monitoring-kube-prometheus-prometheus"
+    store     = "monitoring-thanos-store"
+    compactor = "monitoring-thanos-compactor"
+  }
 }
 
 # Backs Loki's chunks and tsdb index. Keeping them here instead of on a cluster PVC
@@ -29,6 +38,19 @@ resource "azurerm_storage_container" "loki_chunks" {
 
 resource "azurerm_storage_container" "loki_ruler" {
   name                  = "loki-ruler"
+  storage_account_name  = azurerm_storage_account.monitoring.name
+  container_access_type = "private"
+}
+
+# Backs Thanos' Prometheus blocks. They stay Hot with no tiering rule: the compactor
+# deletes raw blocks at around 30 days and rewrites and deletes source blocks after
+# each compaction, so most blocks would leave Cool inside 30 days and bill the
+# early-deletion penalty. The compactor owns retention here.
+#
+# The management policy below does not reach this container, its prefix is scoped
+# to loki-chunks/fake.
+resource "azurerm_storage_container" "thanos_metrics" {
+  name                  = "thanos-metrics"
   storage_account_name  = azurerm_storage_account.monitoring.name
   container_access_type = "private"
 }
@@ -103,6 +125,36 @@ resource "azurerm_role_assignment" "loki_ruler" {
   scope                = "${azurerm_storage_account.monitoring.id}/blobServices/default/containers/${azurerm_storage_container.loki_ruler.name}"
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_user_assigned_identity.loki.principal_id
+
+  # The identity is created in this same apply, and entra takes a moment to
+  # replicate it. Without this the first apply intermittently fails PrincipalNotFound.
+  skip_service_principal_aad_check = true
+}
+
+# The Thanos sidecar, store gateway and compactor authenticate to blob storage as
+# this identity, through the AKS OIDC issuer, the same way Loki does. Each
+# component runs under its own service account, so each gets its own credential.
+resource "azurerm_user_assigned_identity" "thanos" {
+  name                = "Thanos${title(var.environment)}WorkloadIdentity"
+  location            = data.azurerm_resource_group.ifrcgo.location
+  resource_group_name = data.azurerm_resource_group.ifrcgo.name
+}
+
+resource "azurerm_federated_identity_credential" "thanos" {
+  for_each = local.thanos_service_accounts
+
+  name                = "thanos-${var.environment}-${each.key}-blob-identity"
+  audience            = ["api://AzureADTokenExchange"]
+  issuer              = azurerm_kubernetes_cluster.ifrcgo.oidc_issuer_url
+  parent_id           = azurerm_user_assigned_identity.thanos.id
+  resource_group_name = data.azurerm_resource_group.ifrcgo.name
+  subject             = "system:serviceaccount:monitoring:${each.value}"
+}
+
+resource "azurerm_role_assignment" "thanos_metrics" {
+  scope                = "${azurerm_storage_account.monitoring.id}/blobServices/default/containers/${azurerm_storage_container.thanos_metrics.name}"
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_user_assigned_identity.thanos.principal_id
 
   # The identity is created in this same apply, and entra takes a moment to
   # replicate it. Without this the first apply intermittently fails PrincipalNotFound.
