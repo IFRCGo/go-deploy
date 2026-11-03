@@ -17,6 +17,14 @@ spec:
       selfHeal: true
     syncOptions:
     - ServerSideApply=true
+  # The chart's volumeClaimTemplates omit apiVersion and kind, which the
+  # apiserver fills in, so the store gateway and compactor stay OutOfSync
+  ignoreDifferences:
+  - group: apps
+    kind: StatefulSet
+    jqPathExpressions:
+    - .spec.volumeClaimTemplates[]?.apiVersion
+    - .spec.volumeClaimTemplates[]?.kind
   source:
     chart: thanos
     repoURL: https://stevehipwell.github.io/helm-charts/
