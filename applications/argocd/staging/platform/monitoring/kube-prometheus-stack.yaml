@@ -40,6 +40,12 @@ spec:
             users:
               viewers_can_edit: true  # https://grafana.com/docs/grafana/latest/administration/user-management/manage-dashboard-permissions/#enable-viewers-to-edit-but-not-save-dashboards-and-use-explore
               default_theme: system
+          sidecar:
+            datasources:
+              # The default `Prometheus` datasource reads through thanos query
+              # (thanos.yaml), which merges recent data from the sidecar with
+              # older data from blob
+              url: http://monitoring-thanos-query:10902
           additionalDataSources:
             - access: proxy
               isDefault: false
@@ -94,11 +100,6 @@ spec:
             # The thanos sidecar uploads every 2h TSDB block to azure blob. With
             # object storage set, the operator also disables local compaction.
             thanos:
-              additionalArgs:
-                # Uploads the blocks Prometheus compacted before the sidecar existed.
-                # Removed once the old blocks are in blob, together with trimming
-                # the local retention.
-                - name: shipper.upload-compacted
               objectStorageConfig:
                 # The chart renders this into the secret
                 # `monitoring-kube-prometheus-prometheus`. Same config as thanos.yaml.
@@ -114,6 +115,8 @@ spec:
                     # IMDS managed identity instead of DefaultAzureCredential, which
                     # is what picks up the workload identity token.
 
+            # Older data is read from blob through thanos query
+            retention: 3d
             # TODO: Increase/decrease as needed
             # https://prometheus.io/docs/prometheus/latest/storage/#right-sizing-retention-size
             retentionSize: "20GB"  # Maximum size of metrics
