@@ -6,7 +6,7 @@
     - [Prometheus](https://prometheus.io/)
     - [Prometheus Node Exporter](https://github.com/prometheus/node_exporter)
     - [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/)
-- [**loki**](https://github.com/grafana/loki/blob/main/production/helm/loki/Chart.yaml):
+- [**loki**](https://github.com/grafana-community/helm-charts/blob/main/charts/loki/Chart.yaml) (repo `https://grafana-community.github.io/helm-charts`):
     - [Loki](https://grafana.com/oss/loki/)
 - [**alloy**](https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/Chart.yaml):
     - [Grafana Alloy](https://grafana.com/docs/alloy/latest/) - runs as a DaemonSet, tails pod logs from
