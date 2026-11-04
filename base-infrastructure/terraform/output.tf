@@ -59,8 +59,10 @@ output "go_api_app_resource_details" {
 
 output "monitoring_resource_details" {
   value = {
-    storage_account_name = module.resources.monitoring_storage_account_name
-    storage_containers   = module.resources.loki_storage_containers
-    workload_id          = module.resources.loki_workload_identity_client_id
+    storage_account_name     = module.resources.monitoring_storage_account_name
+    storage_containers       = module.resources.loki_storage_containers
+    workload_id              = module.resources.loki_workload_identity_client_id
+    thanos_storage_container = module.resources.thanos_storage_container
+    thanos_workload_id       = module.resources.thanos_workload_identity_client_id
   }
 }

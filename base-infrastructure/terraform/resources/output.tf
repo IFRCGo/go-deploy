@@ -167,3 +167,12 @@ output "loki_storage_containers" {
 output "loki_workload_identity_client_id" {
   value = azurerm_user_assigned_identity.loki.client_id
 }
+
+output "thanos_storage_container" {
+  value = azurerm_storage_container.thanos_metrics.name
+}
+
+# Hardcoded into the kube-prometheus-stack and thanos argocd applications as azure.workload.identity/client-id
+output "thanos_workload_identity_client_id" {
+  value = azurerm_user_assigned_identity.thanos.client_id
+}

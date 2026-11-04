@@ -19,8 +19,8 @@ spec:
     - ServerSideApply=true
   sources:
     - chart: loki
-      repoURL: https://grafana.github.io/helm-charts
-      targetRevision: 6.55.0  # https://github.com/grafana/loki/blob/main/production/helm/loki/Chart.yaml
+      repoURL: https://grafana-community.github.io/helm-charts
+      targetRevision: 20.2.2  # https://github.com/grafana-community/helm-charts/blob/main/charts/loki/Chart.yaml
       helm:
         valuesObject:
           # Copied from https://grafana.com/docs/loki/latest/setup/install/helm/install-monolithic/ - Single Replica
@@ -84,7 +84,7 @@ spec:
                   # terraform: module.resources.monitoring_storage_account_name
                   account_name: ifrctgoaksmonitoring
 
-          deploymentMode: SingleBinary
+          deploymentMode: Monolithic
 
           singleBinary:
             replicas: 1
@@ -114,9 +114,6 @@ spec:
                 cpu: "0.1"
                 memory: 512Mi
 
-          minio:
-            enabled: false
-
           # Zero out replica counts of other deployment modes
           backend:
             replicas: 0
@@ -139,14 +136,12 @@ spec:
             replicas: 0
           indexGateway:
             replicas: 0
-          bloomCompactor:
-            replicas: 0
           bloomGateway:
             replicas: 0
 
     - chart: alloy
       repoURL: https://grafana.github.io/helm-charts
-      targetRevision: 1.12.1  # https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/Chart.yaml
+      targetRevision: 1.15.0  # https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/Chart.yaml
       helm:
         valuesObject:
           # https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/values.yaml

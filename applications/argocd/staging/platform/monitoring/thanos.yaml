@@ -1,0 +1,152 @@
+# vim: set ft=helm:
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring-thanos
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - ServerSideApply=true
+  # The chart's volumeClaimTemplates omit apiVersion and kind, which the
+  # apiserver fills in, so the store gateway and compactor stay OutOfSync
+  ignoreDifferences:
+  - group: apps
+    kind: StatefulSet
+    jqPathExpressions:
+    - .spec.volumeClaimTemplates[]?.apiVersion
+    - .spec.volumeClaimTemplates[]?.kind
+  source:
+    chart: thanos
+    repoURL: https://stevehipwell.github.io/helm-charts/
+    targetRevision: 1.24.2  # https://github.com/stevehipwell/helm-charts/blob/main/charts/thanos/Chart.yaml
+    helm:
+      valuesObject:
+        # https://github.com/stevehipwell/helm-charts/blob/main/charts/thanos/values.yaml
+        # Long-term storage for Prometheus metrics. The thanos sidecar in the
+        # Prometheus pod (kube-prometheus-stack.yaml) uploads TSDB blocks to azure
+        # blob, the compactor downsamples and expires them, the store gateway
+        # serves them and query merges both for grafana.
+
+        # Shared by the store gateway and the compactor. Same config as the
+        # sidecar's in kube-prometheus-stack.yaml. A string like the chart's
+        # default, since a map over a string default makes helm warn on render.
+        objstoreConfig:
+          create: true
+          value: |-
+            type: AZURE
+            config:
+              # terraform: module.resources.monitoring_storage_account_name
+              storage_account: ifrctgoaksmonitoring
+              container: thanos-metrics
+              # terraform owns the container
+              storage_create_container: false
+              # user_assigned_id stays unset: setting it switches thanos to the
+              # IMDS managed identity instead of DefaultAzureCredential, which is
+              # what picks up the workload identity token.
+
+        serviceMonitor:
+          enabled: true
+          # Prometheus only selects ServiceMonitors carrying the kube-prometheus-stack release label
+          additionalLabels:
+            release: monitoring-kube-prometheus-stack
+
+        # The operator sets this external label per Prometheus replica. Query
+        # drops it, so series from more than one replica deduplicate.
+        additionalReplicaLabels:
+          - prometheus_replica
+
+        # The chart adds the store gateway's headless service on its own
+        # (dnssrv+_grpc._tcp.monitoring-thanos-store-gateway-headless...)
+        additionalEndpoints:
+          # Prometheus' thanos sidecar, through kube-prometheus-stack's thanosService
+          - dnssrv+_grpc._tcp.monitoring-kube-prometheus-thanos-discovery.monitoring.svc.cluster.local
+
+        query:
+          enabled: true
+          extraArgs:
+            # Raw samples only live for 30d (compact retention below), so older
+            # ranges return nothing unless query reads the downsampled blocks
+            - --query.auto-downsampling
+          # NOTE: Changed due to limited resources
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+
+        storeGateway:
+          enabled: true
+          serviceAccount:
+            # Pinned because the federated identity credential's subject in
+            # resources/monitoring.tf names it, and a rename breaks blob auth.
+            name: monitoring-thanos-store
+            annotations:
+              # terraform: module.resources.thanos_workload_identity_client_id
+              azure.workload.identity/client-id: "bd3876fa-7a7e-4775-bb43-d132920f454a"
+          podLabels:
+            # Opts the pod in to the azure workload identity webhook, which
+            # injects the token DefaultAzureCredential reads
+            azure.workload.identity/use: "true"
+          # Holds the index headers and caches of the blocks in blob, not the blocks
+          persistence:
+            enabled: true
+            # The chart defaults to `standard`, which AKS does not have
+            storageClass: managed-csi
+            size: 16Gi  # Cost is defined at tier level
+          # NOTE: Changed due to limited resources
+          resources:
+            requests:
+              cpu: 50m
+              memory: 512Mi
+
+        compact:
+          enabled: true
+          # A single Prometheus replica writes each series once, so there is
+          # nothing to deduplicate
+          deduplication:
+            enabled: false
+          serviceAccount:
+            # Pinned because the federated identity credential's subject in
+            # resources/monitoring.tf names it, and a rename breaks blob auth.
+            name: monitoring-thanos-compactor
+            annotations:
+              # terraform: module.resources.thanos_workload_identity_client_id
+              azure.workload.identity/client-id: "bd3876fa-7a7e-4775-bb43-d132920f454a"
+          podLabels:
+            # Opts the pod in to the azure workload identity webhook, which
+            # injects the token DefaultAzureCredential reads
+            azure.workload.identity/use: "true"
+          extraArgs:
+            - --retention.resolution-raw=30d
+            # ~6 months, matching loki's retention_period in loki.yaml
+            - --retention.resolution-5m=4380h
+            - --retention.resolution-1h=4380h
+          # Scratch space for the blocks being compacted and downsampled. A 14d
+          # compaction holds its source blocks and the output at once: 2x 14
+          # days of blocks at ~0.45GiB/day is ~13GiB.
+          persistence:
+            enabled: true
+            # The chart defaults to `standard`, which AKS does not have
+            storageClass: managed-csi
+            size: 32Gi  # Cost is defined at tier level
+          # NOTE: Changed due to limited resources
+          resources:
+            requests:
+              cpu: 50m
+              memory: 1Gi
+
+        queryFrontend:
+          enabled: false
+        rule:
+          enabled: false
+        receive:
+          enabled: false
