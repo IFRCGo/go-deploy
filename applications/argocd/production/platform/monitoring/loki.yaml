@@ -146,7 +146,7 @@ spec:
 
     - chart: alloy
       repoURL: https://grafana.github.io/helm-charts
-      targetRevision: 1.12.1  # https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/Chart.yaml
+      targetRevision: 1.15.0  # https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/Chart.yaml
       helm:
         valuesObject:
           # https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/values.yaml
