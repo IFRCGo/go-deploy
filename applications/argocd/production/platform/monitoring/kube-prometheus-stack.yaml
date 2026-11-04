@@ -68,7 +68,52 @@ spec:
                 datasource: Prometheus
 
         prometheus:
+          serviceAccount:
+            # Pinned because the federated identity credential's subject in
+            # resources/monitoring.tf names it, and a rename breaks blob auth.
+            name: monitoring-kube-prometheus-prometheus
+            annotations:
+              # terraform: module.resources.thanos_workload_identity_client_id
+              azure.workload.identity/client-id: "eed9b930-da00-4504-a312-8f4234c4fd01"
+
+          # Headless service `monitoring-kube-prometheus-thanos-discovery` that
+          # thanos query (thanos.yaml) finds the sidecar's gRPC endpoint through
+          thanosService:
+            enabled: true
+          # Carries the release label from the chart, so Prometheus selects it
+          thanosServiceMonitor:
+            enabled: true
+
           prometheusSpec:
+            podMetadata:
+              labels:
+                # Opts the pod in to the azure workload identity webhook, which
+                # injects the token the thanos sidecar's DefaultAzureCredential reads
+                azure.workload.identity/use: "true"
+
+            # The thanos sidecar uploads every 2h TSDB block to azure blob. With
+            # object storage set, the operator also disables local compaction.
+            thanos:
+              additionalArgs:
+                # Uploads the blocks Prometheus compacted before the sidecar existed.
+                # Removed once the old blocks are in blob, together with trimming
+                # the local retention.
+                - name: shipper.upload-compacted
+              objectStorageConfig:
+                # The chart renders this into the secret
+                # `monitoring-kube-prometheus-prometheus`. Same config as thanos.yaml.
+                secret:
+                  type: AZURE
+                  config:
+                    # terraform: module.resources.monitoring_storage_account_name
+                    storage_account: ifrcpgoaksmonitoring
+                    container: thanos-metrics
+                    # terraform owns the container
+                    storage_create_container: false
+                    # user_assigned_id stays unset: setting it switches thanos to the
+                    # IMDS managed identity instead of DefaultAzureCredential, which
+                    # is what picks up the workload identity token.
+
             # TODO: Increase/decrease as needed
             # https://prometheus.io/docs/prometheus/latest/storage/#right-sizing-retention-size
             retentionSize: "20GB"  # Maximum size of metrics
