@@ -24,13 +24,17 @@ spec:
   source:
     chart: kube-prometheus-stack
     repoURL: https://prometheus-community.github.io/helm-charts
-    targetRevision: 70.3.0  # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/Chart.yaml
+    targetRevision: 92.17.1  # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/Chart.yaml
     helm:
       valuesObject:
         # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
         # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
         grafana:
           replicas: 1
+          # The chart generates a new random password on every render when this
+          # is unset, and ArgoCD renders without helm lookup, so the secret and
+          # Grafana would churn on each sync. This is the chart's former default.
+          adminPassword: prom-operator
           ingress:
             enabled: false
           persistence:
@@ -97,8 +101,9 @@ spec:
                 # injects the token the thanos sidecar's DefaultAzureCredential reads
                 azure.workload.identity/use: "true"
 
-            # The thanos sidecar uploads every 2h TSDB block to azure blob. With
-            # object storage set, the operator also disables local compaction.
+            # The thanos sidecar uploads every 2h TSDB block to azure blob.
+            # Prometheus compacts a block locally only after the sidecar uploaded
+            # it (--storage.tsdb.delay-compact-file.path, set by the operator).
             thanos:
               objectStorageConfig:
                 # The chart renders this into the secret
