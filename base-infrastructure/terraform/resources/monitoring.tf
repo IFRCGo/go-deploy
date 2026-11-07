@@ -28,6 +28,8 @@ resource "azurerm_storage_account" "monitoring" {
   location                 = data.azurerm_resource_group.ifrcgo.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  tags = var.tags
 }
 
 resource "azurerm_storage_container" "loki_chunks" {
@@ -100,6 +102,8 @@ resource "azurerm_user_assigned_identity" "loki" {
   name                = "Loki${title(var.environment)}WorkloadIdentity"
   location            = data.azurerm_resource_group.ifrcgo.location
   resource_group_name = data.azurerm_resource_group.ifrcgo.name
+
+  tags = var.tags
 }
 
 resource "azurerm_federated_identity_credential" "loki" {
@@ -138,6 +142,8 @@ resource "azurerm_user_assigned_identity" "thanos" {
   name                = "Thanos${title(var.environment)}WorkloadIdentity"
   location            = data.azurerm_resource_group.ifrcgo.location
   resource_group_name = data.azurerm_resource_group.ifrcgo.name
+
+  tags = var.tags
 }
 
 resource "azurerm_federated_identity_credential" "thanos" {

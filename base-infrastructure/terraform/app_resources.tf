@@ -28,6 +28,7 @@ module "risk_module_resources" {
   app_name            = "risk-module"
   environment         = var.environment
   resource_group_name = module.resources.resource_group
+  tags                = local.base_tags
 
   database_config = {
     create_database = true
@@ -70,6 +71,7 @@ module "alert_hub_resources" {
   app_name            = "alert-hub"
   environment         = var.environment
   resource_group_name = module.resources.resource_group
+  tags                = local.base_tags
 
   aks_config = {
     cluster_namespace       = "alert-hub"
@@ -118,6 +120,7 @@ module "sdt_resources" {
   app_name            = "sdt"
   environment         = var.environment
   resource_group_name = module.resources.resource_group
+  tags                = local.base_tags
 
   aks_config = {
     cluster_namespace       = "sdt"
@@ -169,6 +172,7 @@ module "montandon_etl_resources" {
   app_name            = "montandon-etl"
   environment         = var.environment
   resource_group_name = module.resources.resource_group
+  tags                = local.base_tags
 
   aks_config = {
     cluster_namespace       = "montandon-etl"
@@ -218,6 +222,7 @@ module "montandon_eoapi_resources" {
   app_name            = "montandon-eoapi"
   environment         = var.environment
   resource_group_name = module.resources.resource_group
+  tags                = local.base_tags
 
   aks_config = {
     cluster_namespace       = "montandon-eoapi"
@@ -264,6 +269,7 @@ module "cacheppuccino_resources" {
   app_name            = "cacheppuccino"
   environment         = var.environment
   resource_group_name = module.resources.resource_group
+  tags                = local.base_tags
 
   aks_config = {
     cluster_namespace       = "cacheppuccino"
@@ -284,6 +290,7 @@ module "go_api_resources" {
   app_name            = "go-api"
   environment         = var.environment
   resource_group_name = module.resources.resource_group
+  tags                = local.base_tags
 
   # NOTE: service_account_name matches serviceAccountName in the chart's
   # values/go-deploy/base.yaml

@@ -4,4 +4,6 @@ resource "azurerm_container_registry" "shared" {
   location            = data.azurerm_resource_group.app_rg.location
   sku                 = var.registry_sku
   admin_enabled       = var.admin_enabled
+
+  tags = var.tags
 }

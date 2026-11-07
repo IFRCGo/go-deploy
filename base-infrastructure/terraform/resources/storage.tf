@@ -6,6 +6,8 @@ resource "azurerm_storage_account" "ifrcgo" {
   location                 = data.azurerm_resource_group.ifrcgo.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  tags = var.tags
 }
 
 resource "azurerm_storage_container" "data" {
@@ -26,6 +28,8 @@ resource "azurerm_storage_account" "sdt" {
   location                 = data.azurerm_resource_group.ifrcgo.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  tags = var.tags
 
   blob_properties {
     cors_rule {
@@ -50,6 +54,8 @@ resource "azurerm_storage_account" "montandon" {
   location                 = data.azurerm_resource_group.ifrcgo.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  tags = var.tags
 }
 
 # Risk module --------------------------------------
@@ -64,4 +70,6 @@ resource "azurerm_storage_account" "risk_module" {
   location                 = data.azurerm_resource_group.ifrcgo.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  tags = var.tags
 }

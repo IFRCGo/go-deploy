@@ -1,3 +1,9 @@
+locals {
+  aks_tags = merge(var.tags, {
+    ManagedBy = "IFRCGo"
+  })
+}
+
 resource "azurerm_kubernetes_cluster" "ifrcgo" {
   lifecycle {
     # Kubernetes version is upgraded manually through Azure
@@ -22,6 +28,7 @@ resource "azurerm_kubernetes_cluster" "ifrcgo" {
     min_count                   = 1
     max_count                   = var.environment == "staging" ? 3 : 4
     temporary_name_for_rotation = "nodepooltemp"
+    tags                        = local.aks_tags
 
     upgrade_settings {
       max_surge = "10%"
@@ -32,10 +39,7 @@ resource "azurerm_kubernetes_cluster" "ifrcgo" {
     type = "SystemAssigned"
   }
 
-  tags = {
-    Environment = var.environment
-    ManagedBy   = "IFRCGo"
-  }
+  tags = local.aks_tags
 
   # Mirrors the live cluster (kubenet, no network policy) so only the outbound IP changes;
   # a plugin mismatch here would replace the cluster.

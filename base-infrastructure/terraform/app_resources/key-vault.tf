@@ -18,6 +18,8 @@ resource "azurerm_key_vault" "app_kv" {
   tenant_id                  = data.azurerm_client_config.current.tenant_id
   purge_protection_enabled   = false
 
+  tags = var.tags
+
   network_acls {
     default_action             = var.key_vault_network_acls.default_action
     bypass                     = var.key_vault_network_acls.bypass

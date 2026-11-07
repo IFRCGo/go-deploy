@@ -10,4 +10,5 @@ module "go_shared_registry" {
 
   registry_sku        = "Standard"
   resource_group_name = module.resources.resource_group
+  tags                = local.base_tags
 }
