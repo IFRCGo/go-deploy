@@ -101,6 +101,11 @@ variable "storage_config" {
   }
 }
 
+variable "tags" {
+  type        = map(string)
+  description = "Tags applied to every taggable resource"
+}
+
 variable "vault_admin_ids" {
   description = "the Azure principals that shall have access to the vault"
   type        = list(string)

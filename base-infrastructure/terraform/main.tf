@@ -3,6 +3,7 @@ module "resources" {
   environment = var.environment
   # subscriptionId      = var.subscriptionId
   REGION = var.REGION
+  tags   = local.base_tags
   # RESOURCES_DB_NAME   = var.RESOURCES_DB_NAME
   # RESOURCES_DB_SERVER = var.RESOURCES_DB_SERVER
 }

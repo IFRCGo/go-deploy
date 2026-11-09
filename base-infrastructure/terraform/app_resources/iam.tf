@@ -10,6 +10,8 @@ resource "azurerm_user_assigned_identity" "workload" {
   name                = "${replace(title(var.app_name), "-", "")}${title(var.environment)}WorkloadIdentity"
   location            = data.azurerm_resource_group.app_rg.location
   resource_group_name = data.azurerm_resource_group.app_rg.name
+
+  tags = var.tags
 }
 
 # Grant application IAM identity permission to access secrets

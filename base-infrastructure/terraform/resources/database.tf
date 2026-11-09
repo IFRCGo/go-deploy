@@ -29,6 +29,8 @@ resource "azurerm_postgresql_flexible_server" "alerthub" {
   public_network_access_enabled = false
   zone                          = 1
 
+  tags = var.tags
+
   depends_on = [
     azurerm_private_dns_zone_virtual_network_link.ifrcgo
   ]
@@ -98,6 +100,8 @@ resource "azurerm_postgresql_flexible_server" "sdt" {
   public_network_access_enabled = false
   zone                          = 1
 
+  tags = var.tags
+
   lifecycle {
     ignore_changes = [
       version
@@ -148,6 +152,8 @@ resource "azurerm_postgresql_flexible_server" "montandon" {
   private_dns_zone_id           = azurerm_private_dns_zone.ifrcgo.id
   public_network_access_enabled = false
   zone                          = 1
+
+  tags = var.tags
 
   lifecycle {
     ignore_changes = [
@@ -200,6 +206,8 @@ resource "azurerm_postgresql_flexible_server" "montandon_eoapi" {
   private_dns_zone_id           = azurerm_private_dns_zone.ifrcgo.id
   public_network_access_enabled = false
   zone                          = 1
+
+  tags = var.tags
 
   lifecycle {
     ignore_changes = [
@@ -262,6 +270,8 @@ resource "azurerm_postgresql_flexible_server" "risk_module" {
   private_dns_zone_id           = azurerm_private_dns_zone.ifrcgo.id
   public_network_access_enabled = false
   zone                          = 1
+
+  tags = var.tags
 
   lifecycle {
     ignore_changes = [

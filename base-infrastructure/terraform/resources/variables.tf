@@ -32,6 +32,10 @@ variable "secret_rotation_interval" {
   }
 }
 
+variable "tags" {
+  type        = map(string)
+  description = "Tags applied to every taggable resource"
+}
 
 # -----------------
 # Attach ACR
