@@ -9,7 +9,7 @@ module "resources" {
 }
 
 terraform {
-  required_version = "~> 1.11.3"
+  required_version = "~> 1.17.0"
 
   backend "azurerm" {
     resource_group_name  = "ifrctgo002rg"
