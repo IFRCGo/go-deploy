@@ -47,40 +47,40 @@ def cql2_in_query(
     return f"{variable} IN ({','.join(repr(c_id) for c_id in collection_ids)})"
 
 
+def is_write(context: dict[str, Any]) -> bool:
+    """
+    True for transaction requests (create/update/delete). stac-auth-proxy validates
+    transactions against the same CQL2 filter as reads, so the filters must deny
+    writes explicitly. POST /search is a read.
+    """
+    req = context.get("req", {})
+    method = str(req.get("method", "GET")).upper()
+    if method in ("GET", "HEAD"):
+        return False
+    return not (method == "POST" and str(req.get("path", "")).endswith("/search"))
+
+
+def is_superuser(jwt_payload: Optional[dict[str, Any]], admin_claim: str) -> bool:
+    return bool(jwt_payload) and jwt_payload.get(admin_claim) == "true"
+
+
 @dataclasses.dataclass
 class CollectionsFilter:
     """
-    CQL2 filter factory for collections based on JWT permissions.
+    CQL2 filter factory for collections.
     """
 
-    collections_claim: str = "collections"  # JWT claim with allowed collection IDs
     admin_claim: str = "superuser"  # JWT claim indicating superuser status
-    public_collections_filter: str = "(private IS NULL OR private = false)"
 
     async def __call__(self, context: dict[str, Any]) -> str:
-        jwt_payload: Optional[dict[str, Any]] = context.get("payload")
+        # Writes: superusers only
+        if is_write(context):
+            return "1=1" if is_superuser(context.get("payload"), self.admin_claim) else "1=0"
 
-        # Anonymous: no data
-        if not jwt_payload:
-            logger.debug("Anonymous user, no collections permitted to be viewed")
-            return "1=0"
-
-        # Superuser: all data
-        if jwt_payload.get(self.admin_claim) == "true":
-            logger.debug(
-                f"Superuser detected for sub {jwt_payload.get('sub')}, "
-                "no filter applied for collections"
-            )
-            return "1=1"  # No filter for superusers
-
-        # Authenticated user: Allowed to access collections mentioned in JWT
-        permitted_collections = jwt_payload.get(self.collections_claim, [])
-        return " OR ".join(
-            [
-                self.public_collections_filter,
-                cql2_in_query("id", permitted_collections),
-            ]
-        )
+        # Collection metadata is public for everyone, including private collections
+        # (EM-DAT, PDC): their existence, coverage and license are visible without a
+        # token. Access to their items is gated by ItemsFilter.
+        return "1=1"
 
 
 @dataclasses.dataclass
@@ -89,7 +89,6 @@ class ItemsFilter:
     CQL2 filter factory for items based on JWT permissions.
     """
 
-    collections_claim: str = "collections"  # JWT claim with allowed collection IDs
     admin_claim: str = "superuser"  # JWT claim indicating superuser status
     public_collections_filter: str = "(private IS NULL OR private = false)"
 
@@ -172,28 +171,23 @@ class ItemsFilter:
     async def __call__(self, context: dict[str, Any]) -> str:
         jwt_payload: Optional[dict[str, Any]] = context.get("payload")
 
-        # Anonymous: no data
-        if not jwt_payload:
-            logger.debug("Anonymous user, no items permitted to be viewed")
-            return "1=0"
+        # Writes: superusers only
+        if is_write(context):
+            return "1=1" if is_superuser(jwt_payload, self.admin_claim) else "1=0"
 
-        # Superuser: all data
-        if jwt_payload.get(self.admin_claim) == "true":
-            logger.debug(
-                f"Superuser detected for sub {jwt_payload.get('sub')}, "
-                "no filter applied for items"
-            )
+        # Any valid token: all items, including private collections (EM-DAT, PDC).
+        # GO issues Montandon tokens only after the user accepts the Montandon terms
+        # and conditions; the tokens carry no per-collection claims. Revoked tokens
+        # are rejected before this point (montandon_revocation.py).
+        if jwt_payload:
             return "1=1"
 
-        # Everyone: Allowed access to items in public collections
+        # Anonymous: items in public collections only.
+        # On failure, deny public items rather than fall back to all items.
         try:
             permitted_collections = set(await self._get_public_collections_ids())
         except httpx.HTTPError:
             logger.warning("Failed to fetch public collections.")
             permitted_collections = set()
-
-        # Authenticated user: Allowed to access items in collections mentioned in JWT
-        if jwt_payload:
-            permitted_collections.update(jwt_payload.get(self.collections_claim, []))
 
         return cql2_in_query("collection", permitted_collections)
