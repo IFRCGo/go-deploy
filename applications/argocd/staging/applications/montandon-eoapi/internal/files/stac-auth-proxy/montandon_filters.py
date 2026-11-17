@@ -89,7 +89,6 @@ class ItemsFilter:
     CQL2 filter factory for items based on JWT permissions.
     """
 
-    collections_claim: str = "collections"  # JWT claim with allowed collection IDs
     admin_claim: str = "superuser"  # JWT claim indicating superuser status
     public_collections_filter: str = "(private IS NULL OR private = false)"
 
@@ -176,24 +175,19 @@ class ItemsFilter:
         if is_write(context):
             return "1=1" if is_superuser(jwt_payload, self.admin_claim) else "1=0"
 
-        # Superuser: all data
-        if is_superuser(jwt_payload, self.admin_claim):
-            logger.debug(
-                f"Superuser detected for sub {jwt_payload.get('sub')}, "
-                "no filter applied for items"
-            )
+        # Any valid token: all items, including private collections (EM-DAT, PDC).
+        # GO issues Montandon tokens only after the user accepts the Montandon terms
+        # and conditions; the tokens carry no per-collection claims. Revoked tokens
+        # are rejected before this point (montandon_revocation.py).
+        if jwt_payload:
             return "1=1"
 
-        # Everyone, including anonymous: allowed access to items in public collections.
+        # Anonymous: items in public collections only.
         # On failure, deny public items rather than fall back to all items.
         try:
             permitted_collections = set(await self._get_public_collections_ids())
         except httpx.HTTPError:
             logger.warning("Failed to fetch public collections.")
             permitted_collections = set()
-
-        # Authenticated user: Allowed to access items in collections mentioned in JWT
-        if jwt_payload:
-            permitted_collections.update(jwt_payload.get(self.collections_claim, []))
 
         return cql2_in_query("collection", permitted_collections)
