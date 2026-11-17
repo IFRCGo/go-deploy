@@ -47,13 +47,36 @@ def cql2_in_query(
     return f"{variable} IN ({','.join(repr(c_id) for c_id in collection_ids)})"
 
 
+def is_write(context: dict[str, Any]) -> bool:
+    """
+    True for transaction requests (create/update/delete). stac-auth-proxy validates
+    transactions against the same CQL2 filter as reads, so the filters must deny
+    writes explicitly. POST /search is a read.
+    """
+    req = context.get("req", {})
+    method = str(req.get("method", "GET")).upper()
+    if method in ("GET", "HEAD"):
+        return False
+    return not (method == "POST" and str(req.get("path", "")).endswith("/search"))
+
+
+def is_superuser(jwt_payload: Optional[dict[str, Any]], admin_claim: str) -> bool:
+    return bool(jwt_payload) and jwt_payload.get(admin_claim) == "true"
+
+
 @dataclasses.dataclass
 class CollectionsFilter:
     """
     CQL2 filter factory for collections.
     """
 
+    admin_claim: str = "superuser"  # JWT claim indicating superuser status
+
     async def __call__(self, context: dict[str, Any]) -> str:
+        # Writes: superusers only
+        if is_write(context):
+            return "1=1" if is_superuser(context.get("payload"), self.admin_claim) else "1=0"
+
         # Collection metadata is public for everyone, including private collections
         # (EM-DAT, PDC): their existence, coverage and license are visible without a
         # token. Access to their items is gated by ItemsFilter.
@@ -149,8 +172,12 @@ class ItemsFilter:
     async def __call__(self, context: dict[str, Any]) -> str:
         jwt_payload: Optional[dict[str, Any]] = context.get("payload")
 
+        # Writes: superusers only
+        if is_write(context):
+            return "1=1" if is_superuser(jwt_payload, self.admin_claim) else "1=0"
+
         # Superuser: all data
-        if jwt_payload and jwt_payload.get(self.admin_claim) == "true":
+        if is_superuser(jwt_payload, self.admin_claim):
             logger.debug(
                 f"Superuser detected for sub {jwt_payload.get('sub')}, "
                 "no filter applied for items"
