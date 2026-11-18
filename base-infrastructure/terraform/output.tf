@@ -57,6 +57,17 @@ output "go_api_app_resource_details" {
   }
 }
 
+output "malawi_rw_app_resource_details" {
+  value = {
+    database_name        = module.malawi_rw_resources.database_name
+    key_vault_name       = module.malawi_rw_resources.key_vault_name
+    storage_account_name = module.malawi_rw_resources.storage_account_name
+    storage_containers   = module.malawi_rw_resources.storage_containers
+    tenant_id            = module.malawi_rw_resources.tenant_id
+    workload_id          = module.malawi_rw_resources.workload_client_id
+  }
+}
+
 output "monitoring_resource_details" {
   value = {
     storage_account_name     = module.resources.monitoring_storage_account_name

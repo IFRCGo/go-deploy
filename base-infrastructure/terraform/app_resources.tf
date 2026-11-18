@@ -14,6 +14,7 @@ locals {
   montandon_db_name       = "montandondb"
   sdt_db_name             = "sdtdb"
   montandon_eoapi_db_name = "montandoneoapidb"
+  malawi_rw_db_name       = "malawirwdb"
 }
 
 module "risk_module_resources" {
@@ -322,4 +323,57 @@ module "go_api_resources" {
   #       - containers
   #          - api
   #          - static
+}
+
+# Malawi Risk Watch
+module "malawi_rw_resources" {
+  source = "./app_resources"
+
+  app_name            = "malawi-rw"
+  environment         = var.environment
+  resource_group_name = module.resources.resource_group
+  tags                = local.base_tags
+
+  # NOTE: service_account_name must match the chart's app.serviceAccount
+  aks_config = {
+    cluster_namespace       = "malawi-rw"
+    cluster_oidc_issuer_url = module.resources.cluster_oidc_issuer_url
+    service_account_name    = "service-token-reader"
+  }
+
+  database_config = {
+    create_database = true
+    database_name   = local.malawi_rw_db_name
+    server_id       = module.resources.malawi_rw_db_server_id
+  }
+
+  storage_config = {
+    container_refs = [
+      {
+        container_ref = "media"
+        access_type   = "private"
+      },
+      {
+        container_ref = "static"
+        access_type   = "blob"
+      }
+    ]
+
+    enabled              = true
+    storage_account_id   = module.resources.malawi_rw_storage_account_id
+    storage_account_name = module.resources.malawi_rw_storage_account_name
+  }
+
+  secrets = {
+    POSTGRES_DB       = local.malawi_rw_db_name
+    POSTGRES_HOST     = module.resources.malawi_rw_db_host
+    POSTGRES_USER     = module.resources.malawi_rw_db_user
+    POSTGRES_PASSWORD = module.resources.malawi_rw_db_admin_password
+    POSTGRES_PORT     = 5432
+  }
+
+  vault_admin_ids = [
+    local.user_principal_ids.tc_sushil,
+    local.user_principal_ids.tc_navin,
+  ]
 }

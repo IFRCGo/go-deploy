@@ -297,3 +297,55 @@ resource "azurerm_postgresql_flexible_server_configuration" "risk_module_db_exte
   server_id = azurerm_postgresql_flexible_server.risk_module.id
   value     = "POSTGIS"
 }
+
+# Database for Malawi Risk Watch --------------------------------------
+resource "random_password" "malawi_rw_db_admin" {
+  length  = 16
+  special = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "azurerm_postgresql_flexible_server" "malawi_rw" {
+  name                          = "malawi-rw-${var.environment}-psql-flexible-server"
+  resource_group_name           = data.azurerm_resource_group.ifrcgo.name
+  location                      = data.azurerm_resource_group.ifrcgo.location
+  version                       = "16"
+  administrator_login           = "postgres"
+  administrator_password        = random_password.malawi_rw_db_admin.result
+  backup_retention_days         = 35
+  auto_grow_enabled             = true
+  sku_name                      = "GP_Standard_D2ds_v5"
+  delegated_subnet_id           = azurerm_subnet.postgres.id
+  private_dns_zone_id           = azurerm_private_dns_zone.ifrcgo.id
+  public_network_access_enabled = false
+  zone                          = 1
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [
+      version
+    ]
+  }
+
+  depends_on = [
+    azurerm_private_dns_zone_virtual_network_link.ifrcgo
+  ]
+}
+
+resource "azurerm_postgresql_flexible_server_firewall_rule" "malawi_rw_db_vnet_rule" {
+  name             = "malawi-rw-${var.environment}-psql-vnet-access-fw-rule"
+  server_id        = azurerm_postgresql_flexible_server.malawi_rw.id
+  start_ip_address = cidrhost(azurerm_virtual_network.ifrcgo-cluster.address_space[0], 0)
+  end_ip_address   = cidrhost(azurerm_virtual_network.ifrcgo-cluster.address_space[0], -1)
+}
+
+# Enable extensions for malawi_rw db (app uses django.contrib.gis)
+resource "azurerm_postgresql_flexible_server_configuration" "malawi_rw_db_extensions" {
+  name      = "azure.extensions"
+  server_id = azurerm_postgresql_flexible_server.malawi_rw.id
+  value     = "POSTGIS"
+}
