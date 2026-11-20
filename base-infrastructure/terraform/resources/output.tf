@@ -151,6 +151,37 @@ output "risk_module_storage_account_name" {
   value = azurerm_storage_account.risk_module.name
 }
 
+# Malawi Risk Watch ----------------------------------------
+
+# DB
+output "malawi_rw_db_server_id" {
+  value = azurerm_postgresql_flexible_server.malawi_rw.id
+}
+
+output "malawi_rw_db_host" {
+  value = azurerm_postgresql_flexible_server.malawi_rw.fqdn
+}
+
+output "malawi_rw_db_user" {
+  value = azurerm_postgresql_flexible_server.malawi_rw.administrator_login
+}
+
+output "malawi_rw_db_admin_password" {
+  value = random_password.malawi_rw_db_admin.result
+}
+
+# Storage
+output "malawi_rw_storage_account_id" {
+  value = azurerm_storage_account.malawi_rw.id
+}
+
+output "malawi_rw_storage_account_name" {
+  value = azurerm_storage_account.malawi_rw.name
+}
+output "malawi_rw_storage_connection_string" {
+  value = azurerm_storage_account.malawi_rw.primary_connection_string
+}
+
 # Monitoring ----------------------------------------
 output "monitoring_storage_account_name" {
   value = azurerm_storage_account.monitoring.name
