@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: malawi-backend-helm
-    targetRevision: 0.0.1-develop.c17d493e
+    targetRevision: 0.0.1-develop.cf214a7d
     helm:
       valueFiles:
         - values/traefik.yaml
