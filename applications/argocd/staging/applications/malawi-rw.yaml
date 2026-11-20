@@ -30,6 +30,7 @@ spec:
             CSRF_COOKIE_DOMAIN: ".ifrc.org"
             AZURE_STORAGE_MEDIA_CONTAINER: "malawi-rw-staging-media-container"
             AZURE_STORAGE_STATIC_CONTAINER: "malawi-rw-staging-static-container"
+            HEALTH_CHECK_DISK_USAGE_MAX: None
           serviceAccount:
             annotations:
               azure.workload.identity/client-id: "42498fa9-c4b7-4fbd-8301-6cce6f5b3dbd"
