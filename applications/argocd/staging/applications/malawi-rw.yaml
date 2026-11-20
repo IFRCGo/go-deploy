@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: ghcr.io/ifrcgo
     chart: malawi-backend-helm
-    targetRevision: 0.0.1-develop.c6c2f1b4
+    targetRevision: 0.0.1-develop.c17d493e
     helm:
       valueFiles:
         - values/traefik.yaml
@@ -39,9 +39,6 @@ spec:
               clientID: "42498fa9-c4b7-4fbd-8301-6cce6f5b3dbd"
               keyvaultName: "malawi-rw-staging-kv"
               tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
-            # TODO: Move to malawi-risk-watch
-            secretsKeyMap:
-              JBA_SFTP_USERNAME: JBA-SFTP-USERNAME
   destination:
     server: https://kubernetes.default.svc
     namespace: malawi-rw
