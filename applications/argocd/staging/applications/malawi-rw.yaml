@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: malawi-rw
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/ifrcgo
+    chart: malawi-backend-helm
+    targetRevision: 0.0.1-develop.c6c2f1b4
+    helm:
+      valueFiles:
+        - values/traefik.yaml
+        - values/operators/dragonfly.yaml
+        - values/go-deploy/base.yaml
+        - values/go-deploy/staging.yaml
+      valuesObject:
+        app:
+          api:
+            ingress:
+              host: "mrwadmin-stage.ifrc.org"
+              tls:
+                secretName: "malawi-rw-helm-secret-cert"
+          env:
+            APP_DOMAIN: "https://mrwadmin-stage.ifrc.org"
+            SESSION_COOKIE_DOMAIN: ".ifrc.org"
+            CSRF_COOKIE_DOMAIN: ".ifrc.org"
+            AZURE_STORAGE_MEDIA_CONTAINER: "malawi-rw-staging-media-container"
+            AZURE_STORAGE_STATIC_CONTAINER: "malawi-rw-staging-static-container"
+          serviceAccount:
+            annotations:
+              azure.workload.identity/client-id: "42498fa9-c4b7-4fbd-8301-6cce6f5b3dbd"
+          secretsStoreCsiDriver:
+            parameters:
+              clientID: "42498fa9-c4b7-4fbd-8301-6cce6f5b3dbd"
+              keyvaultName: "malawi-rw-staging-kv"
+              tenantId: "a2b53be5-734e-4e6c-ab0d-d184f60fd917"
+            # TODO: Move to malawi-risk-watch
+            secretsKeyMap:
+              JBA_SFTP_USERNAME: JBA-SFTP-USERNAME
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: malawi-rw
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
