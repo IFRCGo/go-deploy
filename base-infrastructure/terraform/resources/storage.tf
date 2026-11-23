@@ -88,4 +88,14 @@ resource "azurerm_storage_account" "malawi_rw" {
   account_replication_type = "LRS"
 
   tags = var.tags
+
+  blob_properties {
+    cors_rule {
+      allowed_headers    = ["*"]
+      allowed_methods    = ["GET", "HEAD", "OPTIONS"]
+      allowed_origins    = ["*"] # Allow all origins
+      exposed_headers    = ["*"]
+      max_age_in_seconds = 3600
+    }
+  }
 }
